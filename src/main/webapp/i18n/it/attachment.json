@@ -1,0 +1,24 @@
+{
+  "noticeMeApp": {
+    "attachment": {
+      "home": {
+        "title": "Attachments",
+        "createLabel": "Genera un nuovo Attachment",
+        "createOrEditLabel": "Genera o modifica un Attachment",
+        "notFound": "No Attachments found"
+      },
+      "created": "&Egrave; stato generato un nuovo Attachment con identificatore {{ param }}",
+      "updated": "&Egrave; stato aggiornato Attachment identificato da {{ param }}",
+      "deleted": "&Egrave; stato eliminato Attachment con identificatore {{ param }}",
+      "delete": {
+        "question": "Sei sicuro di volere eliminare Attachment {{ id }}?"
+      },
+      "detail": {
+        "title": "Attachment"
+      },
+      "data": "Data",
+      "format": "Format",
+      "note": "Note"
+    }
+  }
+}

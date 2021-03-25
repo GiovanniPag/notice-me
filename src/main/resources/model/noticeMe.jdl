@@ -58,11 +58,9 @@ relationship ManyToMany {
 // Set pagination options
 paginate Note, Tag, Attachment with infinite-scroll
 
-dto Tag, Note, Attachment, User with mapstruct
+dto Tag, Note, Attachment with mapstruct
 
 // Set service options to all 
-service Tag, Note, User, Attachment with serviceClass 
+service Tag, Note, Attachment with serviceClass 
 
-//set filter options
-filter Tag, Note, User, Attachment
 
