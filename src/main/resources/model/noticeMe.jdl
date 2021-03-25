@@ -6,97 +6,49 @@
 // Entity definitions starts here
 // ==============================
 
-entity Region {
-    regionName String
+entity Tag {
+    tagName String required minlength(1)
 }
 
-entity Country {
-    countryName String
+entity Note {
+  title String required minlength(1)
+  content TextBlob required
+  date Instant required
+  alarm Instant
+  status NoteStatus required
 }
 
-// an ignored comment
-/** not an ignored comment */
-entity Location {
-    streetAddress String
-    postalCode String
-    city String
-    stateProvince String
+entity Attachment{
+    data AnyBlob required
+    format Format required
 }
 
-entity Department {
-    departmentName String required
+enum Format{
+    JPG,
+    PNG
 }
 
-/**
- * Task entity.
- * @author The JHipster team.
- */
-entity Task {
-    title String
-    description String
+enum NoteStatus{
+    NORMAL,
+    ALARM,
+    ARCHIVED,
+    DELETED
 }
 
-/**
- * The Employee entity.
- */
-entity Employee {
-    /**
-    * The firstname attribute.
-    */
-    firstName String
-    lastName String
-    email String
-    phoneNumber String
-    hireDate ZonedDateTime
-    salary Long
-    commissionPct Long
-}
 
-entity Job {
-    jobTitle String
-    minSalary Long
-    maxSalary Long
-}
 
-entity JobHistory {
-    startDate ZonedDateTime
-    endDate ZonedDateTime
-    language Language
-}
-
-enum Language {
-    FRENCH, ENGLISH, SPANISH
-}
-
-relationship ManyToMany {
-    Job{task(title)} to Task{job}
-}
-
-// defining multiple OneToMany relationships with comments
 relationship OneToMany {
-    Country{region} to Region
-    Location{country} to Country
-    Department{location} to Location
-    Employee{job} to Job
-    /**
-    * A relationship
-    */
-    Department{employee} to
-    /**
-    * Another side of the same relationship
-    */
-    Employee
+  Note{attachment} to Attachment
 }
 
 relationship ManyToOne {
-    Employee{manager} to Employee
+  Note{owner required} to User,
+  Tag{owner required} to User
 }
 
-// defining multiple oneToOne relationships
-relationship OneToOne {
-    JobHistory{job} to Job,
-    JobHistory{department} to Department,
-    JobHistory{employee} to Employee
+relationship ManyToMany {
+  Note{tag(tagName)} to Tag{entry},
+  Note{collaborator} to User
 }
 
 // =======
@@ -104,12 +56,13 @@ relationship OneToOne {
 // =======
 
 // Set pagination options
-paginate JobHistory, Employee with infinite-scroll
-paginate Job with pagination
+paginate Note, Tag, Attachment with infinite-scroll
 
-dto * with mapstruct
+dto Tag, Note, Attachment, User with mapstruct
 
 // Set service options to all 
-service all with serviceImpl 
-// Set an angular suffix
-angularSuffix * with mySuffix
+service Tag, Note, User, Attachment with serviceClass 
+
+//set filter options
+filter Tag, Note, User, Attachment
+
