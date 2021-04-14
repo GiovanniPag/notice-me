@@ -2,29 +2,29 @@
   "noticeMeApp": {
     "note": {
       "home": {
-        "title": "Notes",
-        "createLabel": "Genera un nuovo Note",
-        "createOrEditLabel": "Genera o modifica un Note",
-        "notFound": "No Notes found"
+        "title": "Note",
+        "createLabel": "Genera una nuova Nota",
+        "createOrEditLabel": "Genera o modifica una Nota",
+        "notFound": "Nessuna Nota Trovata"
       },
-      "created": "&Egrave; stato generato un nuovo Note con identificatore {{ param }}",
-      "updated": "&Egrave; stato aggiornato Note identificato da {{ param }}",
-      "deleted": "&Egrave; stato eliminato Note con identificatore {{ param }}",
+      "created": "&Egrave; stata generata una nuova Nota con identificatore {{ param }}",
+      "updated": "&Egrave; stata aggiornata la Nota identificata da {{ param }}",
+      "deleted": "&Egrave; stata eliminata la Nota con identificatore {{ param }}",
       "delete": {
-        "question": "Sei sicuro di volere eliminare Note {{ id }}?"
+        "question": "Sei sicuro di volere eliminare Nota {{ id }}?"
       },
       "detail": {
-        "title": "Note"
+        "title": "Nota"
       },
-      "title": "Title",
-      "content": "Content",
-      "date": "Date",
-      "alarm": "Alarm",
-      "status": "Status",
-      "attachment": "Attachment",
-      "owner": "Owner",
+      "title": "Titolo",
+      "content": "Contenuto",
+      "date": "Data",
+      "alarm": "Allarme",
+      "status": "Stato",
+      "attachment": "Allegato",
+      "owner": "Proprietario",
       "tag": "Tag",
-      "collaborator": "Collaborator"
+      "collaborator": "Collaboratori"
     }
   }
 }
