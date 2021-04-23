@@ -15,6 +15,13 @@
         "attachment": "Attachment",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
+      "sidebar": {
+        "tags": "Etichette",
+        "note": "Note",
+        "archive": "Archivio",
+        "trash": "Cestino",
+        "alarm": "Promemoria"
+      },
       "account": {
         "main": "Utente",
         "settings": "Impostazioni",
