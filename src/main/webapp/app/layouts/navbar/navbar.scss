@@ -26,8 +26,18 @@ $noticeme-gray: #c6c6c6;
   width: 1.75em;
 }
 
+.navbar-toggler-sidebar {
+  padding: 0.25rem 0.5rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.15rem;
+  color: $noticeme-blue;
+}
+
 .navbar {
-  padding: 0.2rem 1rem;
+  padding: 0.2rem 0.25rem;
 
   ul.navbar-nav {
     .nav-item {
@@ -44,8 +54,8 @@ $noticeme-gray: #c6c6c6;
 Logo styles
 ========================================================================== */
 .logo-img {
-  height: 45px;
-  width: 45px;
+  height: 30px;
+  width: 30px;
   display: inline-block;
   vertical-align: middle;
   background: url('../../../content/images/logo-noticeme.png') no-repeat center center;

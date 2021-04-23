@@ -1,12 +1,34 @@
 {
   "name": "notice-me",
   "version": "0.0.1-SNAPSHOT",
-  "description": "Description for NoticeMe",
   "private": true,
+  "description": "Description for NoticeMe",
   "license": "UNLICENSED",
-  "cacheDirectories": [
-    "node_modules"
-  ],
+  "scripts": {
+    "prettier:format": "prettier --write \"{,src/**/}*.{md,json,ts,css,scss,yml}\"",
+    "lint": "eslint . --ext .js,.ts",
+    "lint:fix": "npm run lint -- --fix",
+    "ngc": "ngc -p tsconfig.app.json",
+    "cleanup": "rimraf target/classes/static/",
+    "clean-www": "rimraf target/classes/static/app/{src,target/}",
+    "e2e": "protractor src/test/javascript/protractor.conf.js",
+    "postinstall": "node node_modules/protractor/bin/webdriver-manager update --gecko false",
+    "start": "npm run webpack:dev",
+    "start-tls": "npm run webpack:dev -- --env.tls",
+    "serve": "npm run start",
+    "build": "npm run webpack:prod",
+    "test": "npm run lint && jest --coverage --logHeapUsage -w=2 --config src/test/javascript/jest.conf.js",
+    "test:watch": "npm run test -- --watch",
+    "webpack:dev": "npm run webpack-dev-server -- --config webpack/webpack.dev.js --inline --hot --port=9060 --watch-content-base --env.stats=minimal",
+    "webpack:dev-verbose": "npm run webpack-dev-server -- --config webpack/webpack.dev.js --inline --hot --port=9060 --watch-content-base --profile --progress --env.stats=normal",
+    "webpack:build:main": "npm run webpack -- --config webpack/webpack.dev.js --env.stats=minimal",
+    "webpack:build": "npm run cleanup && npm run webpack:build:main",
+    "webpack:prod:main": "npm run webpack -- --config webpack/webpack.prod.js --profile",
+    "webpack:prod": "npm run cleanup && npm run webpack:prod:main && npm run clean-www",
+    "webpack:test": "npm run test",
+    "webpack-dev-server": "node --max_old_space_size=4096 node_modules/webpack-dev-server/bin/webpack-dev-server.js",
+    "webpack": "node --max_old_space_size=4096 node_modules/webpack/bin/webpack.js"
+  },
   "dependencies": {
     "@angular/common": "10.0.0",
     "@angular/compiler": "10.0.0",
@@ -18,6 +40,7 @@
     "@angular/router": "10.0.0",
     "@fortawesome/angular-fontawesome": "0.6.1",
     "@fortawesome/fontawesome-svg-core": "1.2.29",
+    "@fortawesome/free-regular-svg-icons": "5.15.3",
     "@fortawesome/free-solid-svg-icons": "5.13.1",
     "@ng-bootstrap/ng-bootstrap": "6.1.0",
     "@ngx-translate/core": "12.1.2",
@@ -29,10 +52,10 @@
     "ngx-infinite-scroll": "9.0.0",
     "ngx-webstorage": "5.0.0",
     "rxjs": "6.5.5",
-    "swagger-ui-dist": "3.25.1",
     "sockjs-client": "1.4.0",
-    "webstomp-client": "1.2.6",
+    "swagger-ui-dist": "3.25.1",
     "tslib": "2.0.0",
+    "webstomp-client": "1.2.6",
     "zone.js": "0.10.3"
   },
   "devDependencies": {
@@ -108,31 +131,9 @@
   "engines": {
     "node": ">=12.16.1"
   },
-  "scripts": {
-    "prettier:format": "prettier --write \"{,src/**/}*.{md,json,ts,css,scss,yml}\"",
-    "lint": "eslint . --ext .js,.ts",
-    "lint:fix": "npm run lint -- --fix",
-    "ngc": "ngc -p tsconfig.app.json",
-    "cleanup": "rimraf target/classes/static/",
-    "clean-www": "rimraf target/classes/static/app/{src,target/}",
-    "e2e": "protractor src/test/javascript/protractor.conf.js",
-    "postinstall": "node node_modules/protractor/bin/webdriver-manager update --gecko false",
-    "start": "npm run webpack:dev",
-    "start-tls": "npm run webpack:dev -- --env.tls",
-    "serve": "npm run start",
-    "build": "npm run webpack:prod",
-    "test": "npm run lint && jest --coverage --logHeapUsage -w=2 --config src/test/javascript/jest.conf.js",
-    "test:watch": "npm run test -- --watch",
-    "webpack:dev": "npm run webpack-dev-server -- --config webpack/webpack.dev.js --inline --hot --port=9060 --watch-content-base --env.stats=minimal",
-    "webpack:dev-verbose": "npm run webpack-dev-server -- --config webpack/webpack.dev.js --inline --hot --port=9060 --watch-content-base --profile --progress --env.stats=normal",
-    "webpack:build:main": "npm run webpack -- --config webpack/webpack.dev.js --env.stats=minimal",
-    "webpack:build": "npm run cleanup && npm run webpack:build:main",
-    "webpack:prod:main": "npm run webpack -- --config webpack/webpack.prod.js --profile",
-    "webpack:prod": "npm run cleanup && npm run webpack:prod:main && npm run clean-www",
-    "webpack:test": "npm run test",
-    "webpack-dev-server": "node --max_old_space_size=4096 node_modules/webpack-dev-server/bin/webpack-dev-server.js",
-    "webpack": "node --max_old_space_size=4096 node_modules/webpack/bin/webpack.js"
-  },
+  "cacheDirectories": [
+    "node_modules"
+  ],
   "jestSonar": {
     "reportPath": "target/test-results/jest",
     "reportFile": "TESTS-results-sonar.xml"

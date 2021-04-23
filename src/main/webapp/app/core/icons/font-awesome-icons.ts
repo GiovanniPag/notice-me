@@ -36,6 +36,8 @@ import {
   faHome,
 } from '@fortawesome/free-solid-svg-icons';
 
+import { faStickyNote } from '@fortawesome/free-regular-svg-icons';
+
 export const fontAwesomeIcons = [
   faUser,
   faSort,
@@ -72,4 +74,5 @@ export const fontAwesomeIcons = [
   faTrashAlt,
   // jhipster-needle-add-icon-import
   faAsterisk,
+  faStickyNote,
 ];
