@@ -1,16 +1,15 @@
 <div class="navbar navbar-light navbar-expand bg-light">
 
 	<a class="navbar-toggler-sidebar" href="javascript:void(0);" data-toggle="collapse"
-		data-target="#sidebarResponsive" aria-controls="sidebarResponsive" aria-expanded="false"
-		aria-label="Toggle navigation" (click)="toggleNavbar()">
+		data-target="#sidebarResponsive" aria-controls="sidebarResponsive"
+		aria-label="Toggle navigation" (click)="toggleSidebar()">
 		<fa-icon icon="bars"></fa-icon>
 	</a>
 
-	<a class="navbar-brand logo" routerLink="/" (click)="collapseNavbar()">
+	<a class="navbar-brand logo" routerLink="/" (click)="collapseSidebar()">
 		<span class="logo-img"></span>
 		<span class="navbar-title">
-			<span jhiTranslate="global.title.notice" class="navbar-title-notice">Notice</span>
-			<span jhiTranslate="global.title.me" class="navbar-title-me">Me</span>
+			<span jhiTranslate="global.title.notice" class="navbar-title-notice">Notice</span><span jhiTranslate="global.title.me" class="navbar-title-me">Me</span>
 		</span>
 		<span class="navbar-version">{{ version }}</span>
 	</a>
@@ -18,7 +17,7 @@
 	<div class="navbar-collapse" id="navbarResponsive" [ngSwitch]="isAuthenticated()">
 		<ul class="navbar-nav ml-auto">
 			<li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-				<a class="nav-link" routerLink="/" (click)="collapseNavbar()">
+				<a class="nav-link" routerLink="/" (click)="collapseSidebar()">
 					<span>
 						<fa-icon icon="home"></fa-icon>
 						<span jhiTranslate="global.menu.home">Home</span>
@@ -38,21 +37,21 @@
 				<ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
 					<li>
 						<a class="dropdown-item" routerLink="tag" routerLinkActive="active"
-							[routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
+							[routerLinkActiveOptions]="{ exact: true }" (click)="collapseSidebar()">
 							<fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.entities.tag">Tag</span>
 						</a>
 					</li>
 					<li>
 						<a class="dropdown-item" routerLink="note" routerLinkActive="active"
-							[routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
+							[routerLinkActiveOptions]="{ exact: true }" (click)="collapseSidebar()">
 							<fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.entities.note">Note</span>
 						</a>
 					</li>
 					<li>
 						<a class="dropdown-item" routerLink="attachment" routerLinkActive="active"
-							[routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
+							[routerLinkActiveOptions]="{ exact: true }" (click)="collapseSidebar()">
 							<fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.entities.attachment">Attachment</span>
 						</a>
@@ -71,63 +70,63 @@
 				<ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="admin-menu">
 					<li>
 						<a class="dropdown-item" routerLink="admin/user-management" routerLinkActive="active"
-							(click)="collapseNavbar()">
+							(click)="collapseSidebar()">
 							<fa-icon icon="user" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.admin.userManagement">User management</span>
 						</a>
 					</li>
 					<li>
 						<a class="dropdown-item" routerLink="admin/tracker" routerLinkActive="active"
-							(click)="collapseNavbar()">
+							(click)="collapseSidebar()">
 							<fa-icon icon="eye" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.admin.tracker">User tracker</span>
 						</a>
 					</li>
 					<li>
 						<a class="dropdown-item" routerLink="admin/metrics" routerLinkActive="active"
-							(click)="collapseNavbar()">
+							(click)="collapseSidebar()">
 							<fa-icon icon="tachometer-alt" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.admin.metrics">Metrics</span>
 						</a>
 					</li>
 					<li>
 						<a class="dropdown-item" routerLink="admin/health" routerLinkActive="active"
-							(click)="collapseNavbar()">
+							(click)="collapseSidebar()">
 							<fa-icon icon="heart" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.admin.health">Health</span>
 						</a>
 					</li>
 					<li>
 						<a class="dropdown-item" routerLink="admin/configuration" routerLinkActive="active"
-							(click)="collapseNavbar()">
+							(click)="collapseSidebar()">
 							<fa-icon icon="list" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.admin.configuration">Configuration</span>
 						</a>
 					</li>
 					<li>
 						<a class="dropdown-item" routerLink="admin/audits" routerLinkActive="active"
-							(click)="collapseNavbar()">
+							(click)="collapseSidebar()">
 							<fa-icon icon="bell" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.admin.audits">Audits</span>
 						</a>
 					</li>
 					<li>
 						<a class="dropdown-item" routerLink="admin/logs" routerLinkActive="active"
-							(click)="collapseNavbar()">
+							(click)="collapseSidebar()">
 							<fa-icon icon="tasks" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.admin.logs">Logs</span>
 						</a>
 					</li>
 					<li *ngIf="swaggerEnabled">
 						<a class="dropdown-item" routerLink="admin/docs" routerLinkActive="active"
-							(click)="collapseNavbar()">
+							(click)="collapseSidebar()">
 							<fa-icon icon="book" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.admin.apidocs">API</span>
 						</a>
 					</li>
 					<!-- jhipster-needle-add-element-to-admin-menu - JHipster will add entities to the admin menu here -->
 					<li *ngIf="!inProduction">
-						<a class="dropdown-item" href='./h2-console' target="_tab" (click)="collapseNavbar()">
+						<a class="dropdown-item" href='./h2-console' target="_tab" (click)="collapseSidebar()">
 							<fa-icon icon="hdd" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.admin.database">Database</span>
 						</a>
@@ -146,7 +145,7 @@
 				<ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="languagesnavBarDropdown">
 					<li *ngFor="let language of languages">
 						<a class="dropdown-item" [jhiActiveMenu]="language" href="javascript:void(0);"
-							(click)="changeLanguage(language);collapseNavbar();">{{ language | findLanguageFromKey }}</a>
+							(click)="changeLanguage(language);collapseSidebar();">{{ language | findLanguageFromKey }}</a>
 					</li>
 				</ul>
 			</li>
@@ -165,14 +164,14 @@
 				<ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="account-menu">
 					<li *ngSwitchCase="true">
 						<a class="dropdown-item" routerLink="account/settings" routerLinkActive="active"
-							(click)="collapseNavbar()">
+							(click)="collapseSidebar()">
 							<fa-icon icon="wrench" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.account.settings">Settings</span>
 						</a>
 					</li>
 					<li *ngSwitchCase="true">
 						<a class="dropdown-item" routerLink="account/password" routerLinkActive="active"
-							(click)="collapseNavbar()">
+							(click)="collapseSidebar()">
 							<fa-icon icon="lock" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.account.password">Password</span>
 						</a>
@@ -191,7 +190,7 @@
 					</li>
 					<li *ngSwitchCase="false">
 						<a class="dropdown-item" routerLink="account/register" routerLinkActive="active"
-							(click)="collapseNavbar()">
+							(click)="collapseSidebar()">
 							<fa-icon icon="user-plus" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.account.register">Register</span>
 						</a>
@@ -200,41 +199,4 @@
 			</li>
 		</ul>
 	</div>
-</div>
-<div class="col">
-	<nav class="navbar navbar-dark bg-dark navbar-collapse collapse" id="sidebarResponsive"
-		[ngbCollapse]="isNavbarCollapsed" [ngSwitch]="isAuthenticated()">
-		<ul class="list-unstyled components">
-			<li class="active">
-				<a href="" data-toggle="" aria-expanded="false" class="">
-					<fa-icon [icon]="['far', 'sticky-note']"></fa-icon>
-					<span jhiTranslate="global.menu.sidebar.note">Note</span>
-				</a>
-			</li>
-			<li>
-                <a href="" data-toggle="" aria-expanded="false" class="">
-                    <fa-icon [icon]="['far', 'bell']"></fa-icon>
-                    <span jhiTranslate="global.menu.sidebar.alarm">Alarm</span>
-                </a>
-            </li>
-            <li>
-                <a href="" data-toggle="" aria-expanded="false" class="">
-                    <fa-icon [icon]="['far', 'bookmark']"></fa-icon>
-                    <span jhiTranslate="global.menu.sidebar.tags">Tags</span>
-                </a>
-            </li>
-            <li>
-                <a href="" data-toggle="" aria-expanded="false" class="">
-                    <fa-icon [icon]="['far', 'file-archive']"></fa-icon>
-                    <span jhiTranslate="global.menu.sidebar.archive">Archive</span>
-                </a>
-            </li>
-            <li>
-                <a href="" data-toggle="" aria-expanded="false" class="">
-                    <fa-icon [icon]="['far', 'trash-alt']"></fa-icon>
-                    <span jhiTranslate="global.menu.sidebar.trash">Trash</span>
-                </a>
-            </li>
-		</ul>
-	</nav>
 </div>

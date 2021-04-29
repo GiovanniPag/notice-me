@@ -1,19 +1,19 @@
 @import '~bootstrap/scss/functions';
 @import '~bootstrap/scss/variables';
+@import '../../../content/scss/bootstrap-variables';
 
 /* ==========================================================================
 Navbar
 ========================================================================== */
 
-$noticeme-blue: #5ec6f2;
-$noticeme-gray: #c6c6c6;
-
 .navbar-title-notice {
-  color: $noticeme-gray;
+  color: $secondary;
+  font-weight: bold;
 }
 
 .navbar-title-me {
-  color: $noticeme-blue;
+  color: $primary;
+  font-weight: bold;
 }
 
 .navbar-version {
@@ -33,7 +33,7 @@ $noticeme-gray: #c6c6c6;
   background-color: transparent;
   border: 1px solid transparent;
   border-radius: 0.15rem;
-  color: $noticeme-blue;
+  color: $primary;
 }
 
 .navbar {

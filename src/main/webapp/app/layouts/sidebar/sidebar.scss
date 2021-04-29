@@ -1,0 +1,76 @@
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '../../../content/scss/bootstrap-variables';
+
+/* ==========================================================================
+Sidebar
+========================================================================== */
+
+#sidebarResponsive {
+  padding: unset;
+  height: 100%;
+  align-items: flex-start;
+}
+
+#sidebarResponsive ul {
+  width: 100%;
+}
+
+ul li a {
+  padding-left: 1rem;
+  text-decoration: none;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+ul li > a:hover {
+  background: $gray-200;
+}
+
+ul li a fa-icon {
+  padding: 0rem 0.5rem 0rem 0rem;
+  font-size: 1.5rem;
+  line-height: 2;
+  background-color: transparent;
+  color: $primary;
+}
+
+ul li a span {
+  font-size: small;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+/* Shrinking the sidebar from 250px to auto*/
+:host.is-active {
+  min-width: 250px;
+  max-width: 250px;
+}
+
+:host {
+  min-width: auto;
+  max-width: auto;
+}
+
+/* hiding and showing the text*/
+:host.is-active ul li a span {
+  display: inline;
+}
+
+:host ul li a span {
+  display: none;
+}
+
+/*smaller screens*/
+@media (max-width: 768px) {
+  :host {
+    display: none;
+  }
+  :host.is-active {
+    min-width: auto;
+    white-space: nowrap;
+    max-width: auto;
+    display: inline;
+  }
+}

@@ -16,12 +16,11 @@ h4 {
 
 /* Increase contrast of links to get 100% on Lighthouse Accessability Audit. Override this color if you want to change the link color, or use a Bootswatch theme */
 a {
-  color: #533f03;
-  font-weight: bold;
+  color: $gray-700;
 }
 
 a:hover {
-  color: #533f03;
+  color: $gray-700;
 }
 
 /* override hover color for dropdown-item forced by bootstrap to all a:not([href]):not([tabindex]) elements in _reboot.scss */
@@ -71,7 +70,7 @@ Generic styles
 
 .jh-card {
   padding: 1.5%;
-  margin-top: 20px;
+  width: 100%;
   border: none;
 }
 
@@ -193,3 +192,12 @@ ui bootstrap tweaks
 }
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */
+
+.wrapper {
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  margin-left: -15px;
+  margin-right: -15px;
+}

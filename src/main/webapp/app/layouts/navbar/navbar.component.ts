@@ -9,6 +9,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { LoginModalService } from 'app/core/login/login-modal.service';
 import { LoginService } from 'app/core/login/login.service';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
+import { SideBarService } from '../sidebar/sidebar.service';
 
 @Component({
   selector: 'jhi-navbar',
@@ -17,7 +18,6 @@ import { ProfileService } from 'app/layouts/profiles/profile.service';
 })
 export class NavbarComponent implements OnInit {
   inProduction?: boolean;
-  isNavbarCollapsed = true;
   languages = LANGUAGES;
   swaggerEnabled?: boolean;
   version: string;
@@ -29,6 +29,7 @@ export class NavbarComponent implements OnInit {
     private accountService: AccountService,
     private loginModalService: LoginModalService,
     private profileService: ProfileService,
+    private sideBarService: SideBarService,
     private router: Router
   ) {
     this.version = VERSION ? (VERSION.toLowerCase().startsWith('v') ? VERSION : 'v' + VERSION) : '';
@@ -46,8 +47,8 @@ export class NavbarComponent implements OnInit {
     this.languageService.changeLanguage(languageKey);
   }
 
-  collapseNavbar(): void {
-    this.isNavbarCollapsed = true;
+  collapseSidebar(): void {
+    this.sideBarService.closeSidebar();
   }
 
   isAuthenticated(): boolean {
@@ -59,13 +60,13 @@ export class NavbarComponent implements OnInit {
   }
 
   logout(): void {
-    this.collapseNavbar();
+    this.collapseSidebar();
     this.loginService.logout();
     this.router.navigate(['']);
   }
 
-  toggleNavbar(): void {
-    this.isNavbarCollapsed = !this.isNavbarCollapsed;
+  toggleSidebar(): void {
+    this.sideBarService.toggleSidebar();
   }
 
   getImageUrl(): string {
