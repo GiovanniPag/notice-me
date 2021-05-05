@@ -1,76 +1,131 @@
 @import '~bootstrap/scss/functions';
 @import '~bootstrap/scss/variables';
 @import '../../../content/scss/bootstrap-variables';
+@import './sidebar-keyframes';
 
 /* ==========================================================================
 Sidebar
 ========================================================================== */
-
 #sidebarResponsive {
+  z-index: 100;
   padding: unset;
   height: 100%;
   align-items: flex-start;
 }
 
-#sidebarResponsive ul {
+.sidebar-list {
+  padding-top: 48px;
   width: 100%;
+
+  .side-link:hover {
+    background: $gray-200;
+  }
+
+  li.active {
+    background: $primary;
+    fa-icon,
+    .side-link {
+      color: $white;
+    }
+    .side-link:hover {
+      background: darken($primary, 30%);
+    }
+  }
 }
 
-ul li a {
-  padding-left: 1rem;
+.side-link {
+  padding-left: 0.75rem;
   text-decoration: none;
   transition: all 0.3s;
   display: flex;
   align-items: center;
+  -webkit-transition: color 500ms, background 500ms;
+  -moz-transition: color 500ms, background 500ms;
+  -ms-transition: color 500ms, background 500ms;
+  -o-transition: color 500ms, background 500ms;
+  transition: color 500ms, background 500ms;
+
+  fa-icon {
+    padding: 0rem 0.75rem 0rem 0rem;
+    font-size: 1.5rem;
+    line-height: 2;
+    background-color: transparent;
+    color: $primary;
+    -webkit-transition: color 500ms;
+    -moz-transition: color 500ms;
+    -ms-transition: color 500ms;
+    -o-transition: color 500ms;
+    transition: color 500ms;
+  }
+
+  span {
+    font-size: small;
+    font-weight: 500;
+    vertical-align: middle;
+  }
 }
 
-ul li > a:hover {
-  background: $gray-200;
-}
-
-ul li a fa-icon {
-  padding: 0rem 0.5rem 0rem 0rem;
-  font-size: 1.5rem;
-  line-height: 2;
-  background-color: transparent;
-  color: $primary;
-}
-
-ul li a span {
-  font-size: small;
-  font-weight: 500;
-  vertical-align: middle;
-}
-
-/* Shrinking the sidebar from 250px to auto*/
+/* Shrinking the sidebar from 200px to auto*/
 :host.is-active {
-  min-width: 250px;
-  max-width: 250px;
+  .side-link span {
+    -webkit-animation: fadein 0.5s; /* Safari, Chrome and Opera > 12.1 */
+    -moz-animation: fadein 0.5s; /* Firefox < 16 */
+    -ms-animation: fadein 0.5s; /* Internet Explorer */
+    -o-animation: fadein 0.5s; /* Opera < 12.1 */
+    animation: fadein 0.5s;
+    display: flex;
+  }
+
+  #sidebarResponsive {
+    min-width: 200px;
+    max-width: 200px;
+  }
 }
 
 :host {
-  min-width: auto;
-  max-width: auto;
-}
-
-/* hiding and showing the text*/
-:host.is-active ul li a span {
-  display: inline;
-}
-
-:host ul li a span {
-  display: none;
+  #sidebarResponsive {
+    -webkit-transition: min-width 0.5s, max-width 0.5s;
+    -moz-transition: min-width 0.5s, max-width 0.5s;
+    -ms-transition: min-width 0.5s, max-width 0.5s;
+    -o-transition: min-width 0.5s, max-width 0.5s;
+    transition: min-width 0.5s, max-width 0.5s;
+    min-width: 45px;
+    max-width: 45px;
+  }
+  .side-link span {
+    display: none;
+  }
 }
 
 /*smaller screens*/
 @media (max-width: 768px) {
-  :host {
-    display: none;
-  }
-  :host.is-active {
-    min-width: auto;
+  :host #sidebarResponsive {
+    min-width: 127px;
+    max-width: 127px;
     white-space: nowrap;
-    max-width: auto;
+    margin-left: -127px;
+    -webkit-transition: margin-left 0.5s;
+    /* Safari, Chrome and Opera > 12.1 */
+    -moz-transition: margin-left 0.5s; /* Firefox < 16 */
+    -ms-transition: margin-left 0.5s; /* Internet Explorer */
+    -o-transition: margin-left 0.5s; /* Opera < 12.1 */
+    transition: margin-left 0.5s;
+  }
+  :host.is-active #sidebarResponsive {
+    min-width: 127px;
+    max-width: 127px;
+    margin-left: 0px;
+  }
+  :host .side-link span,
+  :host.is-active .side-link span {
+    -webkit-animation: fadein 0s; /* Safari, Chrome and Opera > 12.1 */
+    -moz-animation: fadein 0s; /* Firefox < 16 */
+    -ms-animation: fadein 0s; /* Internet Explorer */
+    -o-animation: fadein 0s; /* Opera < 12.1 */
+    animation: fadein 0s;
     display: inline;
+  }
+  #sidebarResponsive .side-link {
+    padding-right: 10px;
   }
 }

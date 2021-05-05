@@ -1,8 +1,8 @@
-<div class="navbar navbar-light navbar-expand bg-light">
+<nav class="fixed-top navbar navbar-light navbar-expand bg-light">
 
-	<a class="navbar-toggler-sidebar" href="javascript:void(0);" data-toggle="collapse"
-		data-target="#sidebarResponsive" aria-controls="sidebarResponsive"
-		aria-label="Toggle navigation" (click)="toggleSidebar()">
+	<a *ngIf="isAuthenticated()" class="navbar-toggler-sidebar" href="javascript:void(0);" data-toggle="collapse"
+		data-target="#sidebarResponsive" aria-controls="sidebarResponsive" aria-label="Toggle navigation"
+		(click)="toggleSidebar()">
 		<fa-icon icon="bars"></fa-icon>
 	</a>
 
@@ -25,7 +25,8 @@
 				</a>
 			</li>
 			<!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
-			<li *ngSwitchCase="true" ngbDropdown class="nav-item dropdown pointer" display="dynamic"
+			
+			<!--<li *ngSwitchCase="true" ngbDropdown class="nav-item dropdown pointer" display="dynamic"
 				routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
 				<a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);"
 					id="entity-menu">
@@ -56,9 +57,10 @@
 							<span jhiTranslate="global.menu.entities.attachment">Attachment</span>
 						</a>
 					</li>
-					<!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
+					
 				</ul>
-			</li>
+			</li>-->
+			
 			<li *jhiHasAnyAuthority="'ROLE_ADMIN'" ngbDropdown class="nav-item dropdown pointer"
 				display="dynamic" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
 				<a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="admin-menu">
@@ -145,7 +147,8 @@
 				<ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="languagesnavBarDropdown">
 					<li *ngFor="let language of languages">
 						<a class="dropdown-item" [jhiActiveMenu]="language" href="javascript:void(0);"
-							(click)="changeLanguage(language);collapseSidebar();">{{ language | findLanguageFromKey }}</a>
+							(click)="changeLanguage(language);collapseSidebar();">{{ language | findLanguageFromKey
+							}}</a>
 					</li>
 				</ul>
 			</li>
@@ -199,4 +202,4 @@
 			</li>
 		</ul>
 	</div>
-</div>
+</nav>

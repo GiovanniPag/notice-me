@@ -6,6 +6,10 @@
 Navbar
 ========================================================================== */
 
+.navbar-title {
+  white-space: unset;
+}
+
 .navbar-title-notice {
   color: $secondary;
   font-weight: bold;
@@ -36,9 +40,13 @@ Navbar
   color: $primary;
 }
 
+.navbar-toggler-sidebar:hover {
+  color: darken($primary, 30%);
+}
+
 .navbar {
   padding: 0.2rem 0.25rem;
-
+  white-space: nowrap;
   ul.navbar-nav {
     .nav-item {
       margin-left: 0.5em;
@@ -60,4 +68,11 @@ Logo styles
   vertical-align: middle;
   background: url('../../../content/images/logo-noticeme.png') no-repeat center center;
   background-size: contain;
+}
+
+/*smaller screens*/
+@media (max-width: 768px) {
+  .nav-link span span {
+    display: none;
+  }
 }

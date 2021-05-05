@@ -70,6 +70,7 @@ Generic styles
 
 .jh-card {
   padding: 1.5%;
+  padding-top: 48px;
   width: 100%;
   border: none;
 }
@@ -194,7 +195,6 @@ ui bootstrap tweaks
 /* jhipster-needle-scss-add-main JHipster will add new css style */
 
 .wrapper {
-  height: auto;
   display: flex;
   flex-direction: row;
   align-items: stretch;
