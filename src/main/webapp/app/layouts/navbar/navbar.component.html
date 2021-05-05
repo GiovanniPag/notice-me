@@ -152,7 +152,7 @@
 					</li>
 				</ul>
 			</li>
-			<li ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active"
+			<li  *ngSwitchCase="true" ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active"
 				[routerLinkActiveOptions]="{ exact: true }">
 				<a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);"
 					id="account-menu">
@@ -165,21 +165,21 @@
 					</span>
 				</a>
 				<ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="account-menu">
-					<li *ngSwitchCase="true">
+					<li>
 						<a class="dropdown-item" routerLink="account/settings" routerLinkActive="active"
 							(click)="collapseSidebar()">
 							<fa-icon icon="wrench" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.account.settings">Settings</span>
 						</a>
 					</li>
-					<li *ngSwitchCase="true">
+					<li>
 						<a class="dropdown-item" routerLink="account/password" routerLinkActive="active"
 							(click)="collapseSidebar()">
 							<fa-icon icon="lock" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.account.password">Password</span>
 						</a>
 					</li>
-					<li *ngSwitchCase="true">
+					<li>
 						<a class="dropdown-item" (click)="logout()" id="logout">
 							<fa-icon icon="sign-out-alt" [fixedWidth]="true"></fa-icon>
 							<span jhiTranslate="global.menu.account.logout">Sign out</span>
