@@ -3,19 +3,19 @@ import { NoticeMeSharedLibsModule } from './shared-libs.module';
 import { FindLanguageFromKeyPipe } from './language/find-language-from-key.pipe';
 import { AlertComponent } from './alert/alert.component';
 import { AlertErrorComponent } from './alert/alert-error.component';
-import { LoginModalComponent } from './login/login.component';
+import { LoginComponent } from './login/login.component';
 import { HasAnyAuthorityDirective } from './auth/has-any-authority.directive';
 
 @NgModule({
   imports: [NoticeMeSharedLibsModule],
-  declarations: [FindLanguageFromKeyPipe, AlertComponent, AlertErrorComponent, LoginModalComponent, HasAnyAuthorityDirective],
-  entryComponents: [LoginModalComponent],
+  declarations: [FindLanguageFromKeyPipe, AlertComponent, AlertErrorComponent, LoginComponent, HasAnyAuthorityDirective],
+  entryComponents: [LoginComponent],
   exports: [
     NoticeMeSharedLibsModule,
     FindLanguageFromKeyPipe,
     AlertComponent,
     AlertErrorComponent,
-    LoginModalComponent,
+    LoginComponent,
     HasAnyAuthorityDirective,
   ],
 })

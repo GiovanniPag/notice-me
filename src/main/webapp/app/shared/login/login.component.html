@@ -1,9 +1,5 @@
 <div class="modal-header">
     <h4 class="modal-title" jhiTranslate="login.title">Sign in</h4>
-
-    <button aria-label="Close" data-dismiss="modal" class="close" type="button" (click)="activeModal.dismiss('closed')">
-        <span aria-hidden="true">x</span>
-    </button>
 </div>
 
 <div class="modal-body">
@@ -13,7 +9,7 @@
                 <strong>Failed to sign in!</strong> Please check your credentials and try again.
             </div>
         </div>
-
+        
         <div class="col-md-8">
             <form class="form" role="form" (ngSubmit)="login()" [formGroup]="loginForm">
                 <div class="form-group">
