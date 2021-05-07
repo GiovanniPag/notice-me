@@ -1,8 +1,10 @@
 import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { LoginService } from 'app/core/login/login.service';
+import { StateStorageService } from 'app/core/auth/state-storage.service';
 
 @Component({
   selector: 'jhi-login',
@@ -20,7 +22,13 @@ export class LoginComponent implements AfterViewInit {
     rememberMe: [false],
   });
 
-  constructor(private loginService: LoginService, private router: Router, private fb: FormBuilder) {}
+  constructor(
+    private eventManager: JhiEventManager,
+    private loginService: LoginService,
+    private stateStorageService: StateStorageService,
+    private router: Router,
+    private fb: FormBuilder
+  ) {}
 
   ngAfterViewInit(): void {
     if (this.username) {
@@ -43,6 +51,21 @@ export class LoginComponent implements AfterViewInit {
             this.router.url.startsWith('/account/activate') ||
             this.router.url.startsWith('/account/reset/')
           ) {
+            this.router.navigate(['']);
+          }
+
+          this.eventManager.broadcast({
+            name: 'authenticationSuccess',
+            content: 'Sending Authentication Success',
+          });
+          // previousState was set in the authExpiredInterceptor before being redirected to login modal.
+          // since login is successful, go to stored previousState and clear previousState
+          const redirect = this.stateStorageService.getUrl();
+          // TODO Check if the redirect would be login again and route to home
+          if (redirect) {
+            this.stateStorageService.clearUrl();
+            this.router.navigateByUrl(redirect);
+          } else {
             this.router.navigate(['']);
           }
         },

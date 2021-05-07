@@ -7,7 +7,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { StateStorageService } from './state-storage.service';
 
 @Injectable({ providedIn: 'root' })
-export class UserRouteAccessService implements CanActivate {
+export class LoggedUserRouteAccessService implements CanActivate {
   constructor(private router: Router, private accountService: AccountService, private stateStorageService: StateStorageService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
@@ -21,22 +21,16 @@ export class UserRouteAccessService implements CanActivate {
   checkLogin(authorities: string[], url: string): Observable<boolean> {
     return this.accountService.identity().pipe(
       map(account => {
-        if (!authorities || authorities.length === 0) {
-          return true;
-        }
-
         if (account) {
           const hasAnyAuthority = this.accountService.hasAnyAuthority(authorities);
           if (hasAnyAuthority) {
-            return true;
+            this.router.navigate(['/']);
+            return false;
           }
-          this.router.navigate(['accessdenied']);
-          return false;
         }
 
         this.stateStorageService.storeUrl(url);
-        this.router.navigate(['/login']);
-        return false;
+        return true;
       })
     );
   }

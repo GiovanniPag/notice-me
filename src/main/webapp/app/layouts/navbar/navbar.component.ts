@@ -56,7 +56,7 @@ export class NavbarComponent implements OnInit {
   logout(): void {
     this.collapseSidebar();
     this.loginService.logout();
-    this.router.navigate(['']);
+    this.router.navigate(['/login']);
   }
 
   toggleSidebar(): void {

@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { NoticeMeSharedModule } from 'app/shared/shared.module';
-import { HOME_ROUTE } from './home.route';
-import { HomeComponent } from './home.component';
+import { LOGIN_ROUTE } from './login.route';
+import { LoginComponent } from './login.component';
 
 @NgModule({
-  imports: [NoticeMeSharedModule, RouterModule.forChild([...HOME_ROUTE])],
-  declarations: [HomeComponent],
+  imports: [NoticeMeSharedModule, RouterModule.forChild([LOGIN_ROUTE])],
+  declarations: [LoginComponent],
 })
 export class NoticeMeHomeModule {}
