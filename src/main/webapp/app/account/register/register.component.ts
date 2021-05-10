@@ -1,10 +1,10 @@
 import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { JhiLanguageService } from 'ng-jhipster';
 
 import { EMAIL_ALREADY_USED_TYPE, LOGIN_ALREADY_USED_TYPE } from 'app/shared/constants/error.constants';
+import { LoginRouteService } from 'app/core/login/route-login.service';
 import { RegisterService } from './register.service';
 
 @Component({
@@ -38,7 +38,7 @@ export class RegisterComponent implements AfterViewInit {
 
   constructor(
     private languageService: JhiLanguageService,
-    private router: Router,
+    private loginRouteService: LoginRouteService,
     private registerService: RegisterService,
     private fb: FormBuilder
   ) {}
@@ -69,7 +69,7 @@ export class RegisterComponent implements AfterViewInit {
   }
 
   openLogin(): void {
-    this.router.navigate(['']);
+    this.loginRouteService.open();
   }
 
   private processError(response: HttpErrorResponse): void {

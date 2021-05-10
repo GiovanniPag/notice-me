@@ -7,6 +7,7 @@ import { NoticeMeCoreModule } from 'app/core/core.module';
 import { NoticeMeAppRoutingModule } from './app-routing.module';
 import { NoticeMeHomeModule } from './home/home.module';
 import { NoticeMeEntityModule } from './entities/entity.module';
+import { NoticeMeLoginModule } from './login/login.module';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import { MainComponent } from './layouts/main/main.component';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
@@ -22,6 +23,7 @@ import { ErrorComponent } from './layouts/error/error.component';
     NoticeMeSharedModule,
     NoticeMeCoreModule,
     NoticeMeHomeModule,
+    NoticeMeLoginModule,
     // jhipster-needle-angular-add-module JHipster will add new module here
     NoticeMeEntityModule,
     NoticeMeAppRoutingModule,

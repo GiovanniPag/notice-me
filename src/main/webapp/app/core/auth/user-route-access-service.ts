@@ -4,11 +4,17 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { AccountService } from 'app/core/auth/account.service';
+import { LoginRouteService } from 'app/core/login/route-login.service';
 import { StateStorageService } from './state-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserRouteAccessService implements CanActivate {
-  constructor(private router: Router, private accountService: AccountService, private stateStorageService: StateStorageService) {}
+  constructor(
+    private router: Router,
+    private loginRouteService: LoginRouteService,
+    private accountService: AccountService,
+    private stateStorageService: StateStorageService
+  ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     const authorities = route.data['authorities'];
@@ -38,7 +44,8 @@ export class UserRouteAccessService implements CanActivate {
         }
 
         this.stateStorageService.storeUrl(url);
-        this.router.navigate(['/login']);
+        this.router.navigate(['']);
+        this.loginRouteService.open();
         return false;
       })
     );

@@ -1,7 +1,8 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
+import { LoginRouteService } from 'app/core/login/route-login.service';
 import { PasswordResetFinishService } from './password-reset-finish.service';
 
 @Component({
@@ -25,7 +26,7 @@ export class PasswordResetFinishComponent implements OnInit, AfterViewInit {
 
   constructor(
     private passwordResetFinishService: PasswordResetFinishService,
-    private router: Router,
+    private loginRouteService: LoginRouteService,
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {}
@@ -63,6 +64,6 @@ export class PasswordResetFinishComponent implements OnInit, AfterViewInit {
   }
 
   login(): void {
-    this.router.navigate(['']);
+    this.loginRouteService.open();
   }
 }

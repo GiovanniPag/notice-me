@@ -9,4 +9,4 @@ import { LoginComponent } from './login.component';
   imports: [NoticeMeSharedModule, RouterModule.forChild([LOGIN_ROUTE])],
   declarations: [LoginComponent],
 })
-export class NoticeMeHomeModule {}
+export class NoticeMeLoginModule {}
