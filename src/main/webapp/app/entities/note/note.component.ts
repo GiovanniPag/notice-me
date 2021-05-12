@@ -13,6 +13,7 @@ import { NoteDeleteDialogComponent } from './note-delete-dialog.component';
 @Component({
   selector: 'jhi-note',
   templateUrl: './note.component.html',
+  styleUrls: ['note.scss'],
 })
 export class NoteComponent implements OnInit, OnDestroy {
   notes: INote[];

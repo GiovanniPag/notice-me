@@ -2,6 +2,8 @@ package com.mycompany.noticeme.service;
 
 import com.mycompany.noticeme.domain.Tag;
 import com.mycompany.noticeme.repository.TagRepository;
+import com.mycompany.noticeme.security.AuthoritiesConstants;
+import com.mycompany.noticeme.security.SecurityUtils;
 import com.mycompany.noticeme.service.dto.TagDTO;
 import com.mycompany.noticeme.service.mapper.TagMapper;
 import org.slf4j.Logger;
@@ -54,8 +56,11 @@ public class TagService {
     @Transactional(readOnly = true)
     public Page<TagDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Tags");
-        return tagRepository.findAll(pageable)
-            .map(tagMapper::toDto);
+        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            return tagRepository.findAll(pageable).map(tagMapper::toDto);
+        } else {
+            return tagRepository.findAllByOwnerLogin(SecurityUtils.getCurrentUserLogin().get(), pageable).map(tagMapper::toDto);
+        }
     }
 
 
@@ -68,8 +73,11 @@ public class TagService {
     @Transactional(readOnly = true)
     public Optional<TagDTO> findOne(Long id) {
         log.debug("Request to get Tag : {}", id);
-        return tagRepository.findById(id)
-            .map(tagMapper::toDto);
+        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            return tagRepository.findById(id).map(tagMapper::toDto);
+        } else {
+            return tagRepository.findOneByIdAndOwnerLogin(id,SecurityUtils.getCurrentUserLogin().get()).map(tagMapper::toDto);
+        }
     }
 
     /**

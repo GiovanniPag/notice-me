@@ -29,4 +29,10 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
 
     @Query("select note from Note note left join fetch note.tags left join fetch note.collaborators where note.id =:id")
     Optional<Note> findOneWithEagerRelationships(@Param("id") Long id);
+    
+    @Query("select note from Note note left join fetch note.tags left join fetch note.collaborators "
+            + "where note.id =:id and note.owner.login=:login")
+    Optional<Note> findOneWithEagerRelationshipsByIdAndOwnerLogin(@Param("id") Long id,@Param("login") String login);
+    
+    Page<Note> findAllByOwnerLogin(String login, Pageable pageable);
 }

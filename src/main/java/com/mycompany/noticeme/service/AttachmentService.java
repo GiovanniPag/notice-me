@@ -2,6 +2,8 @@ package com.mycompany.noticeme.service;
 
 import com.mycompany.noticeme.domain.Attachment;
 import com.mycompany.noticeme.repository.AttachmentRepository;
+import com.mycompany.noticeme.security.AuthoritiesConstants;
+import com.mycompany.noticeme.security.SecurityUtils;
 import com.mycompany.noticeme.service.dto.AttachmentDTO;
 import com.mycompany.noticeme.service.mapper.AttachmentMapper;
 import org.slf4j.Logger;
@@ -54,8 +56,11 @@ public class AttachmentService {
     @Transactional(readOnly = true)
     public Page<AttachmentDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Attachments");
-        return attachmentRepository.findAll(pageable)
-            .map(attachmentMapper::toDto);
+        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            return attachmentRepository.findAll(pageable).map(attachmentMapper::toDto);
+        } else {
+            return attachmentRepository.findAllByNoteOwnerLogin(SecurityUtils.getCurrentUserLogin().get(), pageable).map(attachmentMapper::toDto);
+        }
     }
 
 
@@ -68,8 +73,11 @@ public class AttachmentService {
     @Transactional(readOnly = true)
     public Optional<AttachmentDTO> findOne(Long id) {
         log.debug("Request to get Attachment : {}", id);
-        return attachmentRepository.findById(id)
-            .map(attachmentMapper::toDto);
+        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            return attachmentRepository.findById(id).map(attachmentMapper::toDto);
+        } else {
+            return attachmentRepository.findOneByIdAndNoteOwnerLogin(id,SecurityUtils.getCurrentUserLogin().get()).map(attachmentMapper::toDto);
+        }
     }
 
     /**

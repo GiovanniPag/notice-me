@@ -2,6 +2,8 @@ package com.mycompany.noticeme.service;
 
 import com.mycompany.noticeme.domain.Note;
 import com.mycompany.noticeme.repository.NoteRepository;
+import com.mycompany.noticeme.security.AuthoritiesConstants;
+import com.mycompany.noticeme.security.SecurityUtils;
 import com.mycompany.noticeme.service.dto.NoteDTO;
 import com.mycompany.noticeme.service.mapper.NoteMapper;
 import org.slf4j.Logger;
@@ -54,10 +56,13 @@ public class NoteService {
     @Transactional(readOnly = true)
     public Page<NoteDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Notes");
-        return noteRepository.findAll(pageable)
-            .map(noteMapper::toDto);
+        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            return noteRepository.findAll(pageable).map(noteMapper::toDto);
+        } else {
+            return noteRepository.findAllByOwnerLogin(SecurityUtils.getCurrentUserLogin().get(), pageable)
+                    .map(noteMapper::toDto);
+        }
     }
-
 
     /**
      * Get all the notes with eager load of many-to-many relationships.
@@ -77,8 +82,11 @@ public class NoteService {
     @Transactional(readOnly = true)
     public Optional<NoteDTO> findOne(Long id) {
         log.debug("Request to get Note : {}", id);
-        return noteRepository.findOneWithEagerRelationships(id)
-            .map(noteMapper::toDto);
+        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            return noteRepository.findById(id).map(noteMapper::toDto);
+        } else {
+            return noteRepository.findOneWithEagerRelationshipsByIdAndOwnerLogin(id,SecurityUtils.getCurrentUserLogin().get()).map(noteMapper::toDto);
+        }
     }
 
     /**
