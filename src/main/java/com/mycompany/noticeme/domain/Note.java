@@ -1,18 +1,15 @@
 package com.mycompany.noticeme.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
+import com.mycompany.noticeme.domain.enumeration.NoteStatus;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.mycompany.noticeme.domain.enumeration.NoteStatus;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Note.
@@ -33,7 +30,6 @@ public class Note implements Serializable {
     @Column(name = "title", nullable = false)
     private String title;
 
-    
     @Lob
     @Column(name = "content", nullable = false)
     private String content;
@@ -52,25 +48,26 @@ public class Note implements Serializable {
 
     @OneToMany(mappedBy = "note")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "note" }, allowSetters = true)
     private Set<Attachment> attachments = new HashSet<>();
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = "notes", allowSetters = true)
     private User owner;
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JoinTable(name = "note_tag",
-               joinColumns = @JoinColumn(name = "note_id", referencedColumnName = "id"),
-               inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
+    @JoinTable(name = "rel_note__tag", joinColumns = @JoinColumn(name = "note_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @JsonIgnoreProperties(value = { "owner", "entries" }, allowSetters = true)
     private Set<Tag> tags = new HashSet<>();
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JoinTable(name = "note_collaborator",
-               joinColumns = @JoinColumn(name = "note_id", referencedColumnName = "id"),
-               inverseJoinColumns = @JoinColumn(name = "collaborator_id", referencedColumnName = "id"))
+    @JoinTable(
+        name = "rel_note__collaborator",
+        joinColumns = @JoinColumn(name = "note_id"),
+        inverseJoinColumns = @JoinColumn(name = "collaborator_id")
+    )
     private Set<User> collaborators = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -82,8 +79,13 @@ public class Note implements Serializable {
         this.id = id;
     }
 
+    public Note id(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     public Note title(String title) {
@@ -96,7 +98,7 @@ public class Note implements Serializable {
     }
 
     public String getContent() {
-        return content;
+        return this.content;
     }
 
     public Note content(String content) {
@@ -109,7 +111,7 @@ public class Note implements Serializable {
     }
 
     public Instant getDate() {
-        return date;
+        return this.date;
     }
 
     public Note date(Instant date) {
@@ -122,7 +124,7 @@ public class Note implements Serializable {
     }
 
     public Instant getAlarm() {
-        return alarm;
+        return this.alarm;
     }
 
     public Note alarm(Instant alarm) {
@@ -135,7 +137,7 @@ public class Note implements Serializable {
     }
 
     public NoteStatus getStatus() {
-        return status;
+        return this.status;
     }
 
     public Note status(NoteStatus status) {
@@ -148,11 +150,11 @@ public class Note implements Serializable {
     }
 
     public Set<Attachment> getAttachments() {
-        return attachments;
+        return this.attachments;
     }
 
     public Note attachments(Set<Attachment> attachments) {
-        this.attachments = attachments;
+        this.setAttachments(attachments);
         return this;
     }
 
@@ -169,15 +171,21 @@ public class Note implements Serializable {
     }
 
     public void setAttachments(Set<Attachment> attachments) {
+        if (this.attachments != null) {
+            this.attachments.forEach(i -> i.setNote(null));
+        }
+        if (attachments != null) {
+            attachments.forEach(i -> i.setNote(this));
+        }
         this.attachments = attachments;
     }
 
     public User getOwner() {
-        return owner;
+        return this.owner;
     }
 
     public Note owner(User user) {
-        this.owner = user;
+        this.setOwner(user);
         return this;
     }
 
@@ -186,11 +194,11 @@ public class Note implements Serializable {
     }
 
     public Set<Tag> getTags() {
-        return tags;
+        return this.tags;
     }
 
     public Note tags(Set<Tag> tags) {
-        this.tags = tags;
+        this.setTags(tags);
         return this;
     }
 
@@ -211,11 +219,11 @@ public class Note implements Serializable {
     }
 
     public Set<User> getCollaborators() {
-        return collaborators;
+        return this.collaborators;
     }
 
     public Note collaborators(Set<User> users) {
-        this.collaborators = users;
+        this.setCollaborators(users);
         return this;
     }
 
@@ -232,6 +240,7 @@ public class Note implements Serializable {
     public void setCollaborators(Set<User> users) {
         this.collaborators = users;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -247,7 +256,8 @@ public class Note implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

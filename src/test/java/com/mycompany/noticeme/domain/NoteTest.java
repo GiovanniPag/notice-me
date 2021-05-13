@@ -1,13 +1,14 @@
 package com.mycompany.noticeme.domain;
 
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import com.mycompany.noticeme.web.rest.TestUtil;
 
-public class NoteTest {
+import com.mycompany.noticeme.web.rest.TestUtil;
+import org.junit.jupiter.api.Test;
+
+class NoteTest {
 
     @Test
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Note.class);
         Note note1 = new Note();
         note1.setId(1L);

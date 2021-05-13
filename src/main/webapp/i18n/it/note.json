@@ -3,6 +3,7 @@
     "note": {
       "home": {
         "title": "Notes",
+        "refreshListLabel": "Refresh list",
         "createLabel": "Genera un nuovo Note",
         "createOrEditLabel": "Genera o modifica un Note",
         "notFound": "No Notes found"
@@ -16,6 +17,7 @@
       "detail": {
         "title": "Note"
       },
+      "id": "ID",
       "title": "Title",
       "content": "Content",
       "date": "Date",

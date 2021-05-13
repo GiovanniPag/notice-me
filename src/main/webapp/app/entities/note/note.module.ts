@@ -1,16 +1,15 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
 
-import { NoticeMeSharedModule } from 'app/shared/shared.module';
-import { NoteComponent } from './note.component';
-import { NoteDetailComponent } from './note-detail.component';
-import { NoteUpdateComponent } from './note-update.component';
-import { NoteDeleteDialogComponent } from './note-delete-dialog.component';
-import { noteRoute } from './note.route';
+import { SharedModule } from 'app/shared/shared.module';
+import { NoteComponent } from './list/note.component';
+import { NoteDetailComponent } from './detail/note-detail.component';
+import { NoteUpdateComponent } from './update/note-update.component';
+import { NoteDeleteDialogComponent } from './delete/note-delete-dialog.component';
+import { NoteRoutingModule } from './route/note-routing.module';
 
 @NgModule({
-  imports: [NoticeMeSharedModule, RouterModule.forChild(noteRoute)],
+  imports: [SharedModule, NoteRoutingModule],
   declarations: [NoteComponent, NoteDetailComponent, NoteUpdateComponent, NoteDeleteDialogComponent],
   entryComponents: [NoteDeleteDialogComponent],
 })
-export class NoticeMeNoteModule {}
+export class NoteModule {}

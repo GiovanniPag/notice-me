@@ -15,12 +15,14 @@ describe('Note e2e test', () => {
   let noteComponentsPage: NoteComponentsPage;
   let noteUpdatePage: NoteUpdatePage;
   /* let noteDeleteDialog: NoteDeleteDialog; */
+  const username = process.env.E2E_USERNAME ?? 'admin';
+  const password = process.env.E2E_PASSWORD ?? 'admin';
 
   before(async () => {
     await browser.get('/');
     navBarPage = new NavBarPage();
     signInPage = await navBarPage.getSignInPage();
-    await signInPage.autoSignInUsing('admin', 'admin');
+    await signInPage.autoSignInUsing(username, password);
     await browser.wait(ec.visibilityOf(navBarPage.entityMenu), 5000);
   });
 
@@ -74,6 +76,7 @@ describe('Note e2e test', () => {
         expect(await noteDeleteDialog.getDialogTitle())
             .to.eq('noticeMeApp.note.delete.question');
         await noteDeleteDialog.clickOnConfirmButton();
+        await browser.wait(ec.visibilityOf(noteComponentsPage.title), 5000);
 
         expect(await noteComponentsPage.countDeleteButtons()).to.eq(nbButtonsBeforeDelete - 1);
     }); */

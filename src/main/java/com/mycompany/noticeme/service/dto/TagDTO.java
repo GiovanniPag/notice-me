@@ -1,24 +1,24 @@
 package com.mycompany.noticeme.service.dto;
 
 import io.swagger.annotations.ApiModel;
-import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.Objects;
+import javax.validation.constraints.*;
 
 /**
  * A DTO for the {@link com.mycompany.noticeme.domain.Tag} entity.
  */
 @ApiModel(description = "JHipster JDL model for myApp")
 public class TagDTO implements Serializable {
-    
+
     private Long id;
 
     @NotNull
     @Size(min = 1)
     private String tagName;
 
+    private UserDTO owner;
 
-    private Long ownerId;
-    
     public Long getId() {
         return id;
     }
@@ -35,12 +35,12 @@ public class TagDTO implements Serializable {
         this.tagName = tagName;
     }
 
-    public Long getOwnerId() {
-        return ownerId;
+    public UserDTO getOwner() {
+        return owner;
     }
 
-    public void setOwnerId(Long userId) {
-        this.ownerId = userId;
+    public void setOwner(UserDTO owner) {
+        this.owner = owner;
     }
 
     @Override
@@ -52,12 +52,16 @@ public class TagDTO implements Serializable {
             return false;
         }
 
-        return id != null && id.equals(((TagDTO) o).id);
+        TagDTO tagDTO = (TagDTO) o;
+        if (this.id == null) {
+            return false;
+        }
+        return Objects.equals(this.id, tagDTO.id);
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(this.id);
     }
 
     // prettier-ignore
@@ -66,7 +70,7 @@ public class TagDTO implements Serializable {
         return "TagDTO{" +
             "id=" + getId() +
             ", tagName='" + getTagName() + "'" +
-            ", ownerId=" + getOwnerId() +
+            ", owner=" + getOwner() +
             "}";
     }
 }

@@ -1,13 +1,14 @@
 package com.mycompany.noticeme.domain;
 
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import com.mycompany.noticeme.web.rest.TestUtil;
 
-public class AttachmentTest {
+import com.mycompany.noticeme.web.rest.TestUtil;
+import org.junit.jupiter.api.Test;
+
+class AttachmentTest {
 
     @Test
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Attachment.class);
         Attachment attachment1 = new Attachment();
         attachment1.setId(1L);

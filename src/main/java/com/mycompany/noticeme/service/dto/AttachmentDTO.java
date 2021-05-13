@@ -1,28 +1,28 @@
 package com.mycompany.noticeme.service.dto;
 
-import javax.validation.constraints.*;
-import java.io.Serializable;
-import javax.persistence.Lob;
 import com.mycompany.noticeme.domain.enumeration.Format;
+import java.io.Serializable;
+import java.util.Objects;
+import javax.persistence.Lob;
+import javax.validation.constraints.*;
 
 /**
  * A DTO for the {@link com.mycompany.noticeme.domain.Attachment} entity.
  */
 public class AttachmentDTO implements Serializable {
-    
+
     private Long id;
 
-    
     @Lob
     private byte[] data;
 
     private String dataContentType;
+
     @NotNull
     private Format format;
 
+    private NoteDTO note;
 
-    private Long noteId;
-    
     public Long getId() {
         return id;
     }
@@ -55,12 +55,12 @@ public class AttachmentDTO implements Serializable {
         this.format = format;
     }
 
-    public Long getNoteId() {
-        return noteId;
+    public NoteDTO getNote() {
+        return note;
     }
 
-    public void setNoteId(Long noteId) {
-        this.noteId = noteId;
+    public void setNote(NoteDTO note) {
+        this.note = note;
     }
 
     @Override
@@ -72,12 +72,16 @@ public class AttachmentDTO implements Serializable {
             return false;
         }
 
-        return id != null && id.equals(((AttachmentDTO) o).id);
+        AttachmentDTO attachmentDTO = (AttachmentDTO) o;
+        if (this.id == null) {
+            return false;
+        }
+        return Objects.equals(this.id, attachmentDTO.id);
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(this.id);
     }
 
     // prettier-ignore
@@ -87,7 +91,7 @@ public class AttachmentDTO implements Serializable {
             "id=" + getId() +
             ", data='" + getData() + "'" +
             ", format='" + getFormat() + "'" +
-            ", noteId=" + getNoteId() +
+            ", note=" + getNote() +
             "}";
     }
 }

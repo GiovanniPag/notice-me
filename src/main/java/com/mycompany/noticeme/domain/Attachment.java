@@ -1,15 +1,12 @@
 package com.mycompany.noticeme.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
+import com.mycompany.noticeme.domain.enumeration.Format;
+import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
-
-import java.io.Serializable;
-
-import com.mycompany.noticeme.domain.enumeration.Format;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Attachment.
@@ -25,7 +22,6 @@ public class Attachment implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    
     @Lob
     @Column(name = "data", nullable = false)
     private byte[] data;
@@ -39,7 +35,7 @@ public class Attachment implements Serializable {
     private Format format;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = "attachments", allowSetters = true)
+    @JsonIgnoreProperties(value = { "attachments", "owner", "tags", "collaborators" }, allowSetters = true)
     private Note note;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -51,8 +47,13 @@ public class Attachment implements Serializable {
         this.id = id;
     }
 
+    public Attachment id(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public byte[] getData() {
-        return data;
+        return this.data;
     }
 
     public Attachment data(byte[] data) {
@@ -65,7 +66,7 @@ public class Attachment implements Serializable {
     }
 
     public String getDataContentType() {
-        return dataContentType;
+        return this.dataContentType;
     }
 
     public Attachment dataContentType(String dataContentType) {
@@ -78,7 +79,7 @@ public class Attachment implements Serializable {
     }
 
     public Format getFormat() {
-        return format;
+        return this.format;
     }
 
     public Attachment format(Format format) {
@@ -91,17 +92,18 @@ public class Attachment implements Serializable {
     }
 
     public Note getNote() {
-        return note;
+        return this.note;
     }
 
     public Attachment note(Note note) {
-        this.note = note;
+        this.setNote(note);
         return this;
     }
 
     public void setNote(Note note) {
         this.note = note;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -117,7 +119,8 @@ public class Attachment implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

@@ -4,7 +4,7 @@
       "packageName": "com.mycompany.noticeme",
       "nativeLanguage": "it"
     },
-    "jhipsterVersion": "6.10.5",
+    "jhipsterVersion": "7.0.1",
     "applicationType": "monolith",
     "baseName": "NoticeMe",
     "packageName": "com.mycompany.noticeme",
@@ -38,6 +38,15 @@
     "enableTranslation": true,
     "nativeLanguage": "it",
     "languages": ["it", "en"],
-    "blueprints": []
+    "blueprints": [],
+    "skipUserManagement": false,
+    "withAdminUi": true,
+    "skipClient": false,
+    "skipServer": false,
+    "skipCheckLengthOfIdentifier": false,
+    "skipFakeData": false,
+    "pages": [],
+    "reactive": false,
+    "entities": ["Tag", "Note", "Attachment"]
   }
 }
