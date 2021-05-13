@@ -1,0 +1,43 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.mycompany.noticeme",
+      "nativeLanguage": "it"
+    },
+    "jhipsterVersion": "6.10.5",
+    "applicationType": "monolith",
+    "baseName": "NoticeMe",
+    "packageName": "com.mycompany.noticeme",
+    "packageFolder": "com/mycompany/noticeme",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": "spring-websocket",
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "mysql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "YjI4N2RmM2EyYjEyMWQ4ODRkMWVmNTkzMmZiNDllZDUwZDMyMDA1NDM4NTAyNTdiYTVmZmZhYzM4OWE0ZmZmYWVhNGY3YzgzOGMyZWM2NDBkNmQzNzIwNThlMGZlMmJjOGYxMGFiZDg3Yzg5MzRjZjEyMmM3ZThlZDAyY2NkOTc=",
+    "embeddableLaunchScript": false,
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "clientFramework": "angularX",
+    "clientTheme": "none",
+    "clientThemeVariant": "",
+    "creationTimestamp": 1614945987166,
+    "testFrameworks": ["gatling", "cucumber", "protractor"],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": true,
+    "nativeLanguage": "it",
+    "languages": ["it", "en"],
+    "blueprints": []
+  }
+}

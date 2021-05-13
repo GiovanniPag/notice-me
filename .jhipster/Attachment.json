@@ -1,0 +1,37 @@
+{
+  "name": "Attachment",
+  "fields": [
+    {
+      "fieldName": "data",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "format",
+      "fieldType": "Format",
+      "fieldValues": "JPG,PNG",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "note",
+      "otherEntityRelationshipName": "attachment",
+      "relationshipName": "note",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210325183400",
+  "entityTableName": "attachment",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

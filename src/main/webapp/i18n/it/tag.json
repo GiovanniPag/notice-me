@@ -1,0 +1,24 @@
+{
+  "noticeMeApp": {
+    "tag": {
+      "home": {
+        "title": "Tags",
+        "createLabel": "Genera un nuovo Tag",
+        "createOrEditLabel": "Genera o modifica un Tag",
+        "notFound": "No Tags found"
+      },
+      "created": "&Egrave; stato generato un nuovo Tag con identificatore {{ param }}",
+      "updated": "&Egrave; stato aggiornato Tag identificato da {{ param }}",
+      "deleted": "&Egrave; stato eliminato Tag con identificatore {{ param }}",
+      "delete": {
+        "question": "Sei sicuro di volere eliminare Tag {{ id }}?"
+      },
+      "detail": {
+        "title": "Tag"
+      },
+      "tagName": "Tag Name",
+      "owner": "Owner",
+      "entry": "Entry"
+    }
+  }
+}
