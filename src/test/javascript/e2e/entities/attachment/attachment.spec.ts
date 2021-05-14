@@ -15,12 +15,14 @@ describe('Attachment e2e test', () => {
   const fileNameToUpload = 'logo-jhipster.png';
   const fileToUpload = '../../../../../../src/main/webapp/content/images/' + fileNameToUpload;
   const absolutePath = path.resolve(__dirname, fileToUpload);
+  const username = process.env.E2E_USERNAME ?? 'admin';
+  const password = process.env.E2E_PASSWORD ?? 'admin';
 
   before(async () => {
     await browser.get('/');
     navBarPage = new NavBarPage();
     signInPage = await navBarPage.getSignInPage();
-    await signInPage.autoSignInUsing('admin', 'admin');
+    await signInPage.autoSignInUsing(username, password);
     await browser.wait(ec.visibilityOf(navBarPage.entityMenu), 5000);
   });
 
@@ -68,6 +70,7 @@ describe('Attachment e2e test', () => {
     attachmentDeleteDialog = new AttachmentDeleteDialog();
     expect(await attachmentDeleteDialog.getDialogTitle()).to.eq('noticeMeApp.attachment.delete.question');
     await attachmentDeleteDialog.clickOnConfirmButton();
+    await browser.wait(ec.visibilityOf(attachmentComponentsPage.title), 5000);
 
     expect(await attachmentComponentsPage.countDeleteButtons()).to.eq(nbButtonsBeforeDelete - 1);
   });

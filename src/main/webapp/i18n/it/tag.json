@@ -3,6 +3,7 @@
     "tag": {
       "home": {
         "title": "Tags",
+        "refreshListLabel": "Refresh list",
         "createLabel": "Genera un nuovo Tag",
         "createOrEditLabel": "Genera o modifica un Tag",
         "notFound": "No Tags found"
@@ -16,6 +17,7 @@
       "detail": {
         "title": "Tag"
       },
+      "id": "ID",
       "tagName": "Tag Name",
       "owner": "Owner",
       "entry": "Entry"

@@ -4,15 +4,13 @@ import com.mycompany.noticeme.domain.Note;
 import com.mycompany.noticeme.repository.NoteRepository;
 import com.mycompany.noticeme.service.dto.NoteDTO;
 import com.mycompany.noticeme.service.mapper.NoteMapper;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link Note}.
@@ -46,6 +44,27 @@ public class NoteService {
     }
 
     /**
+     * Partially update a note.
+     *
+     * @param noteDTO the entity to update partially.
+     * @return the persisted entity.
+     */
+    public Optional<NoteDTO> partialUpdate(NoteDTO noteDTO) {
+        log.debug("Request to partially update Note : {}", noteDTO);
+
+        return noteRepository
+            .findById(noteDTO.getId())
+            .map(
+                existingNote -> {
+                    noteMapper.partialUpdate(existingNote, noteDTO);
+                    return existingNote;
+                }
+            )
+            .map(noteRepository::save)
+            .map(noteMapper::toDto);
+    }
+
+    /**
      * Get all the notes.
      *
      * @param pageable the pagination information.
@@ -54,10 +73,8 @@ public class NoteService {
     @Transactional(readOnly = true)
     public Page<NoteDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Notes");
-        return noteRepository.findAll(pageable)
-            .map(noteMapper::toDto);
+        return noteRepository.findAll(pageable).map(noteMapper::toDto);
     }
-
 
     /**
      * Get all the notes with eager load of many-to-many relationships.
@@ -77,8 +94,7 @@ public class NoteService {
     @Transactional(readOnly = true)
     public Optional<NoteDTO> findOne(Long id) {
         log.debug("Request to get Note : {}", id);
-        return noteRepository.findOneWithEagerRelationships(id)
-            .map(noteMapper::toDto);
+        return noteRepository.findOneWithEagerRelationships(id).map(noteMapper::toDto);
     }
 
     /**

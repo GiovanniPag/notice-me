@@ -3,17 +3,15 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-
-        <property name="autoIncrement" value="true"/>
 
     <!--
         Added the entity Note.
     -->
     <changeSet id="20210325183300-1" author="jhipster">
         <createTable tableName="note">
-            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+            <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="title" type="varchar(255)">
@@ -22,10 +20,10 @@
             <column name="content" type="${clobType}">
                 <constraints nullable="false" />
             </column>
-            <column name="date" type="datetime">
+            <column name="date" type="${datetimeType}">
                 <constraints nullable="false" />
             </column>
-            <column name="alarm" type="datetime">
+            <column name="alarm" type="${datetimeType}">
                 <constraints nullable="true" />
             </column>
             <column name="status" type="varchar(255)">
@@ -36,13 +34,13 @@
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
-        <dropDefaultValue tableName="note" columnName="date" columnDataType="datetime"/>
-        <dropDefaultValue tableName="note" columnName="alarm" columnDataType="datetime"/>
+        <dropDefaultValue tableName="note" columnName="date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="note" columnName="alarm" columnDataType="${datetimeType}"/>
     </changeSet>
 
     <changeSet id="20210325183300-1-relations" author="jhipster">
 
-        <createTable tableName="note_tag">
+        <createTable tableName="rel_note__tag">
             <column name="tag_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
@@ -51,9 +49,9 @@
             </column>
         </createTable>
 
-        <addPrimaryKey columnNames="note_id, tag_id" tableName="note_tag"/>
-        
-        <createTable tableName="note_collaborator">
+        <addPrimaryKey columnNames="note_id, tag_id" tableName="rel_note__tag"/>
+
+        <createTable tableName="rel_note__collaborator">
             <column name="collaborator_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
@@ -62,9 +60,9 @@
             </column>
         </createTable>
 
-        <addPrimaryKey columnNames="note_id, collaborator_id" tableName="note_collaborator"/>
-        
+        <addPrimaryKey columnNames="note_id, collaborator_id" tableName="rel_note__collaborator"/>
     </changeSet>
+
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
 
     <!--
@@ -83,12 +81,11 @@
             <column name="id" type="numeric"/>
             <column name="title" type="string"/>
             <column name="content" type="clob"/>
-            <column name="date" type="datetime"/>
-            <column name="alarm" type="datetime"/>
+            <column name="date" type="${datetimeType}"/>
+            <column name="alarm" type="${datetimeType}"/>
             <column name="status" type="string"/>
             <column name="owner_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>
-
 </databaseChangeLog>

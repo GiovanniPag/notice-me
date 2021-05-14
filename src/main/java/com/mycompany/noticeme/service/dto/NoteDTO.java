@@ -1,25 +1,25 @@
 package com.mycompany.noticeme.service.dto;
 
-import java.time.Instant;
-import javax.validation.constraints.*;
+import com.mycompany.noticeme.domain.enumeration.NoteStatus;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Lob;
-import com.mycompany.noticeme.domain.enumeration.NoteStatus;
+import javax.validation.constraints.*;
 
 /**
  * A DTO for the {@link com.mycompany.noticeme.domain.Note} entity.
  */
 public class NoteDTO implements Serializable {
-    
+
     private Long id;
 
     @NotNull
     @Size(min = 1)
     private String title;
 
-    
     @Lob
     private String content;
 
@@ -31,11 +31,12 @@ public class NoteDTO implements Serializable {
     @NotNull
     private NoteStatus status;
 
+    private UserDTO owner;
 
-    private Long ownerId;
     private Set<TagDTO> tags = new HashSet<>();
+
     private Set<UserDTO> collaborators = new HashSet<>();
-    
+
     public Long getId() {
         return id;
     }
@@ -84,12 +85,12 @@ public class NoteDTO implements Serializable {
         this.status = status;
     }
 
-    public Long getOwnerId() {
-        return ownerId;
+    public UserDTO getOwner() {
+        return owner;
     }
 
-    public void setOwnerId(Long userId) {
-        this.ownerId = userId;
+    public void setOwner(UserDTO owner) {
+        this.owner = owner;
     }
 
     public Set<TagDTO> getTags() {
@@ -104,8 +105,8 @@ public class NoteDTO implements Serializable {
         return collaborators;
     }
 
-    public void setCollaborators(Set<UserDTO> users) {
-        this.collaborators = users;
+    public void setCollaborators(Set<UserDTO> collaborators) {
+        this.collaborators = collaborators;
     }
 
     @Override
@@ -117,12 +118,16 @@ public class NoteDTO implements Serializable {
             return false;
         }
 
-        return id != null && id.equals(((NoteDTO) o).id);
+        NoteDTO noteDTO = (NoteDTO) o;
+        if (this.id == null) {
+            return false;
+        }
+        return Objects.equals(this.id, noteDTO.id);
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(this.id);
     }
 
     // prettier-ignore
@@ -135,9 +140,9 @@ public class NoteDTO implements Serializable {
             ", date='" + getDate() + "'" +
             ", alarm='" + getAlarm() + "'" +
             ", status='" + getStatus() + "'" +
-            ", ownerId=" + getOwnerId() +
-            ", tags='" + getTags() + "'" +
-            ", collaborators='" + getCollaborators() + "'" +
+            ", owner=" + getOwner() +
+            ", tags=" + getTags() +
+            ", collaborators=" + getCollaborators() +
             "}";
     }
 }

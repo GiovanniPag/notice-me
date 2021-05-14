@@ -1,12 +1,16 @@
 package com.mycompany.noticeme.web.rest;
 
+import com.mycompany.noticeme.repository.TagRepository;
 import com.mycompany.noticeme.service.TagService;
-import com.mycompany.noticeme.web.rest.errors.BadRequestAlertException;
 import com.mycompany.noticeme.service.dto.TagDTO;
-
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import com.mycompany.noticeme.web.rest.errors.BadRequestAlertException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,15 +18,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.mycompany.noticeme.domain.Tag}.
@@ -40,8 +41,11 @@ public class TagResource {
 
     private final TagService tagService;
 
-    public TagResource(TagService tagService) {
+    private final TagRepository tagRepository;
+
+    public TagResource(TagService tagService, TagRepository tagRepository) {
         this.tagService = tagService;
+        this.tagRepository = tagRepository;
     }
 
     /**
@@ -58,30 +62,78 @@ public class TagResource {
             throw new BadRequestAlertException("A new tag cannot already have an ID", ENTITY_NAME, "idexists");
         }
         TagDTO result = tagService.save(tagDTO);
-        return ResponseEntity.created(new URI("/api/tags/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/tags/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /tags} : Updates an existing tag.
+     * {@code PUT  /tags/:id} : Updates an existing tag.
      *
+     * @param id the id of the tagDTO to save.
      * @param tagDTO the tagDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated tagDTO,
      * or with status {@code 400 (Bad Request)} if the tagDTO is not valid,
      * or with status {@code 500 (Internal Server Error)} if the tagDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/tags")
-    public ResponseEntity<TagDTO> updateTag(@Valid @RequestBody TagDTO tagDTO) throws URISyntaxException {
-        log.debug("REST request to update Tag : {}", tagDTO);
+    @PutMapping("/tags/{id}")
+    public ResponseEntity<TagDTO> updateTag(@PathVariable(value = "id", required = false) final Long id, @Valid @RequestBody TagDTO tagDTO)
+        throws URISyntaxException {
+        log.debug("REST request to update Tag : {}, {}", id, tagDTO);
         if (tagDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if (!Objects.equals(id, tagDTO.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!tagRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
         TagDTO result = tagService.save(tagDTO);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, tagDTO.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PATCH  /tags/:id} : Partial updates given fields of an existing tag, field will ignore if it is null
+     *
+     * @param id the id of the tagDTO to save.
+     * @param tagDTO the tagDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated tagDTO,
+     * or with status {@code 400 (Bad Request)} if the tagDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the tagDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the tagDTO couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/tags/{id}", consumes = "application/merge-patch+json")
+    public ResponseEntity<TagDTO> partialUpdateTag(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody TagDTO tagDTO
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update Tag partially : {}, {}", id, tagDTO);
+        if (tagDTO.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, tagDTO.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!tagRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<TagDTO> result = tagService.partialUpdate(tagDTO);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, tagDTO.getId().toString())
+        );
     }
 
     /**
@@ -121,6 +173,9 @@ public class TagResource {
     public ResponseEntity<Void> deleteTag(@PathVariable Long id) {
         log.debug("REST request to delete Tag : {}", id);
         tagService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 }
