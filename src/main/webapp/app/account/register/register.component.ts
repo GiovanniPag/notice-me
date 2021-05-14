@@ -3,8 +3,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
-import { EMAIL_ALREADY_USED_TYPE, LOGIN_ALREADY_USED_TYPE } from 'app/shared/constants/error.constants';
-import { LoginRouteService } from 'app/core/login/route-login.service';
 import { EMAIL_ALREADY_USED_TYPE, LOGIN_ALREADY_USED_TYPE } from 'app/config/error.constants';
 import { RegisterService } from './register.service';
 
@@ -37,12 +35,6 @@ export class RegisterComponent implements AfterViewInit {
     confirmPassword: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
   });
 
-  constructor(
-    private languageService: JhiLanguageService,
-    private loginRouteService: LoginRouteService,
-    private registerService: RegisterService,
-    private fb: FormBuilder
-  ) {}
   constructor(private translateService: TranslateService, private registerService: RegisterService, private fb: FormBuilder) {}
 
   ngAfterViewInit(): void {

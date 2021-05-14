@@ -75,7 +75,7 @@ public class AttachmentService {
     @Transactional(readOnly = true)
     public Page<AttachmentDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Attachments");
-        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+        if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
             return attachmentRepository.findAll(pageable).map(attachmentMapper::toDto);
         } else {
             return attachmentRepository
@@ -93,7 +93,7 @@ public class AttachmentService {
     @Transactional(readOnly = true)
     public Optional<AttachmentDTO> findOne(Long id) {
         log.debug("Request to get Attachment : {}", id);
-        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+        if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
             return attachmentRepository.findById(id).map(attachmentMapper::toDto);
         } else {
             return attachmentRepository

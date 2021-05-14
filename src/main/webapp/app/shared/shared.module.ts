@@ -13,9 +13,6 @@ import { SortDirective } from './sort/sort.directive';
 import { ItemCountComponent } from './pagination/item-count.component';
 
 @NgModule({
-  imports: [NoticeMeSharedLibsModule],
-  declarations: [FindLanguageFromKeyPipe, AlertComponent, AlertErrorComponent, HasAnyAuthorityDirective],
-  exports: [NoticeMeSharedLibsModule, FindLanguageFromKeyPipe, AlertComponent, AlertErrorComponent, HasAnyAuthorityDirective],
   imports: [SharedLibsModule],
   declarations: [
     FindLanguageFromKeyPipe,

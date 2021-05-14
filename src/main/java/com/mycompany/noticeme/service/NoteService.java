@@ -75,7 +75,7 @@ public class NoteService {
     @Transactional(readOnly = true)
     public Page<NoteDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Notes");
-        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+        if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
             return noteRepository.findAll(pageable).map(noteMapper::toDto);
         } else {
             return noteRepository.findAllByOwnerLogin(SecurityUtils.getCurrentUserLogin().get(), pageable).map(noteMapper::toDto);
@@ -100,7 +100,7 @@ public class NoteService {
     @Transactional(readOnly = true)
     public Optional<NoteDTO> findOne(Long id) {
         log.debug("Request to get Note : {}", id);
-        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+        if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
             return noteRepository.findById(id).map(noteMapper::toDto);
         } else {
             return noteRepository

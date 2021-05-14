@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 import { AccountService } from './account.service';
-import { Authority } from 'app/shared/constants/authority.constants';
+import { Authority } from 'app/config/authority.constants';
 
 @Injectable({ providedIn: 'root' })
 export class LoggedInGuard implements CanActivate {
