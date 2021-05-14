@@ -1,16 +1,13 @@
 package com.mycompany.noticeme.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * JHipster JDL model for myApp
@@ -33,12 +30,11 @@ public class Tag implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = "tags", allowSetters = true)
     private User owner;
 
     @ManyToMany(mappedBy = "tags")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnore
+    @JsonIgnoreProperties(value = { "attachments", "owner", "tags", "collaborators" }, allowSetters = true)
     private Set<Note> entries = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -50,8 +46,13 @@ public class Tag implements Serializable {
         this.id = id;
     }
 
+    public Tag id(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public String getTagName() {
-        return tagName;
+        return this.tagName;
     }
 
     public Tag tagName(String tagName) {
@@ -64,11 +65,11 @@ public class Tag implements Serializable {
     }
 
     public User getOwner() {
-        return owner;
+        return this.owner;
     }
 
     public Tag owner(User user) {
-        this.owner = user;
+        this.setOwner(user);
         return this;
     }
 
@@ -77,11 +78,11 @@ public class Tag implements Serializable {
     }
 
     public Set<Note> getEntries() {
-        return entries;
+        return this.entries;
     }
 
     public Tag entries(Set<Note> notes) {
-        this.entries = notes;
+        this.setEntries(notes);
         return this;
     }
 
@@ -98,8 +99,15 @@ public class Tag implements Serializable {
     }
 
     public void setEntries(Set<Note> notes) {
+        if (this.entries != null) {
+            this.entries.forEach(i -> i.removeTag(this));
+        }
+        if (notes != null) {
+            notes.forEach(i -> i.addTag(this));
+        }
         this.entries = notes;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -115,7 +123,8 @@ public class Tag implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

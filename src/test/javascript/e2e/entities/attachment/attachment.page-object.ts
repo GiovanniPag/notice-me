@@ -29,6 +29,7 @@ export class AttachmentUpdatePage {
   saveButton = element(by.id('save-entity'));
   cancelButton = element(by.id('cancel-save'));
 
+  idInput = element(by.id('field_id'));
   dataInput = element(by.id('file_data'));
   formatSelect = element(by.id('field_format'));
 
@@ -36,6 +37,14 @@ export class AttachmentUpdatePage {
 
   async getPageTitle(): Promise<string> {
     return this.pageTitle.getAttribute('jhiTranslate');
+  }
+
+  async setIdInput(id: string): Promise<void> {
+    await this.idInput.sendKeys(id);
+  }
+
+  async getIdInput(): Promise<string> {
+    return await this.idInput.getAttribute('value');
   }
 
   async setDataInput(data: string): Promise<void> {

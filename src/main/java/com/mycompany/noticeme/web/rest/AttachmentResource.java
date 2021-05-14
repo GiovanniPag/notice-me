@@ -1,12 +1,16 @@
 package com.mycompany.noticeme.web.rest;
 
+import com.mycompany.noticeme.repository.AttachmentRepository;
 import com.mycompany.noticeme.service.AttachmentService;
-import com.mycompany.noticeme.web.rest.errors.BadRequestAlertException;
 import com.mycompany.noticeme.service.dto.AttachmentDTO;
-
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import com.mycompany.noticeme.web.rest.errors.BadRequestAlertException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,15 +18,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.mycompany.noticeme.domain.Attachment}.
@@ -40,8 +41,11 @@ public class AttachmentResource {
 
     private final AttachmentService attachmentService;
 
-    public AttachmentResource(AttachmentService attachmentService) {
+    private final AttachmentRepository attachmentRepository;
+
+    public AttachmentResource(AttachmentService attachmentService, AttachmentRepository attachmentRepository) {
         this.attachmentService = attachmentService;
+        this.attachmentRepository = attachmentRepository;
     }
 
     /**
@@ -58,30 +62,80 @@ public class AttachmentResource {
             throw new BadRequestAlertException("A new attachment cannot already have an ID", ENTITY_NAME, "idexists");
         }
         AttachmentDTO result = attachmentService.save(attachmentDTO);
-        return ResponseEntity.created(new URI("/api/attachments/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/attachments/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /attachments} : Updates an existing attachment.
+     * {@code PUT  /attachments/:id} : Updates an existing attachment.
      *
+     * @param id the id of the attachmentDTO to save.
      * @param attachmentDTO the attachmentDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated attachmentDTO,
      * or with status {@code 400 (Bad Request)} if the attachmentDTO is not valid,
      * or with status {@code 500 (Internal Server Error)} if the attachmentDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/attachments")
-    public ResponseEntity<AttachmentDTO> updateAttachment(@Valid @RequestBody AttachmentDTO attachmentDTO) throws URISyntaxException {
-        log.debug("REST request to update Attachment : {}", attachmentDTO);
+    @PutMapping("/attachments/{id}")
+    public ResponseEntity<AttachmentDTO> updateAttachment(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody AttachmentDTO attachmentDTO
+    ) throws URISyntaxException {
+        log.debug("REST request to update Attachment : {}, {}", id, attachmentDTO);
         if (attachmentDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if (!Objects.equals(id, attachmentDTO.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!attachmentRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
         AttachmentDTO result = attachmentService.save(attachmentDTO);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, attachmentDTO.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PATCH  /attachments/:id} : Partial updates given fields of an existing attachment, field will ignore if it is null
+     *
+     * @param id the id of the attachmentDTO to save.
+     * @param attachmentDTO the attachmentDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated attachmentDTO,
+     * or with status {@code 400 (Bad Request)} if the attachmentDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the attachmentDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the attachmentDTO couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/attachments/{id}", consumes = "application/merge-patch+json")
+    public ResponseEntity<AttachmentDTO> partialUpdateAttachment(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody AttachmentDTO attachmentDTO
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update Attachment partially : {}, {}", id, attachmentDTO);
+        if (attachmentDTO.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, attachmentDTO.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!attachmentRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<AttachmentDTO> result = attachmentService.partialUpdate(attachmentDTO);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, attachmentDTO.getId().toString())
+        );
     }
 
     /**
@@ -121,6 +175,9 @@ public class AttachmentResource {
     public ResponseEntity<Void> deleteAttachment(@PathVariable Long id) {
         log.debug("REST request to delete Attachment : {}", id);
         attachmentService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

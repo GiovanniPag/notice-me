@@ -1,0 +1,97 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-attachment-heading" data-cy="AttachmentCreateUpdateHeading" jhiTranslate="noticeMeApp.attachment.home.createOrEditLabel">
+        Create or edit a Attachment
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="noticeMeApp.attachment.data" for="field_data">Data</label>
+          <div>
+            <div *ngIf="editForm.get('data')!.value" class="form-text text-danger clearfix">
+              <a
+                class="pull-left"
+                (click)="openFile(editForm.get('data')!.value, editForm.get('dataContentType')!.value)"
+                jhiTranslate="entity.action.open"
+                >open</a
+              ><br />
+              <span class="pull-left">{{ editForm.get('dataContentType')!.value }}, {{ byteSize(editForm.get('data')!.value) }}</span>
+              <button
+                type="button"
+                (click)="editForm.patchValue({ data: null }); editForm.patchValue({ dataContentType: null })"
+                class="btn btn-secondary btn-xs pull-right"
+              >
+                <fa-icon icon="times"></fa-icon>
+              </button>
+            </div>
+            <input
+              type="file"
+              id="file_data"
+              data-cy="data"
+              (change)="setFileData($event, 'data', false)"
+              jhiTranslate="entity.action.addblob"
+            />
+          </div>
+          <input type="hidden" class="form-control" name="data" id="field_data" data-cy="data" formControlName="data" />
+          <input type="hidden" class="form-control" name="dataContentType" id="field_dataContentType" formControlName="dataContentType" />
+          <div *ngIf="editForm.get('data')!.invalid && (editForm.get('data')!.dirty || editForm.get('data')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('data')?.errors?.required" jhiTranslate="entity.validation.required">
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="noticeMeApp.attachment.format" for="field_format">Format</label>
+          <select class="form-control" name="format" formControlName="format" id="field_format" data-cy="format">
+            <option [ngValue]="null">{{ 'noticeMeApp.Format.null' | translate }}</option>
+            <option value="JPG">{{ 'noticeMeApp.Format.JPG' | translate }}</option>
+            <option value="PNG">{{ 'noticeMeApp.Format.PNG' | translate }}</option>
+          </select>
+          <div *ngIf="editForm.get('format')!.invalid && (editForm.get('format')!.dirty || editForm.get('format')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('format')?.errors?.required" jhiTranslate="entity.validation.required">
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="noticeMeApp.attachment.note" for="field_note">Note</label>
+          <select class="form-control" id="field_note" data-cy="note" name="note" formControlName="note">
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="noteOption.id === editForm.get('note')!.value?.id ? editForm.get('note')!.value : noteOption"
+              *ngFor="let noteOption of notesSharedCollection; trackBy: trackNoteById"
+            >
+              {{ noteOption.id }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

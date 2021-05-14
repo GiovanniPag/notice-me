@@ -30,6 +30,7 @@ export class PasswordResetFinishComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {}
+  constructor(private passwordResetFinishService: PasswordResetFinishService, private route: ActivatedRoute, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -61,9 +62,5 @@ export class PasswordResetFinishComponent implements OnInit, AfterViewInit {
         () => (this.error = true)
       );
     }
-  }
-
-  login(): void {
-    this.loginRouteService.open();
   }
 }

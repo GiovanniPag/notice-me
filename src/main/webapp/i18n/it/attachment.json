@@ -3,6 +3,7 @@
     "attachment": {
       "home": {
         "title": "Attachments",
+        "refreshListLabel": "Refresh list",
         "createLabel": "Genera un nuovo Attachment",
         "createOrEditLabel": "Genera o modifica un Attachment",
         "notFound": "No Attachments found"
@@ -16,6 +17,7 @@
       "detail": {
         "title": "Attachment"
       },
+      "id": "ID",
       "data": "Data",
       "format": "Format",
       "note": "Note"

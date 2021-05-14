@@ -6,15 +6,13 @@ import com.mycompany.noticeme.security.AuthoritiesConstants;
 import com.mycompany.noticeme.security.SecurityUtils;
 import com.mycompany.noticeme.service.dto.TagDTO;
 import com.mycompany.noticeme.service.mapper.TagMapper;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link Tag}.
@@ -48,6 +46,27 @@ public class TagService {
     }
 
     /**
+     * Partially update a tag.
+     *
+     * @param tagDTO the entity to update partially.
+     * @return the persisted entity.
+     */
+    public Optional<TagDTO> partialUpdate(TagDTO tagDTO) {
+        log.debug("Request to partially update Tag : {}", tagDTO);
+
+        return tagRepository
+            .findById(tagDTO.getId())
+            .map(
+                existingTag -> {
+                    tagMapper.partialUpdate(existingTag, tagDTO);
+                    return existingTag;
+                }
+            )
+            .map(tagRepository::save)
+            .map(tagMapper::toDto);
+    }
+
+    /**
      * Get all the tags.
      *
      * @param pageable the pagination information.
@@ -63,7 +82,6 @@ public class TagService {
         }
     }
 
-
     /**
      * Get one tag by id.
      *
@@ -76,7 +94,7 @@ public class TagService {
         if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             return tagRepository.findById(id).map(tagMapper::toDto);
         } else {
-            return tagRepository.findOneByIdAndOwnerLogin(id,SecurityUtils.getCurrentUserLogin().get()).map(tagMapper::toDto);
+            return tagRepository.findOneByIdAndOwnerLogin(id, SecurityUtils.getCurrentUserLogin().get()).map(tagMapper::toDto);
         }
     }
 

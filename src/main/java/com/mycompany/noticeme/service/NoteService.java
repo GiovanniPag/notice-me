@@ -6,15 +6,13 @@ import com.mycompany.noticeme.security.AuthoritiesConstants;
 import com.mycompany.noticeme.security.SecurityUtils;
 import com.mycompany.noticeme.service.dto.NoteDTO;
 import com.mycompany.noticeme.service.mapper.NoteMapper;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link Note}.
@@ -48,6 +46,27 @@ public class NoteService {
     }
 
     /**
+     * Partially update a note.
+     *
+     * @param noteDTO the entity to update partially.
+     * @return the persisted entity.
+     */
+    public Optional<NoteDTO> partialUpdate(NoteDTO noteDTO) {
+        log.debug("Request to partially update Note : {}", noteDTO);
+
+        return noteRepository
+            .findById(noteDTO.getId())
+            .map(
+                existingNote -> {
+                    noteMapper.partialUpdate(existingNote, noteDTO);
+                    return existingNote;
+                }
+            )
+            .map(noteRepository::save)
+            .map(noteMapper::toDto);
+    }
+
+    /**
      * Get all the notes.
      *
      * @param pageable the pagination information.
@@ -59,8 +78,7 @@ public class NoteService {
         if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             return noteRepository.findAll(pageable).map(noteMapper::toDto);
         } else {
-            return noteRepository.findAllByOwnerLogin(SecurityUtils.getCurrentUserLogin().get(), pageable)
-                    .map(noteMapper::toDto);
+            return noteRepository.findAllByOwnerLogin(SecurityUtils.getCurrentUserLogin().get(), pageable).map(noteMapper::toDto);
         }
     }
 
@@ -85,7 +103,9 @@ public class NoteService {
         if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             return noteRepository.findById(id).map(noteMapper::toDto);
         } else {
-            return noteRepository.findOneWithEagerRelationshipsByIdAndOwnerLogin(id,SecurityUtils.getCurrentUserLogin().get()).map(noteMapper::toDto);
+            return noteRepository
+                .findOneWithEagerRelationshipsByIdAndOwnerLogin(id, SecurityUtils.getCurrentUserLogin().get())
+                .map(noteMapper::toDto);
         }
     }
 

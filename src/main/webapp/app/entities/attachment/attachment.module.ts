@@ -1,16 +1,15 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
 
-import { NoticeMeSharedModule } from 'app/shared/shared.module';
-import { AttachmentComponent } from './attachment.component';
-import { AttachmentDetailComponent } from './attachment-detail.component';
-import { AttachmentUpdateComponent } from './attachment-update.component';
-import { AttachmentDeleteDialogComponent } from './attachment-delete-dialog.component';
-import { attachmentRoute } from './attachment.route';
+import { SharedModule } from 'app/shared/shared.module';
+import { AttachmentComponent } from './list/attachment.component';
+import { AttachmentDetailComponent } from './detail/attachment-detail.component';
+import { AttachmentUpdateComponent } from './update/attachment-update.component';
+import { AttachmentDeleteDialogComponent } from './delete/attachment-delete-dialog.component';
+import { AttachmentRoutingModule } from './route/attachment-routing.module';
 
 @NgModule({
-  imports: [NoticeMeSharedModule, RouterModule.forChild(attachmentRoute)],
+  imports: [SharedModule, AttachmentRoutingModule],
   declarations: [AttachmentComponent, AttachmentDetailComponent, AttachmentUpdateComponent, AttachmentDeleteDialogComponent],
   entryComponents: [AttachmentDeleteDialogComponent],
 })
-export class NoticeMeAttachmentModule {}
+export class AttachmentModule {}

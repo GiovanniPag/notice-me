@@ -1,13 +1,14 @@
 package com.mycompany.noticeme.service.dto;
 
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import com.mycompany.noticeme.web.rest.TestUtil;
 
-public class TagDTOTest {
+import com.mycompany.noticeme.web.rest.TestUtil;
+import org.junit.jupiter.api.Test;
+
+class TagDTOTest {
 
     @Test
-    public void dtoEqualsVerifier() throws Exception {
+    void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(TagDTO.class);
         TagDTO tagDTO1 = new TagDTO();
         tagDTO1.setId(1L);

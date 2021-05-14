@@ -6,15 +6,13 @@ import com.mycompany.noticeme.security.AuthoritiesConstants;
 import com.mycompany.noticeme.security.SecurityUtils;
 import com.mycompany.noticeme.service.dto.AttachmentDTO;
 import com.mycompany.noticeme.service.mapper.AttachmentMapper;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link Attachment}.
@@ -48,6 +46,27 @@ public class AttachmentService {
     }
 
     /**
+     * Partially update a attachment.
+     *
+     * @param attachmentDTO the entity to update partially.
+     * @return the persisted entity.
+     */
+    public Optional<AttachmentDTO> partialUpdate(AttachmentDTO attachmentDTO) {
+        log.debug("Request to partially update Attachment : {}", attachmentDTO);
+
+        return attachmentRepository
+            .findById(attachmentDTO.getId())
+            .map(
+                existingAttachment -> {
+                    attachmentMapper.partialUpdate(existingAttachment, attachmentDTO);
+                    return existingAttachment;
+                }
+            )
+            .map(attachmentRepository::save)
+            .map(attachmentMapper::toDto);
+    }
+
+    /**
      * Get all the attachments.
      *
      * @param pageable the pagination information.
@@ -59,10 +78,11 @@ public class AttachmentService {
         if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             return attachmentRepository.findAll(pageable).map(attachmentMapper::toDto);
         } else {
-            return attachmentRepository.findAllByNoteOwnerLogin(SecurityUtils.getCurrentUserLogin().get(), pageable).map(attachmentMapper::toDto);
+            return attachmentRepository
+                .findAllByNoteOwnerLogin(SecurityUtils.getCurrentUserLogin().get(), pageable)
+                .map(attachmentMapper::toDto);
         }
     }
-
 
     /**
      * Get one attachment by id.
@@ -76,7 +96,9 @@ public class AttachmentService {
         if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             return attachmentRepository.findById(id).map(attachmentMapper::toDto);
         } else {
-            return attachmentRepository.findOneByIdAndNoteOwnerLogin(id,SecurityUtils.getCurrentUserLogin().get()).map(attachmentMapper::toDto);
+            return attachmentRepository
+                .findOneByIdAndNoteOwnerLogin(id, SecurityUtils.getCurrentUserLogin().get())
+                .map(attachmentMapper::toDto);
         }
     }
 

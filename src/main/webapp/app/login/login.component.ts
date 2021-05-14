@@ -1,34 +1,40 @@
-import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, ViewChild, OnInit, AfterViewInit, ElementRef } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { JhiEventManager } from 'ng-jhipster';
-
-import { LoginService } from 'app/core/login/login.service';
-import { StateStorageService } from 'app/core/auth/state-storage.service';
+import { LoginService } from 'app/login/login.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-login',
   templateUrl: './login.component.html',
 })
-export class LoginComponent implements AfterViewInit {
+export class LoginComponent implements OnInit, AfterViewInit {
   @ViewChild('username', { static: false })
   username?: ElementRef;
 
   authenticationError = false;
 
   loginForm = this.fb.group({
-    username: [''],
-    password: [''],
+    username: [null, [Validators.required]],
+    password: [null, [Validators.required]],
     rememberMe: [false],
   });
 
   constructor(
-    private eventManager: JhiEventManager,
+    private accountService: AccountService,
     private loginService: LoginService,
-    private stateStorageService: StateStorageService,
     private router: Router,
     private fb: FormBuilder
   ) {}
+
+  ngOnInit(): void {
+    // if already authenticated then navigate to home page
+    this.accountService.identity().subscribe(() => {
+      if (this.accountService.isAuthenticated()) {
+        this.router.navigate(['']);
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
     if (this.username) {
@@ -46,38 +52,12 @@ export class LoginComponent implements AfterViewInit {
       .subscribe(
         () => {
           this.authenticationError = false;
-          if (
-            this.router.url === '/account/register' ||
-            this.router.url.startsWith('/account/activate') ||
-            this.router.url.startsWith('/account/reset/')
-          ) {
-            this.router.navigate(['']);
-          }
-
-          this.eventManager.broadcast({
-            name: 'authenticationSuccess',
-            content: 'Sending Authentication Success',
-          });
-          // previousState was set in the authExpiredInterceptor before being redirected to login modal.
-          // since login is successful, go to stored previousState and clear previousState
-          const redirect = this.stateStorageService.getUrl();
-          // TODO Check if the redirect would be login again and route to home
-          if (redirect) {
-            this.stateStorageService.clearUrl();
-            this.router.navigateByUrl(redirect);
-          } else {
+          if (!this.router.getCurrentNavigation()) {
+            // There were no routing during login (eg from navigationToStoredUrl)
             this.router.navigate(['']);
           }
         },
         () => (this.authenticationError = true)
       );
-  }
-
-  register(): void {
-    this.router.navigate(['/account/register']);
-  }
-
-  requestResetPassword(): void {
-    this.router.navigate(['/account/reset', 'request']);
   }
 }

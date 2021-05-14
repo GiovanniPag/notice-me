@@ -1,38 +1,37 @@
 package com.mycompany.noticeme.web.rest;
 
-import com.mycompany.noticeme.NoticeMeApp;
-import com.mycompany.noticeme.domain.Attachment;
-import com.mycompany.noticeme.repository.AttachmentRepository;
-import com.mycompany.noticeme.service.AttachmentService;
-import com.mycompany.noticeme.service.dto.AttachmentDTO;
-import com.mycompany.noticeme.service.mapper.AttachmentMapper;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Base64Utils;
-import javax.persistence.EntityManager;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.mycompany.noticeme.IntegrationTest;
+import com.mycompany.noticeme.domain.Attachment;
 import com.mycompany.noticeme.domain.enumeration.Format;
+import com.mycompany.noticeme.repository.AttachmentRepository;
+import com.mycompany.noticeme.service.dto.AttachmentDTO;
+import com.mycompany.noticeme.service.mapper.AttachmentMapper;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+import javax.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
+
 /**
  * Integration tests for the {@link AttachmentResource} REST controller.
  */
-@SpringBootTest(classes = NoticeMeApp.class)
+@IntegrationTest
 @AutoConfigureMockMvc
 @WithMockUser
-public class AttachmentResourceIT {
+class AttachmentResourceIT {
 
     private static final byte[] DEFAULT_DATA = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_DATA = TestUtil.createByteArray(1, "1");
@@ -42,14 +41,17 @@ public class AttachmentResourceIT {
     private static final Format DEFAULT_FORMAT = Format.JPG;
     private static final Format UPDATED_FORMAT = Format.PNG;
 
+    private static final String ENTITY_API_URL = "/api/attachments";
+    private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    private static Random random = new Random();
+    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
     @Autowired
     private AttachmentRepository attachmentRepository;
 
     @Autowired
     private AttachmentMapper attachmentMapper;
-
-    @Autowired
-    private AttachmentService attachmentService;
 
     @Autowired
     private EntityManager em;
@@ -66,12 +68,10 @@ public class AttachmentResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Attachment createEntity(EntityManager em) {
-        Attachment attachment = new Attachment()
-            .data(DEFAULT_DATA)
-            .dataContentType(DEFAULT_DATA_CONTENT_TYPE)
-            .format(DEFAULT_FORMAT);
+        Attachment attachment = new Attachment().data(DEFAULT_DATA).dataContentType(DEFAULT_DATA_CONTENT_TYPE).format(DEFAULT_FORMAT);
         return attachment;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -79,10 +79,7 @@ public class AttachmentResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Attachment createUpdatedEntity(EntityManager em) {
-        Attachment attachment = new Attachment()
-            .data(UPDATED_DATA)
-            .dataContentType(UPDATED_DATA_CONTENT_TYPE)
-            .format(UPDATED_FORMAT);
+        Attachment attachment = new Attachment().data(UPDATED_DATA).dataContentType(UPDATED_DATA_CONTENT_TYPE).format(UPDATED_FORMAT);
         return attachment;
     }
 
@@ -93,13 +90,12 @@ public class AttachmentResourceIT {
 
     @Test
     @Transactional
-    public void createAttachment() throws Exception {
+    void createAttachment() throws Exception {
         int databaseSizeBeforeCreate = attachmentRepository.findAll().size();
         // Create the Attachment
         AttachmentDTO attachmentDTO = attachmentMapper.toDto(attachment);
-        restAttachmentMockMvc.perform(post("/api/attachments")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(attachmentDTO)))
+        restAttachmentMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(attachmentDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Attachment in the database
@@ -113,17 +109,16 @@ public class AttachmentResourceIT {
 
     @Test
     @Transactional
-    public void createAttachmentWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = attachmentRepository.findAll().size();
-
+    void createAttachmentWithExistingId() throws Exception {
         // Create the Attachment with an existing ID
         attachment.setId(1L);
         AttachmentDTO attachmentDTO = attachmentMapper.toDto(attachment);
 
+        int databaseSizeBeforeCreate = attachmentRepository.findAll().size();
+
         // An entity with an existing ID cannot be created, so this API call must fail
-        restAttachmentMockMvc.perform(post("/api/attachments")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(attachmentDTO)))
+        restAttachmentMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(attachmentDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Attachment in the database
@@ -131,10 +126,9 @@ public class AttachmentResourceIT {
         assertThat(attachmentList).hasSize(databaseSizeBeforeCreate);
     }
 
-
     @Test
     @Transactional
-    public void checkFormatIsRequired() throws Exception {
+    void checkFormatIsRequired() throws Exception {
         int databaseSizeBeforeTest = attachmentRepository.findAll().size();
         // set the field null
         attachment.setFormat(null);
@@ -142,10 +136,8 @@ public class AttachmentResourceIT {
         // Create the Attachment, which fails.
         AttachmentDTO attachmentDTO = attachmentMapper.toDto(attachment);
 
-
-        restAttachmentMockMvc.perform(post("/api/attachments")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(attachmentDTO)))
+        restAttachmentMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(attachmentDTO)))
             .andExpect(status().isBadRequest());
 
         List<Attachment> attachmentList = attachmentRepository.findAll();
@@ -154,12 +146,13 @@ public class AttachmentResourceIT {
 
     @Test
     @Transactional
-    public void getAllAttachments() throws Exception {
+    void getAllAttachments() throws Exception {
         // Initialize the database
         attachmentRepository.saveAndFlush(attachment);
 
         // Get all the attachmentList
-        restAttachmentMockMvc.perform(get("/api/attachments?sort=id,desc"))
+        restAttachmentMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(attachment.getId().intValue())))
@@ -167,15 +160,16 @@ public class AttachmentResourceIT {
             .andExpect(jsonPath("$.[*].data").value(hasItem(Base64Utils.encodeToString(DEFAULT_DATA))))
             .andExpect(jsonPath("$.[*].format").value(hasItem(DEFAULT_FORMAT.toString())));
     }
-    
+
     @Test
     @Transactional
-    public void getAttachment() throws Exception {
+    void getAttachment() throws Exception {
         // Initialize the database
         attachmentRepository.saveAndFlush(attachment);
 
         // Get the attachment
-        restAttachmentMockMvc.perform(get("/api/attachments/{id}", attachment.getId()))
+        restAttachmentMockMvc
+            .perform(get(ENTITY_API_URL_ID, attachment.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(attachment.getId().intValue()))
@@ -183,17 +177,17 @@ public class AttachmentResourceIT {
             .andExpect(jsonPath("$.data").value(Base64Utils.encodeToString(DEFAULT_DATA)))
             .andExpect(jsonPath("$.format").value(DEFAULT_FORMAT.toString()));
     }
+
     @Test
     @Transactional
-    public void getNonExistingAttachment() throws Exception {
+    void getNonExistingAttachment() throws Exception {
         // Get the attachment
-        restAttachmentMockMvc.perform(get("/api/attachments/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+        restAttachmentMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void updateAttachment() throws Exception {
+    void putNewAttachment() throws Exception {
         // Initialize the database
         attachmentRepository.saveAndFlush(attachment);
 
@@ -203,15 +197,15 @@ public class AttachmentResourceIT {
         Attachment updatedAttachment = attachmentRepository.findById(attachment.getId()).get();
         // Disconnect from session so that the updates on updatedAttachment are not directly saved in db
         em.detach(updatedAttachment);
-        updatedAttachment
-            .data(UPDATED_DATA)
-            .dataContentType(UPDATED_DATA_CONTENT_TYPE)
-            .format(UPDATED_FORMAT);
+        updatedAttachment.data(UPDATED_DATA).dataContentType(UPDATED_DATA_CONTENT_TYPE).format(UPDATED_FORMAT);
         AttachmentDTO attachmentDTO = attachmentMapper.toDto(updatedAttachment);
 
-        restAttachmentMockMvc.perform(put("/api/attachments")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(attachmentDTO)))
+        restAttachmentMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, attachmentDTO.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(attachmentDTO))
+            )
             .andExpect(status().isOk());
 
         // Validate the Attachment in the database
@@ -225,16 +219,20 @@ public class AttachmentResourceIT {
 
     @Test
     @Transactional
-    public void updateNonExistingAttachment() throws Exception {
+    void putNonExistingAttachment() throws Exception {
         int databaseSizeBeforeUpdate = attachmentRepository.findAll().size();
+        attachment.setId(count.incrementAndGet());
 
         // Create the Attachment
         AttachmentDTO attachmentDTO = attachmentMapper.toDto(attachment);
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restAttachmentMockMvc.perform(put("/api/attachments")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(attachmentDTO)))
+        restAttachmentMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, attachmentDTO.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(attachmentDTO))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the Attachment in the database
@@ -244,15 +242,186 @@ public class AttachmentResourceIT {
 
     @Test
     @Transactional
-    public void deleteAttachment() throws Exception {
+    void putWithIdMismatchAttachment() throws Exception {
+        int databaseSizeBeforeUpdate = attachmentRepository.findAll().size();
+        attachment.setId(count.incrementAndGet());
+
+        // Create the Attachment
+        AttachmentDTO attachmentDTO = attachmentMapper.toDto(attachment);
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restAttachmentMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(attachmentDTO))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the Attachment in the database
+        List<Attachment> attachmentList = attachmentRepository.findAll();
+        assertThat(attachmentList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void putWithMissingIdPathParamAttachment() throws Exception {
+        int databaseSizeBeforeUpdate = attachmentRepository.findAll().size();
+        attachment.setId(count.incrementAndGet());
+
+        // Create the Attachment
+        AttachmentDTO attachmentDTO = attachmentMapper.toDto(attachment);
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restAttachmentMockMvc
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(attachmentDTO)))
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the Attachment in the database
+        List<Attachment> attachmentList = attachmentRepository.findAll();
+        assertThat(attachmentList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void partialUpdateAttachmentWithPatch() throws Exception {
+        // Initialize the database
+        attachmentRepository.saveAndFlush(attachment);
+
+        int databaseSizeBeforeUpdate = attachmentRepository.findAll().size();
+
+        // Update the attachment using partial update
+        Attachment partialUpdatedAttachment = new Attachment();
+        partialUpdatedAttachment.setId(attachment.getId());
+
+        partialUpdatedAttachment.format(UPDATED_FORMAT);
+
+        restAttachmentMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedAttachment.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedAttachment))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Attachment in the database
+        List<Attachment> attachmentList = attachmentRepository.findAll();
+        assertThat(attachmentList).hasSize(databaseSizeBeforeUpdate);
+        Attachment testAttachment = attachmentList.get(attachmentList.size() - 1);
+        assertThat(testAttachment.getData()).isEqualTo(DEFAULT_DATA);
+        assertThat(testAttachment.getDataContentType()).isEqualTo(DEFAULT_DATA_CONTENT_TYPE);
+        assertThat(testAttachment.getFormat()).isEqualTo(UPDATED_FORMAT);
+    }
+
+    @Test
+    @Transactional
+    void fullUpdateAttachmentWithPatch() throws Exception {
+        // Initialize the database
+        attachmentRepository.saveAndFlush(attachment);
+
+        int databaseSizeBeforeUpdate = attachmentRepository.findAll().size();
+
+        // Update the attachment using partial update
+        Attachment partialUpdatedAttachment = new Attachment();
+        partialUpdatedAttachment.setId(attachment.getId());
+
+        partialUpdatedAttachment.data(UPDATED_DATA).dataContentType(UPDATED_DATA_CONTENT_TYPE).format(UPDATED_FORMAT);
+
+        restAttachmentMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedAttachment.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedAttachment))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Attachment in the database
+        List<Attachment> attachmentList = attachmentRepository.findAll();
+        assertThat(attachmentList).hasSize(databaseSizeBeforeUpdate);
+        Attachment testAttachment = attachmentList.get(attachmentList.size() - 1);
+        assertThat(testAttachment.getData()).isEqualTo(UPDATED_DATA);
+        assertThat(testAttachment.getDataContentType()).isEqualTo(UPDATED_DATA_CONTENT_TYPE);
+        assertThat(testAttachment.getFormat()).isEqualTo(UPDATED_FORMAT);
+    }
+
+    @Test
+    @Transactional
+    void patchNonExistingAttachment() throws Exception {
+        int databaseSizeBeforeUpdate = attachmentRepository.findAll().size();
+        attachment.setId(count.incrementAndGet());
+
+        // Create the Attachment
+        AttachmentDTO attachmentDTO = attachmentMapper.toDto(attachment);
+
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
+        restAttachmentMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, attachmentDTO.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(attachmentDTO))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the Attachment in the database
+        List<Attachment> attachmentList = attachmentRepository.findAll();
+        assertThat(attachmentList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithIdMismatchAttachment() throws Exception {
+        int databaseSizeBeforeUpdate = attachmentRepository.findAll().size();
+        attachment.setId(count.incrementAndGet());
+
+        // Create the Attachment
+        AttachmentDTO attachmentDTO = attachmentMapper.toDto(attachment);
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restAttachmentMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(attachmentDTO))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the Attachment in the database
+        List<Attachment> attachmentList = attachmentRepository.findAll();
+        assertThat(attachmentList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithMissingIdPathParamAttachment() throws Exception {
+        int databaseSizeBeforeUpdate = attachmentRepository.findAll().size();
+        attachment.setId(count.incrementAndGet());
+
+        // Create the Attachment
+        AttachmentDTO attachmentDTO = attachmentMapper.toDto(attachment);
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restAttachmentMockMvc
+            .perform(
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(attachmentDTO))
+            )
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the Attachment in the database
+        List<Attachment> attachmentList = attachmentRepository.findAll();
+        assertThat(attachmentList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void deleteAttachment() throws Exception {
         // Initialize the database
         attachmentRepository.saveAndFlush(attachment);
 
         int databaseSizeBeforeDelete = attachmentRepository.findAll().size();
 
         // Delete the attachment
-        restAttachmentMockMvc.perform(delete("/api/attachments/{id}", attachment.getId())
-            .accept(MediaType.APPLICATION_JSON))
+        restAttachmentMockMvc
+            .perform(delete(ENTITY_API_URL_ID, attachment.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
