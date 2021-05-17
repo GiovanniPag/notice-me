@@ -9,7 +9,7 @@ import { SideBarService } from './sidebar.service';
 @Component({
   selector: 'jhi-sidebar',
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.scss'],
+  styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent implements OnInit {
   inProduction?: boolean;

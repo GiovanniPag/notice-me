@@ -9,10 +9,12 @@ import { NoteService } from '../service/note.service';
 import { NoteDeleteDialogComponent } from '../delete/note-delete-dialog.component';
 import { DataUtils } from 'app/core/util/data-util.service';
 import { ParseLinks } from 'app/core/util/parse-links.service';
+import { GridOptions } from 'muuri';
 
 @Component({
   selector: 'jhi-note',
   templateUrl: './note.component.html',
+  styleUrls: ['./note.component.scss'],
 })
 export class NoteComponent implements OnInit {
   notes: INote[];
@@ -22,6 +24,19 @@ export class NoteComponent implements OnInit {
   page: number;
   predicate: string;
   ascending: boolean;
+
+  public layoutConfig: GridOptions = {
+    items: [],
+    layoutOnInit: false,
+    dragEnabled: true,
+    layout: {
+      fillGaps: true,
+      horizontal: false,
+      alignRight: false,
+      alignBottom: false,
+      rounding: true,
+    },
+  };
 
   constructor(
     protected noteService: NoteService,
