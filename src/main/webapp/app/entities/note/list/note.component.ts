@@ -20,11 +20,17 @@ import Grid from 'muuri';
 export class NoteComponent implements OnInit {
   notes: INote[];
   isLoading = false;
+  isDragging = false;
   itemsPerPage: number;
   links: { [key: string]: number };
   page: number;
   predicate: string;
   ascending: boolean;
+
+  mousePosition = {
+    x: 0,
+    y: 0,
+  };
 
   public layoutConfig: GridOptions = {
     layoutOnInit: true, // Muuri trigger layout method automatically on init
@@ -66,8 +72,25 @@ export class NoteComponent implements OnInit {
     this.grid?.refreshItems().layout();
   }
 
+  onMouseDown(event: MouseEvent): void {
+    this.mousePosition.x = event.screenX;
+    this.mousePosition.y = event.screenY;
+  }
+
+  onClick(event: MouseEvent): void {
+    if (!this.isDragging && Math.abs(this.mousePosition.x - event.screenX) <= 5 && Math.abs(this.mousePosition.y - event.screenY) <= 5) {
+      alert('click');
+    }
+  }
+
   onGridCreated(grid: Grid): void {
     this.grid = grid;
+    this.grid.on('dragInit', () => {
+      this.isDragging = true;
+    });
+    this.grid.on('dragReleaseEnd', () => {
+      this.isDragging = false;
+    });
   }
 
   loadAll(): void {
