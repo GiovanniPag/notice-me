@@ -6,6 +6,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
 import { MuuriModule } from 'muuri-angular';
+import { AngularResizedEventModule } from 'angular-resize-event';
 
 @NgModule({
   exports: [
@@ -17,6 +18,7 @@ import { MuuriModule } from 'muuri-angular';
     FontAwesomeModule,
     ReactiveFormsModule,
     TranslateModule,
+    AngularResizedEventModule,
   ],
 })
 export class SharedLibsModule {}

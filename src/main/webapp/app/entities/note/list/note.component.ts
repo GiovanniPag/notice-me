@@ -10,6 +10,7 @@ import { NoteDeleteDialogComponent } from '../delete/note-delete-dialog.componen
 import { DataUtils } from 'app/core/util/data-util.service';
 import { ParseLinks } from 'app/core/util/parse-links.service';
 import { GridOptions } from 'muuri';
+import Grid from 'muuri';
 
 @Component({
   selector: 'jhi-note',
@@ -26,9 +27,10 @@ export class NoteComponent implements OnInit {
   ascending: boolean;
 
   public layoutConfig: GridOptions = {
-    items: [],
-    layoutOnInit: false,
-    dragEnabled: true,
+    layoutOnInit: true, // Muuri trigger layout method automatically on init
+    layoutOnResize: true, //  trigger layout method on window resize
+    dragEnabled: true, // items be draggable
+    layoutDuration: 300, // The duration for item's layout animation in milliseconds
     layout: {
       fillGaps: true,
       horizontal: false,
@@ -36,7 +38,14 @@ export class NoteComponent implements OnInit {
       alignBottom: false,
       rounding: true,
     },
+    dragStartPredicate: {
+      // determines when the item should start moving when the item is being dragged
+      distance: 10, // How many pixels the user must drag before the drag procedure starts
+      delay: 0, // ow long (in milliseconds) the user must drag before the dragging starts.
+    },
   };
+
+  grid: Grid | undefined;
 
   constructor(
     protected noteService: NoteService,
@@ -52,6 +61,13 @@ export class NoteComponent implements OnInit {
     };
     this.predicate = 'id';
     this.ascending = true;
+  }
+  onResized(): void {
+    this.grid?.refreshItems().layout();
+  }
+
+  onGridCreated(grid: Grid): void {
+    this.grid = grid;
   }
 
   loadAll(): void {

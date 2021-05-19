@@ -36,7 +36,7 @@
     [infiniteScrollDisabled]="page >= links['last']"
     [infiniteScrollDistance]="0"
   >
-    <div #grid class="muuri-grid" muuriGrid [config]="layoutConfig">
+    <div #grid class="muuri-grid" muuriGrid [config]="layoutConfig" (gridCreated)="onGridCreated($event)" (resized)="onResized()">
       <div class="muuri-grid-item" muuriGridItem *ngFor="let note of notes; trackBy: trackId">
         <div class="muuri-grid-item-content">
           <img class="card-img-top" alt="Card image cap" />
