@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { NoteComponent } from '../list/note.component';
-import { NoteDetailComponent } from '../detail/note-detail.component';
 import { NoteUpdateComponent } from '../update/note-update.component';
 import { NoteRoutingResolveService } from './note-routing-resolve.service';
 
@@ -11,14 +10,6 @@ const noteRoute: Routes = [
   {
     path: '',
     component: NoteComponent,
-    canActivate: [UserRouteAccessService],
-  },
-  {
-    path: ':id/view',
-    component: NoteDetailComponent,
-    resolve: {
-      note: NoteRoutingResolveService,
-    },
     canActivate: [UserRouteAccessService],
   },
   {

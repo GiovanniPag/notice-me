@@ -1,0 +1,81 @@
+<form *ngIf="note" name="editForm">
+  <!-- (ngSubmit)= -->
+  <div class="modal-header">
+    <h4 class="modal-title" data-cy="noteDetailsDialogHeading">
+      <span jhiTranslate="noticeMeApp.note.detail.title">Note</span>
+    </h4>
+  </div>
+  <div class="modal-body">
+    <jhi-alert-error></jhi-alert-error>
+    <jhi-alert></jhi-alert>
+
+    <dl class="row-md jh-entity-details">
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.title">Title</span>
+      </dt>
+      <dd>
+        <span>{{ note.title }}</span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.content">Content</span>
+      </dt>
+      <dd>
+        <span>{{ note.content }}</span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.date">Date</span>
+      </dt>
+      <dd>
+        <span>{{ note.date | formatMediumDatetime }}</span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.alarm">Alarm</span>
+      </dt>
+      <dd>
+        <span>{{ note.alarm | formatMediumDatetime }}</span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.status">Status</span>
+      </dt>
+      <dd>
+        <span jhiTranslate="{{ 'noticeMeApp.NoteStatus.' + note.status }}">{{ note.status }}</span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.owner">Owner</span>
+      </dt>
+      <dd>
+        <span>{{ note.owner?.id }}</span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.tag">Tag</span>
+      </dt>
+      <dd>
+        <span *ngFor="let tag of note.tags; let last = last">
+          <a [routerLink]="['/tag', tag?.id, 'view']">{{ tag.tagName }}</a>
+          {{ last ? '' : ', ' }}
+        </span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.collaborator">Collaborator</span>
+      </dt>
+      <dd>
+        <span *ngFor="let collaborator of note.collaborators; let last = last"> {{ collaborator.id }}{{ last ? '' : ', ' }} </span>
+      </dd>
+    </dl>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      data-dismiss="modal"
+      aria-hidden="true"
+      class="btn btn-primary"
+      data-dismiss="modal"
+      (click)="close()"
+      data-cy="entityDetailsCloseButton"
+    >
+      <fa-icon icon="arrow-left"></fa-icon>
+      &nbsp;
+      <span jhiTranslate="entity.action.close">Close</span>
+    </button>
+  </div>
+</form>

@@ -39,7 +39,7 @@
     <div #grid class="muuri-grid" muuriGrid [config]="layoutConfig" (gridCreated)="onGridCreated($event)" (resized)="onResized()">
       <div
         (mousedown)="onMouseDown($event)"
-        (click)="onClick($event)"
+        (click)="onClick($event, note)"
         class="muuri-grid-item"
         muuriGridItem
         *ngFor="let note of notes; trackBy: trackId"
@@ -49,9 +49,6 @@
           <div class="card-body">
             <h5 class="card-title">{{ note.title }}</h5>
             <p class="card-text">{{ note.content }}</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-            <a href="#" class="card-link">Card link</a>
-            <a href="#" class="card-link">Another link</a>
           </div>
         </div>
       </div>
