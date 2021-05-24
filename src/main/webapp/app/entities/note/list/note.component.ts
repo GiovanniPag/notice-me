@@ -69,6 +69,7 @@ export class NoteComponent implements OnInit {
     this.predicate = 'id';
     this.ascending = true;
   }
+
   onResized(): void {
     this.grid?.refreshItems().layout();
   }
@@ -80,7 +81,7 @@ export class NoteComponent implements OnInit {
 
   onClick(event: MouseEvent, note: INote): void {
     if (!this.isDragging && Math.abs(this.mousePosition.x - event.screenX) <= 5 && Math.abs(this.mousePosition.y - event.screenY) <= 5) {
-      const modalRef = this.modalService.open(NoteDetailDialogComponent, { windowClass: 'note-detail-dialog' });
+      const modalRef = this.modalService.open(NoteDetailDialogComponent, { scrollable: true, windowClass: 'note-detail-dialog' });
       modalRef.componentInstance.note = note;
     }
   }

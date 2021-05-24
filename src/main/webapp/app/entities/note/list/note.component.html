@@ -1,7 +1,8 @@
 <div>
-  <h2 id="page-heading" data-cy="NoteHeading">
-    <span jhiTranslate="noticeMeApp.note.home.title">Notes</span>
-
+  <div id="page-heading" data-cy="NoteHeading">
+    <h2>
+      <span jhiTranslate="noticeMeApp.note.home.title">Notes</span>
+    </h2>
     <div class="d-flex justify-content-end">
       <button class="btn btn-info mr-2" (click)="reset()" [disabled]="isLoading">
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
@@ -18,7 +19,7 @@
         <span jhiTranslate="noticeMeApp.note.home.createLabel"> Create a new Note </span>
       </button>
     </div>
-  </h2>
+  </div>
 
   <jhi-alert-error></jhi-alert-error>
 
