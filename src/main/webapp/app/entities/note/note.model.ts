@@ -6,10 +6,10 @@ import { NoteStatus } from 'app/entities/enumerations/note-status.model';
 
 export interface INote {
   id?: number;
-  title?: string;
-  content?: string;
-  date?: dayjs.Dayjs;
-  alarm?: dayjs.Dayjs | null;
+  title?: string | null;
+  content?: string | null;
+  lastUpdateDate?: dayjs.Dayjs;
+  alarmDate?: dayjs.Dayjs | null;
   status?: NoteStatus;
   attachments?: IAttachment[] | null;
   owner?: IUser;
@@ -20,10 +20,10 @@ export interface INote {
 export class Note implements INote {
   constructor(
     public id?: number,
-    public title?: string,
-    public content?: string,
-    public date?: dayjs.Dayjs,
-    public alarm?: dayjs.Dayjs | null,
+    public title?: string | null,
+    public content?: string | null,
+    public lastUpdateDate?: dayjs.Dayjs,
+    public alarmDate?: dayjs.Dayjs | null,
     public status?: NoteStatus,
     public attachments?: IAttachment[] | null,
     public owner?: IUser,

@@ -29,8 +29,8 @@ describe('Service Tests', () => {
         id: 0,
         title: 'AAAAAAA',
         content: 'AAAAAAA',
-        date: currentDate,
-        alarm: currentDate,
+        lastUpdateDate: currentDate,
+        alarmDate: currentDate,
         status: NoteStatus.NORMAL,
       };
     });
@@ -39,8 +39,8 @@ describe('Service Tests', () => {
       it('should find an element', () => {
         const returnedFromService = Object.assign(
           {
-            date: currentDate.format(DATE_TIME_FORMAT),
-            alarm: currentDate.format(DATE_TIME_FORMAT),
+            lastUpdateDate: currentDate.format(DATE_TIME_FORMAT),
+            alarmDate: currentDate.format(DATE_TIME_FORMAT),
           },
           elemDefault
         );
@@ -56,16 +56,16 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             id: 0,
-            date: currentDate.format(DATE_TIME_FORMAT),
-            alarm: currentDate.format(DATE_TIME_FORMAT),
+            lastUpdateDate: currentDate.format(DATE_TIME_FORMAT),
+            alarmDate: currentDate.format(DATE_TIME_FORMAT),
           },
           elemDefault
         );
 
         const expected = Object.assign(
           {
-            date: currentDate,
-            alarm: currentDate,
+            lastUpdateDate: currentDate,
+            alarmDate: currentDate,
           },
           returnedFromService
         );
@@ -83,8 +83,8 @@ describe('Service Tests', () => {
             id: 1,
             title: 'BBBBBB',
             content: 'BBBBBB',
-            date: currentDate.format(DATE_TIME_FORMAT),
-            alarm: currentDate.format(DATE_TIME_FORMAT),
+            lastUpdateDate: currentDate.format(DATE_TIME_FORMAT),
+            alarmDate: currentDate.format(DATE_TIME_FORMAT),
             status: 'BBBBBB',
           },
           elemDefault
@@ -92,8 +92,8 @@ describe('Service Tests', () => {
 
         const expected = Object.assign(
           {
-            date: currentDate,
-            alarm: currentDate,
+            lastUpdateDate: currentDate,
+            alarmDate: currentDate,
           },
           returnedFromService
         );
@@ -108,8 +108,8 @@ describe('Service Tests', () => {
       it('should partial update a Note', () => {
         const patchObject = Object.assign(
           {
-            date: currentDate.format(DATE_TIME_FORMAT),
-            alarm: currentDate.format(DATE_TIME_FORMAT),
+            lastUpdateDate: currentDate.format(DATE_TIME_FORMAT),
+            alarmDate: currentDate.format(DATE_TIME_FORMAT),
             status: 'BBBBBB',
           },
           new Note()
@@ -119,8 +119,8 @@ describe('Service Tests', () => {
 
         const expected = Object.assign(
           {
-            date: currentDate,
-            alarm: currentDate,
+            lastUpdateDate: currentDate,
+            alarmDate: currentDate,
           },
           returnedFromService
         );
@@ -138,8 +138,8 @@ describe('Service Tests', () => {
             id: 1,
             title: 'BBBBBB',
             content: 'BBBBBB',
-            date: currentDate.format(DATE_TIME_FORMAT),
-            alarm: currentDate.format(DATE_TIME_FORMAT),
+            lastUpdateDate: currentDate.format(DATE_TIME_FORMAT),
+            alarmDate: currentDate.format(DATE_TIME_FORMAT),
             status: 'BBBBBB',
           },
           elemDefault
@@ -147,8 +147,8 @@ describe('Service Tests', () => {
 
         const expected = Object.assign(
           {
-            date: currentDate,
-            alarm: currentDate,
+            lastUpdateDate: currentDate,
+            alarmDate: currentDate,
           },
           returnedFromService
         );

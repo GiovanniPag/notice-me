@@ -74,8 +74,8 @@ class NoteGatlingTest extends Simulation {
                 "id":null
                 , "title":"SAMPLE_TEXT"
                 , "content":null
-                , "date":"2020-01-01T00:00:00.000Z"
-                , "alarm":"2020-01-01T00:00:00.000Z"
+                , "lastUpdateDate":"2020-01-01T00:00:00.000Z"
+                , "alarmDate":"2020-01-01T00:00:00.000Z"
                 , "status":"NORMAL"
                 }""")).asJson
             .check(status.is(201))

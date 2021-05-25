@@ -30,10 +30,10 @@ export class NoteUpdateComponent implements OnInit {
 
   editForm = this.fb.group({
     id: [],
-    title: [null, [Validators.required, Validators.minLength(1)]],
-    content: [null, [Validators.required]],
-    date: [null, [Validators.required]],
-    alarm: [],
+    title: [],
+    content: [],
+    lastUpdateDate: [null, [Validators.required]],
+    alarmDate: [],
     status: [null, [Validators.required]],
     owner: [null, Validators.required],
     tags: [],
@@ -54,8 +54,8 @@ export class NoteUpdateComponent implements OnInit {
     this.activatedRoute.data.subscribe(({ note }) => {
       if (note.id === undefined) {
         const today = dayjs().startOf('day');
-        note.date = today;
-        note.alarm = today;
+        note.lastUpdateDate = today;
+        note.alarmDate = today;
       }
 
       this.updateForm(note);
@@ -149,8 +149,8 @@ export class NoteUpdateComponent implements OnInit {
       id: note.id,
       title: note.title,
       content: note.content,
-      date: note.date ? note.date.format(DATE_TIME_FORMAT) : null,
-      alarm: note.alarm ? note.alarm.format(DATE_TIME_FORMAT) : null,
+      lastUpdateDate: note.lastUpdateDate ? note.lastUpdateDate.format(DATE_TIME_FORMAT) : null,
+      alarmDate: note.alarmDate ? note.alarmDate.format(DATE_TIME_FORMAT) : null,
       status: note.status,
       owner: note.owner,
       tags: note.tags,
@@ -193,8 +193,10 @@ export class NoteUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       title: this.editForm.get(['title'])!.value,
       content: this.editForm.get(['content'])!.value,
-      date: this.editForm.get(['date'])!.value ? dayjs(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : undefined,
-      alarm: this.editForm.get(['alarm'])!.value ? dayjs(this.editForm.get(['alarm'])!.value, DATE_TIME_FORMAT) : undefined,
+      lastUpdateDate: this.editForm.get(['lastUpdateDate'])!.value
+        ? dayjs(this.editForm.get(['lastUpdateDate'])!.value, DATE_TIME_FORMAT)
+        : undefined,
+      alarmDate: this.editForm.get(['alarmDate'])!.value ? dayjs(this.editForm.get(['alarmDate'])!.value, DATE_TIME_FORMAT) : undefined,
       status: this.editForm.get(['status'])!.value,
       owner: this.editForm.get(['owner'])!.value,
       tags: this.editForm.get(['tags'])!.value,

@@ -16,17 +16,15 @@ public class NoteDTO implements Serializable {
 
     private Long id;
 
-    @NotNull
-    @Size(min = 1)
     private String title;
 
     @Lob
     private String content;
 
     @NotNull
-    private Instant date;
+    private Instant lastUpdateDate;
 
-    private Instant alarm;
+    private Instant alarmDate;
 
     @NotNull
     private NoteStatus status;
@@ -61,20 +59,20 @@ public class NoteDTO implements Serializable {
         this.content = content;
     }
 
-    public Instant getDate() {
-        return date;
+    public Instant getLastUpdateDate() {
+        return lastUpdateDate;
     }
 
-    public void setDate(Instant date) {
-        this.date = date;
+    public void setLastUpdateDate(Instant lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 
-    public Instant getAlarm() {
-        return alarm;
+    public Instant getAlarmDate() {
+        return alarmDate;
     }
 
-    public void setAlarm(Instant alarm) {
-        this.alarm = alarm;
+    public void setAlarmDate(Instant alarmDate) {
+        this.alarmDate = alarmDate;
     }
 
     public NoteStatus getStatus() {
@@ -137,8 +135,8 @@ public class NoteDTO implements Serializable {
             "id=" + getId() +
             ", title='" + getTitle() + "'" +
             ", content='" + getContent() + "'" +
-            ", date='" + getDate() + "'" +
-            ", alarm='" + getAlarm() + "'" +
+            ", lastUpdateDate='" + getLastUpdateDate() + "'" +
+            ", alarmDate='" + getAlarmDate() + "'" +
             ", status='" + getStatus() + "'" +
             ", owner=" + getOwner() +
             ", tags=" + getTags() +

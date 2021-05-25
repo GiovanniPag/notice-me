@@ -75,15 +75,15 @@ export class NoteService {
 
   protected convertDateFromClient(note: INote): INote {
     return Object.assign({}, note, {
-      date: note.date?.isValid() ? note.date.toJSON() : undefined,
-      alarm: note.alarm?.isValid() ? note.alarm.toJSON() : undefined,
+      lastUpdateDate: note.lastUpdateDate?.isValid() ? note.lastUpdateDate.toJSON() : undefined,
+      alarmDate: note.alarmDate?.isValid() ? note.alarmDate.toJSON() : undefined,
     });
   }
 
   protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
     if (res.body) {
-      res.body.date = res.body.date ? dayjs(res.body.date) : undefined;
-      res.body.alarm = res.body.alarm ? dayjs(res.body.alarm) : undefined;
+      res.body.lastUpdateDate = res.body.lastUpdateDate ? dayjs(res.body.lastUpdateDate) : undefined;
+      res.body.alarmDate = res.body.alarmDate ? dayjs(res.body.alarmDate) : undefined;
     }
     return res;
   }
@@ -91,8 +91,8 @@ export class NoteService {
   protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((note: INote) => {
-        note.date = note.date ? dayjs(note.date) : undefined;
-        note.alarm = note.alarm ? dayjs(note.alarm) : undefined;
+        note.lastUpdateDate = note.lastUpdateDate ? dayjs(note.lastUpdateDate) : undefined;
+        note.alarmDate = note.alarmDate ? dayjs(note.alarmDate) : undefined;
       });
     }
     return res;

@@ -51,11 +51,11 @@ class NoteResourceIT {
     private static final String DEFAULT_CONTENT = "AAAAAAAAAA";
     private static final String UPDATED_CONTENT = "BBBBBBBBBB";
 
-    private static final Instant DEFAULT_DATE = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final Instant DEFAULT_LAST_UPDATE_DATE = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_LAST_UPDATE_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
-    private static final Instant DEFAULT_ALARM = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_ALARM = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final Instant DEFAULT_ALARM_DATE = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_ALARM_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
     private static final NoteStatus DEFAULT_STATUS = NoteStatus.NORMAL;
     private static final NoteStatus UPDATED_STATUS = NoteStatus.ALARM;
@@ -93,7 +93,12 @@ class NoteResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Note createEntity(EntityManager em) {
-        Note note = new Note().title(DEFAULT_TITLE).content(DEFAULT_CONTENT).date(DEFAULT_DATE).alarm(DEFAULT_ALARM).status(DEFAULT_STATUS);
+        Note note = new Note()
+            .title(DEFAULT_TITLE)
+            .content(DEFAULT_CONTENT)
+            .lastUpdateDate(DEFAULT_LAST_UPDATE_DATE)
+            .alarmDate(DEFAULT_ALARM_DATE)
+            .status(DEFAULT_STATUS);
         // Add required entity
         User user = UserResourceIT.createEntity(em);
         em.persist(user);
@@ -109,7 +114,12 @@ class NoteResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Note createUpdatedEntity(EntityManager em) {
-        Note note = new Note().title(UPDATED_TITLE).content(UPDATED_CONTENT).date(UPDATED_DATE).alarm(UPDATED_ALARM).status(UPDATED_STATUS);
+        Note note = new Note()
+            .title(UPDATED_TITLE)
+            .content(UPDATED_CONTENT)
+            .lastUpdateDate(UPDATED_LAST_UPDATE_DATE)
+            .alarmDate(UPDATED_ALARM_DATE)
+            .status(UPDATED_STATUS);
         // Add required entity
         User user = UserResourceIT.createEntity(em);
         em.persist(user);
@@ -139,8 +149,8 @@ class NoteResourceIT {
         Note testNote = noteList.get(noteList.size() - 1);
         assertThat(testNote.getTitle()).isEqualTo(DEFAULT_TITLE);
         assertThat(testNote.getContent()).isEqualTo(DEFAULT_CONTENT);
-        assertThat(testNote.getDate()).isEqualTo(DEFAULT_DATE);
-        assertThat(testNote.getAlarm()).isEqualTo(DEFAULT_ALARM);
+        assertThat(testNote.getLastUpdateDate()).isEqualTo(DEFAULT_LAST_UPDATE_DATE);
+        assertThat(testNote.getAlarmDate()).isEqualTo(DEFAULT_ALARM_DATE);
         assertThat(testNote.getStatus()).isEqualTo(DEFAULT_STATUS);
     }
 
@@ -165,28 +175,10 @@ class NoteResourceIT {
 
     @Test
     @Transactional
-    void checkTitleIsRequired() throws Exception {
+    void checkLastUpdateDateIsRequired() throws Exception {
         int databaseSizeBeforeTest = noteRepository.findAll().size();
         // set the field null
-        note.setTitle(null);
-
-        // Create the Note, which fails.
-        NoteDTO noteDTO = noteMapper.toDto(note);
-
-        restNoteMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(noteDTO)))
-            .andExpect(status().isBadRequest());
-
-        List<Note> noteList = noteRepository.findAll();
-        assertThat(noteList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    void checkDateIsRequired() throws Exception {
-        int databaseSizeBeforeTest = noteRepository.findAll().size();
-        // set the field null
-        note.setDate(null);
+        note.setLastUpdateDate(null);
 
         // Create the Note, which fails.
         NoteDTO noteDTO = noteMapper.toDto(note);
@@ -231,8 +223,8 @@ class NoteResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(note.getId().intValue())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
             .andExpect(jsonPath("$.[*].content").value(hasItem(DEFAULT_CONTENT.toString())))
-            .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
-            .andExpect(jsonPath("$.[*].alarm").value(hasItem(DEFAULT_ALARM.toString())))
+            .andExpect(jsonPath("$.[*].lastUpdateDate").value(hasItem(DEFAULT_LAST_UPDATE_DATE.toString())))
+            .andExpect(jsonPath("$.[*].alarmDate").value(hasItem(DEFAULT_ALARM_DATE.toString())))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
     }
 
@@ -268,8 +260,8 @@ class NoteResourceIT {
             .andExpect(jsonPath("$.id").value(note.getId().intValue()))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
             .andExpect(jsonPath("$.content").value(DEFAULT_CONTENT.toString()))
-            .andExpect(jsonPath("$.date").value(DEFAULT_DATE.toString()))
-            .andExpect(jsonPath("$.alarm").value(DEFAULT_ALARM.toString()))
+            .andExpect(jsonPath("$.lastUpdateDate").value(DEFAULT_LAST_UPDATE_DATE.toString()))
+            .andExpect(jsonPath("$.alarmDate").value(DEFAULT_ALARM_DATE.toString()))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()));
     }
 
@@ -292,7 +284,12 @@ class NoteResourceIT {
         Note updatedNote = noteRepository.findById(note.getId()).get();
         // Disconnect from session so that the updates on updatedNote are not directly saved in db
         em.detach(updatedNote);
-        updatedNote.title(UPDATED_TITLE).content(UPDATED_CONTENT).date(UPDATED_DATE).alarm(UPDATED_ALARM).status(UPDATED_STATUS);
+        updatedNote
+            .title(UPDATED_TITLE)
+            .content(UPDATED_CONTENT)
+            .lastUpdateDate(UPDATED_LAST_UPDATE_DATE)
+            .alarmDate(UPDATED_ALARM_DATE)
+            .status(UPDATED_STATUS);
         NoteDTO noteDTO = noteMapper.toDto(updatedNote);
 
         restNoteMockMvc
@@ -309,8 +306,8 @@ class NoteResourceIT {
         Note testNote = noteList.get(noteList.size() - 1);
         assertThat(testNote.getTitle()).isEqualTo(UPDATED_TITLE);
         assertThat(testNote.getContent()).isEqualTo(UPDATED_CONTENT);
-        assertThat(testNote.getDate()).isEqualTo(UPDATED_DATE);
-        assertThat(testNote.getAlarm()).isEqualTo(UPDATED_ALARM);
+        assertThat(testNote.getLastUpdateDate()).isEqualTo(UPDATED_LAST_UPDATE_DATE);
+        assertThat(testNote.getAlarmDate()).isEqualTo(UPDATED_ALARM_DATE);
         assertThat(testNote.getStatus()).isEqualTo(UPDATED_STATUS);
     }
 
@@ -391,7 +388,7 @@ class NoteResourceIT {
         Note partialUpdatedNote = new Note();
         partialUpdatedNote.setId(note.getId());
 
-        partialUpdatedNote.date(UPDATED_DATE).alarm(UPDATED_ALARM).status(UPDATED_STATUS);
+        partialUpdatedNote.lastUpdateDate(UPDATED_LAST_UPDATE_DATE).alarmDate(UPDATED_ALARM_DATE).status(UPDATED_STATUS);
 
         restNoteMockMvc
             .perform(
@@ -407,8 +404,8 @@ class NoteResourceIT {
         Note testNote = noteList.get(noteList.size() - 1);
         assertThat(testNote.getTitle()).isEqualTo(DEFAULT_TITLE);
         assertThat(testNote.getContent()).isEqualTo(DEFAULT_CONTENT);
-        assertThat(testNote.getDate()).isEqualTo(UPDATED_DATE);
-        assertThat(testNote.getAlarm()).isEqualTo(UPDATED_ALARM);
+        assertThat(testNote.getLastUpdateDate()).isEqualTo(UPDATED_LAST_UPDATE_DATE);
+        assertThat(testNote.getAlarmDate()).isEqualTo(UPDATED_ALARM_DATE);
         assertThat(testNote.getStatus()).isEqualTo(UPDATED_STATUS);
     }
 
@@ -424,7 +421,12 @@ class NoteResourceIT {
         Note partialUpdatedNote = new Note();
         partialUpdatedNote.setId(note.getId());
 
-        partialUpdatedNote.title(UPDATED_TITLE).content(UPDATED_CONTENT).date(UPDATED_DATE).alarm(UPDATED_ALARM).status(UPDATED_STATUS);
+        partialUpdatedNote
+            .title(UPDATED_TITLE)
+            .content(UPDATED_CONTENT)
+            .lastUpdateDate(UPDATED_LAST_UPDATE_DATE)
+            .alarmDate(UPDATED_ALARM_DATE)
+            .status(UPDATED_STATUS);
 
         restNoteMockMvc
             .perform(
@@ -440,8 +442,8 @@ class NoteResourceIT {
         Note testNote = noteList.get(noteList.size() - 1);
         assertThat(testNote.getTitle()).isEqualTo(UPDATED_TITLE);
         assertThat(testNote.getContent()).isEqualTo(UPDATED_CONTENT);
-        assertThat(testNote.getDate()).isEqualTo(UPDATED_DATE);
-        assertThat(testNote.getAlarm()).isEqualTo(UPDATED_ALARM);
+        assertThat(testNote.getLastUpdateDate()).isEqualTo(UPDATED_LAST_UPDATE_DATE);
+        assertThat(testNote.getAlarmDate()).isEqualTo(UPDATED_ALARM_DATE);
         assertThat(testNote.getStatus()).isEqualTo(UPDATED_STATUS);
     }
 

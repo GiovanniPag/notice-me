@@ -37,8 +37,12 @@
           <th scope="col" jhiSortBy="content">
             <span jhiTranslate="noticeMeApp.note.content">Content</span> <fa-icon icon="sort"></fa-icon>
           </th>
-          <th scope="col" jhiSortBy="date"><span jhiTranslate="noticeMeApp.note.date">Date</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="alarm"><span jhiTranslate="noticeMeApp.note.alarm">Alarm</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="lastUpdateDate">
+            <span jhiTranslate="noticeMeApp.note.lastUpdateDate">Last Update Date</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="alarmDate">
+            <span jhiTranslate="noticeMeApp.note.alarmDate">Alarm Date</span> <fa-icon icon="sort"></fa-icon>
+          </th>
           <th scope="col" jhiSortBy="status"><span jhiTranslate="noticeMeApp.note.status">Status</span> <fa-icon icon="sort"></fa-icon></th>
           <th scope="col" jhiSortBy="owner.id"><span jhiTranslate="noticeMeApp.note.owner">Owner</span> <fa-icon icon="sort"></fa-icon></th>
           <th scope="col"></th>
@@ -51,8 +55,8 @@
           </td>
           <td>{{ note.title }}</td>
           <td>{{ note.content }}</td>
-          <td>{{ note.date | formatMediumDatetime }}</td>
-          <td>{{ note.alarm | formatMediumDatetime }}</td>
+          <td>{{ note.lastUpdateDate | formatMediumDatetime }}</td>
+          <td>{{ note.alarmDate | formatMediumDatetime }}</td>
           <td jhiTranslate="{{ 'noticeMeApp.NoteStatus.' + note.status }}">{{ note.status }}</td>
           <td>
             {{ note.owner?.id }}

@@ -25,21 +25,19 @@ public class Note implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Size(min = 1)
-    @Column(name = "title", nullable = false)
+    @Column(name = "title")
     private String title;
 
     @Lob
-    @Column(name = "content", nullable = false)
+    @Column(name = "content")
     private String content;
 
     @NotNull
-    @Column(name = "date", nullable = false)
-    private Instant date;
+    @Column(name = "last_update_date", nullable = false)
+    private Instant lastUpdateDate;
 
-    @Column(name = "alarm")
-    private Instant alarm;
+    @Column(name = "alarm_date")
+    private Instant alarmDate;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -110,30 +108,30 @@ public class Note implements Serializable {
         this.content = content;
     }
 
-    public Instant getDate() {
-        return this.date;
+    public Instant getLastUpdateDate() {
+        return this.lastUpdateDate;
     }
 
-    public Note date(Instant date) {
-        this.date = date;
+    public Note lastUpdateDate(Instant lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
         return this;
     }
 
-    public void setDate(Instant date) {
-        this.date = date;
+    public void setLastUpdateDate(Instant lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 
-    public Instant getAlarm() {
-        return this.alarm;
+    public Instant getAlarmDate() {
+        return this.alarmDate;
     }
 
-    public Note alarm(Instant alarm) {
-        this.alarm = alarm;
+    public Note alarmDate(Instant alarmDate) {
+        this.alarmDate = alarmDate;
         return this;
     }
 
-    public void setAlarm(Instant alarm) {
-        this.alarm = alarm;
+    public void setAlarmDate(Instant alarmDate) {
+        this.alarmDate = alarmDate;
     }
 
     public NoteStatus getStatus() {
@@ -267,8 +265,8 @@ public class Note implements Serializable {
             "id=" + getId() +
             ", title='" + getTitle() + "'" +
             ", content='" + getContent() + "'" +
-            ", date='" + getDate() + "'" +
-            ", alarm='" + getAlarm() + "'" +
+            ", lastUpdateDate='" + getLastUpdateDate() + "'" +
+            ", alarmDate='" + getAlarmDate() + "'" +
             ", status='" + getStatus() + "'" +
             "}";
     }

@@ -47,12 +47,12 @@ describe('Component Tests', () => {
     describe('ngOnInit', () => {
       it('Should call User query and add missing value', () => {
         const note: INote = { id: 456 };
-        const owner: IUser = { id: 8136 };
+        const owner: IUser = { id: 27699 };
         note.owner = owner;
-        const collaborators: IUser[] = [{ id: 62330 }];
+        const collaborators: IUser[] = [{ id: 87926 }];
         note.collaborators = collaborators;
 
-        const userCollection: IUser[] = [{ id: 48385 }];
+        const userCollection: IUser[] = [{ id: 47918 }];
         spyOn(userService, 'query').and.returnValue(of(new HttpResponse({ body: userCollection })));
         const additionalUsers = [owner, ...collaborators];
         const expectedCollection: IUser[] = [...additionalUsers, ...userCollection];
@@ -68,10 +68,10 @@ describe('Component Tests', () => {
 
       it('Should call Tag query and add missing value', () => {
         const note: INote = { id: 456 };
-        const tags: ITag[] = [{ id: 65912 }];
+        const tags: ITag[] = [{ id: 53942 }];
         note.tags = tags;
 
-        const tagCollection: ITag[] = [{ id: 1485 }];
+        const tagCollection: ITag[] = [{ id: 54270 }];
         spyOn(tagService, 'query').and.returnValue(of(new HttpResponse({ body: tagCollection })));
         const additionalTags = [...tags];
         const expectedCollection: ITag[] = [...additionalTags, ...tagCollection];
@@ -87,11 +87,11 @@ describe('Component Tests', () => {
 
       it('Should update editForm', () => {
         const note: INote = { id: 456 };
-        const owner: IUser = { id: 2487 };
+        const owner: IUser = { id: 13820 };
         note.owner = owner;
-        const collaborators: IUser = { id: 97240 };
+        const collaborators: IUser = { id: 8136 };
         note.collaborators = [collaborators];
-        const tags: ITag = { id: 77949 };
+        const tags: ITag = { id: 45876 };
         note.tags = [tags];
 
         activatedRoute.data = of({ note });
