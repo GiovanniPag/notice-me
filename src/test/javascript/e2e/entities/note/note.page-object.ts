@@ -32,8 +32,8 @@ export class NoteUpdatePage {
   idInput = element(by.id('field_id'));
   titleInput = element(by.id('field_title'));
   contentInput = element(by.id('field_content'));
-  dateInput = element(by.id('field_date'));
-  alarmInput = element(by.id('field_alarm'));
+  lastUpdateDateInput = element(by.id('field_lastUpdateDate'));
+  alarmDateInput = element(by.id('field_alarmDate'));
   statusSelect = element(by.id('field_status'));
 
   ownerSelect = element(by.id('field_owner'));
@@ -68,20 +68,20 @@ export class NoteUpdatePage {
     return await this.contentInput.getAttribute('value');
   }
 
-  async setDateInput(date: string): Promise<void> {
-    await this.dateInput.sendKeys(date);
+  async setLastUpdateDateInput(lastUpdateDate: string): Promise<void> {
+    await this.lastUpdateDateInput.sendKeys(lastUpdateDate);
   }
 
-  async getDateInput(): Promise<string> {
-    return await this.dateInput.getAttribute('value');
+  async getLastUpdateDateInput(): Promise<string> {
+    return await this.lastUpdateDateInput.getAttribute('value');
   }
 
-  async setAlarmInput(alarm: string): Promise<void> {
-    await this.alarmInput.sendKeys(alarm);
+  async setAlarmDateInput(alarmDate: string): Promise<void> {
+    await this.alarmDateInput.sendKeys(alarmDate);
   }
 
-  async getAlarmInput(): Promise<string> {
-    return await this.alarmInput.getAttribute('value');
+  async getAlarmDateInput(): Promise<string> {
+    return await this.alarmDateInput.getAttribute('value');
   }
 
   async setStatusSelect(status: string): Promise<void> {

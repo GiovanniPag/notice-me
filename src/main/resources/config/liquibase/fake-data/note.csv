@@ -1,4 +1,4 @@
-id;title;content;date;alarm;status;owner_id
+id;title;content;last_update_date;alarm_date;status;owner_id
 1;Produttività Rial;../fake-data/blob/hipster.txt;2021-03-24T19:12:46;2021-03-25T03:55:36;NORMAL;1
 2;orange auxiliary reboot;../fake-data/blob/hipster.txt;2021-03-25T11:16:27;2021-03-24T23:18:27;ALARM;2
 3;Assistant;../fake-data/blob/hipster.txt;2021-03-24T23:47:02;2021-03-25T14:57:04;ALARM;1

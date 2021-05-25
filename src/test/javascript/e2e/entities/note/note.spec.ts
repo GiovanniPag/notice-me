@@ -49,8 +49,8 @@ describe('Note e2e test', () => {
         await promise.all([
             noteUpdatePage.setTitleInput('title'),
             noteUpdatePage.setContentInput('content'),
-            noteUpdatePage.setDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM'),
-            noteUpdatePage.setAlarmInput('01/01/2001' + protractor.Key.TAB + '02:30AM'),
+            noteUpdatePage.setLastUpdateDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM'),
+            noteUpdatePage.setAlarmDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM'),
             noteUpdatePage.statusSelectLastOption(),
             noteUpdatePage.ownerSelectLastOption(),
             // noteUpdatePage.tagSelectLastOption(),
@@ -59,8 +59,8 @@ describe('Note e2e test', () => {
 
         expect(await noteUpdatePage.getTitleInput()).to.eq('title', 'Expected Title value to be equals to title');
         expect(await noteUpdatePage.getContentInput()).to.eq('content', 'Expected Content value to be equals to content');
-        expect(await noteUpdatePage.getDateInput()).to.contain('2001-01-01T02:30', 'Expected date value to be equals to 2000-12-31');
-        expect(await noteUpdatePage.getAlarmInput()).to.contain('2001-01-01T02:30', 'Expected alarm value to be equals to 2000-12-31');
+        expect(await noteUpdatePage.getLastUpdateDateInput()).to.contain('2001-01-01T02:30', 'Expected lastUpdateDate value to be equals to 2000-12-31');
+        expect(await noteUpdatePage.getAlarmDateInput()).to.contain('2001-01-01T02:30', 'Expected alarmDate value to be equals to 2000-12-31');
 
         await noteUpdatePage.save();
         expect(await noteUpdatePage.getSaveButton().isPresent(), 'Expected save button disappear').to.be.false;

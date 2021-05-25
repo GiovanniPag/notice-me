@@ -3,23 +3,20 @@
   "fields": [
     {
       "fieldName": "title",
-      "fieldType": "String",
-      "fieldValidateRules": ["required", "minlength"],
-      "fieldValidateRulesMinlength": "1"
+      "fieldType": "String"
     },
     {
       "fieldName": "content",
       "fieldType": "byte[]",
-      "fieldTypeBlobContent": "text",
-      "fieldValidateRules": ["required"]
+      "fieldTypeBlobContent": "text"
     },
     {
-      "fieldName": "date",
+      "fieldName": "lastUpdateDate",
       "fieldType": "Instant",
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "alarm",
+      "fieldName": "alarmDate",
       "fieldType": "Instant"
     },
     {

@@ -15,15 +15,15 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="title" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="true" />
             </column>
             <column name="content" type="${clobType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="last_update_date" type="${datetimeType}">
                 <constraints nullable="false" />
             </column>
-            <column name="date" type="${datetimeType}">
-                <constraints nullable="false" />
-            </column>
-            <column name="alarm" type="${datetimeType}">
+            <column name="alarm_date" type="${datetimeType}">
                 <constraints nullable="true" />
             </column>
             <column name="status" type="varchar(255)">
@@ -34,8 +34,8 @@
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
-        <dropDefaultValue tableName="note" columnName="date" columnDataType="${datetimeType}"/>
-        <dropDefaultValue tableName="note" columnName="alarm" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="note" columnName="last_update_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="note" columnName="alarm_date" columnDataType="${datetimeType}"/>
     </changeSet>
 
     <changeSet id="20210325183300-1-relations" author="jhipster">
@@ -81,8 +81,8 @@
             <column name="id" type="numeric"/>
             <column name="title" type="string"/>
             <column name="content" type="clob"/>
-            <column name="date" type="${datetimeType}"/>
-            <column name="alarm" type="${datetimeType}"/>
+            <column name="last_update_date" type="${datetimeType}"/>
+            <column name="alarm_date" type="${datetimeType}"/>
             <column name="status" type="string"/>
             <column name="owner_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->

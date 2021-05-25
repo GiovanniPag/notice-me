@@ -38,6 +38,7 @@
     "enableTranslation": true,
     "nativeLanguage": "it",
     "languages": ["it", "en"],
-    "blueprints": []
+    "blueprints": [],
+    "entities": ["Note", "Tag", "Attachment"]
   }
 }
