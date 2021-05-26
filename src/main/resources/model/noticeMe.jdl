@@ -11,10 +11,10 @@ entity Tag {
 }
 
 entity Note {
-  title String required minlength(1)
-  content TextBlob required
-  date Instant required
-  alarm Instant
+  title String
+  content TextBlob
+  lastUpdateDate Instant required
+  alarmDate Instant
   status NoteStatus required
 }
 
