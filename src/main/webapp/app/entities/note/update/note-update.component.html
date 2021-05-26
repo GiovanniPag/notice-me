@@ -80,9 +80,9 @@
           <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
             <option [ngValue]="null">{{ 'noticeMeApp.NoteStatus.null' | translate }}</option>
             <option value="NORMAL">{{ 'noticeMeApp.NoteStatus.NORMAL' | translate }}</option>
-            <option value="ALARM">{{ 'noticeMeApp.NoteStatus.ALARM' | translate }}</option>
             <option value="ARCHIVED">{{ 'noticeMeApp.NoteStatus.ARCHIVED' | translate }}</option>
             <option value="DELETED">{{ 'noticeMeApp.NoteStatus.DELETED' | translate }}</option>
+            <option value="PINNED">{{ 'noticeMeApp.NoteStatus.PINNED' | translate }}</option>
           </select>
           <div *ngIf="editForm.get('status')!.invalid && (editForm.get('status')!.dirty || editForm.get('status')!.touched)">
             <small class="form-text text-danger" *ngIf="editForm.get('status')?.errors?.required" jhiTranslate="entity.validation.required">

@@ -22,7 +22,7 @@
     {
       "fieldName": "status",
       "fieldType": "NoteStatus",
-      "fieldValues": "NORMAL,ALARM,ARCHIVED,DELETED",
+      "fieldValues": "NORMAL,ARCHIVED,DELETED,PINNED",
       "fieldValidateRules": ["required"]
     }
   ],

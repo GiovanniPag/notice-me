@@ -5,7 +5,7 @@ package com.mycompany.noticeme.domain.enumeration;
  */
 public enum NoteStatus {
     NORMAL,
-    ALARM,
     ARCHIVED,
     DELETED,
+    PINNED,
 }
