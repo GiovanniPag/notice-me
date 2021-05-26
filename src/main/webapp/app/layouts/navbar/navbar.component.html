@@ -8,6 +8,8 @@
     aria-controls="sidebarResponsive"
     aria-label="Toggle navigation"
     (click)="toggleSidebar()"
+    ngbTooltip="{{ 'global.menu.sidebar.title' | translate }}"
+    placement="bottom-left"
   >
     <fa-icon icon="bars"></fa-icon>
   </a>

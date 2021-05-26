@@ -1,6 +1,15 @@
 {
   "noticeMeApp": {
     "note": {
+      "toolbar": {
+        "archive": "Archive",
+        "delete": "Delete",
+        "alarm": "Add alarm",
+        "alarmdate": "Alarm Date",
+        "tags": "Add tag",
+        "collaborator": "Add collaborator",
+        "attachment": "Add attachment"
+      },
       "home": {
         "title": "Notes",
         "refreshListLabel": "Refresh list",

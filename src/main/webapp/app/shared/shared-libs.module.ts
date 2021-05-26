@@ -6,6 +6,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
 import { MuuriModule } from 'muuri-angular';
+import { EllipsisModule } from 'ngx-ellipsis';
 import { AngularResizedEventModule } from 'angular-resize-event';
 
 @NgModule({
@@ -19,6 +20,7 @@ import { AngularResizedEventModule } from 'angular-resize-event';
     ReactiveFormsModule,
     TranslateModule,
     AngularResizedEventModule,
+    EllipsisModule,
   ],
 })
 export class SharedLibsModule {}

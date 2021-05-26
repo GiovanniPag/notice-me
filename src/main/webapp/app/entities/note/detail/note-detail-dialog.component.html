@@ -1,11 +1,8 @@
-<form *ngIf="note" name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-  <div class="form-group" [hidden]="true">
-    <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-  </div>
-
-  <div class="modal-body">
-    <jhi-alert-error></jhi-alert-error>
-
+<form *ngIf="note" class="scrollable-modal" name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+  <div class="modal-header">
+    <div class="form-group" [hidden]="true">
+      <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+    </div>
     <div class="form-group">
       <input
         type="text"
@@ -15,52 +12,52 @@
         id="field_title"
         data-cy="title"
         formControlName="title"
+        autocomplete="off"
       />
-      <div *ngIf="editForm.get('title')!.invalid && (editForm.get('title')!.dirty || editForm.get('title')!.touched)">
-        <small class="form-text text-danger" *ngIf="editForm.get('title')?.errors?.required" jhiTranslate="entity.validation.required">
-          This field is required.
-        </small>
-        <small
-          class="form-text text-danger"
-          *ngIf="editForm.get('title')?.errors?.minlength"
-          jhiTranslate="entity.validation.minlength"
-          [translateValues]="{ min: 1 }"
-        >
-          This field is required to be at least 1 characters.
-        </small>
-      </div>
     </div>
+  </div>
+  <div class="modal-body">
+    <jhi-alert-error></jhi-alert-error>
 
     <div class="form-group">
-      <label class="form-control-label" jhiTranslate="noticeMeApp.note.content" for="field_content">Content</label>
-      <textarea class="form-control" name="content" id="field_content" data-cy="content" formControlName="content"></textarea>
-      <div *ngIf="editForm.get('content')!.invalid && (editForm.get('content')!.dirty || editForm.get('content')!.touched)">
-        <small class="form-text text-danger" *ngIf="editForm.get('content')?.errors?.required" jhiTranslate="entity.validation.required">
-          This field is required.
-        </small>
-      </div>
+      <textarea
+        class="form-control"
+        placeholder="{{ 'noticeMeApp.note.content' | translate }}"
+        name="content"
+        id="field_content"
+        data-cy="content"
+        formControlName="content"
+      ></textarea>
     </div>
 
     <div class="form-group">
       <label class="form-control-label" jhiTranslate="noticeMeApp.note.date" for="field_date">Date</label>
       <div class="d-flex">
         <input
-          id="field_date"
-          data-cy="date"
+          id="field_lastUpdateDate"
+          data-cy="lastUpdateDate"
           type="datetime-local"
           class="form-control"
-          name="date"
-          formControlName="date"
+          name="lastUpdateDate"
+          formControlName="lastUpdateDate"
           placeholder="YYYY-MM-DD HH:mm"
         />
       </div>
-      <div *ngIf="editForm.get('date')!.invalid && (editForm.get('date')!.dirty || editForm.get('date')!.touched)">
-        <small class="form-text text-danger" *ngIf="editForm.get('date')?.errors?.required" jhiTranslate="entity.validation.required">
+      <div
+        *ngIf="
+          editForm.get('lastUpdateDate')!.invalid && (editForm.get('lastUpdateDate')!.dirty || editForm.get('lastUpdateDate')!.touched)
+        "
+      >
+        <small
+          class="form-text text-danger"
+          *ngIf="editForm.get('lastUpdateDate')?.errors?.required"
+          jhiTranslate="entity.validation.required"
+        >
           This field is required.
         </small>
         <small
           class="form-text text-danger"
-          [hidden]="!editForm.get('date')?.errors?.ZonedDateTimelocal"
+          [hidden]="!editForm.get('lastUpdateDate')?.errors?.ZonedDateTimelocal"
           jhiTranslate="entity.validation.ZonedDateTimelocal"
         >
           This field should be a date and time.
@@ -69,26 +66,10 @@
     </div>
 
     <div class="form-group">
-      <label class="form-control-label" jhiTranslate="noticeMeApp.note.alarm" for="field_alarm">Alarm</label>
-      <div class="d-flex">
-        <input
-          id="field_alarm"
-          data-cy="alarm"
-          type="datetime-local"
-          class="form-control"
-          name="alarm"
-          formControlName="alarm"
-          placeholder="YYYY-MM-DD HH:mm"
-        />
-      </div>
-    </div>
-
-    <div class="form-group">
       <label class="form-control-label" jhiTranslate="noticeMeApp.note.status" for="field_status">Status</label>
       <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
         <option [ngValue]="null">{{ 'noticeMeApp.NoteStatus.null' | translate }}</option>
         <option value="NORMAL">{{ 'noticeMeApp.NoteStatus.NORMAL' | translate }}</option>
-        <option value="ALARM">{{ 'noticeMeApp.NoteStatus.ALARM' | translate }}</option>
         <option value="ARCHIVED">{{ 'noticeMeApp.NoteStatus.ARCHIVED' | translate }}</option>
         <option value="DELETED">{{ 'noticeMeApp.NoteStatus.DELETED' | translate }}</option>
       </select>
@@ -147,87 +128,138 @@
         </option>
       </select>
     </div>
+
+    <dl class="row-md jh-entity-details">
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.title">Title</span>
+      </dt>
+      <dd>
+        <span>{{ note.title }}</span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.content">Content</span>
+      </dt>
+      <dd>
+        <span>{{ note.content }}</span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.date">Date</span>
+      </dt>
+      <dd>
+        <span>{{ note.lastUpdateDate | formatMediumDatetime }}</span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.alarm">Alarm</span>
+      </dt>
+      <dd>
+        <span>{{ note.alarmDate | formatMediumDatetime }}</span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.status">Status</span>
+      </dt>
+      <dd>
+        <span jhiTranslate="{{ 'noticeMeApp.NoteStatus.' + note.status }}">{{ note.status }}</span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.owner">Owner</span>
+      </dt>
+      <dd>
+        <span>{{ note.owner?.id }}</span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.tag">Tag</span>
+      </dt>
+      <dd>
+        <span *ngFor="let tag of note.tags; let last = last">
+          <a [routerLink]="['/tag', tag?.id, 'view']">{{ tag.tagName }}</a>
+          {{ last ? '' : ', ' }}
+        </span>
+      </dd>
+      <dt>
+        <span jhiTranslate="noticeMeApp.note.collaborator">Collaborator</span>
+      </dt>
+      <dd>
+        <span *ngFor="let collaborator of note.collaborators; let last = last"> {{ collaborator.id }}{{ last ? '' : ', ' }} </span>
+      </dd>
+    </dl>
   </div>
 
-  <dl class="row-md jh-entity-details">
-    <dt>
-      <span jhiTranslate="noticeMeApp.note.title">Title</span>
-    </dt>
-    <dd>
-      <span>{{ note.title }}</span>
-    </dd>
-    <dt>
-      <span jhiTranslate="noticeMeApp.note.content">Content</span>
-    </dt>
-    <dd>
-      <span>{{ note.content }}</span>
-    </dd>
-    <dt>
-      <span jhiTranslate="noticeMeApp.note.date">Date</span>
-    </dt>
-    <dd>
-      <span>{{ note.lastUpdateDate | formatMediumDatetime }}</span>
-    </dd>
-    <dt>
-      <span jhiTranslate="noticeMeApp.note.alarm">Alarm</span>
-    </dt>
-    <dd>
-      <span>{{ note.alarmDate | formatMediumDatetime }}</span>
-    </dd>
-    <dt>
-      <span jhiTranslate="noticeMeApp.note.status">Status</span>
-    </dt>
-    <dd>
-      <span jhiTranslate="{{ 'noticeMeApp.NoteStatus.' + note.status }}">{{ note.status }}</span>
-    </dd>
-    <dt>
-      <span jhiTranslate="noticeMeApp.note.owner">Owner</span>
-    </dt>
-    <dd>
-      <span>{{ note.owner?.id }}</span>
-    </dd>
-    <dt>
-      <span jhiTranslate="noticeMeApp.note.tag">Tag</span>
-    </dt>
-    <dd>
-      <span *ngFor="let tag of note.tags; let last = last">
-        <a [routerLink]="['/tag', tag?.id, 'view']">{{ tag.tagName }}</a>
-        {{ last ? '' : ', ' }}
-      </span>
-    </dd>
-    <dt>
-      <span jhiTranslate="noticeMeApp.note.collaborator">Collaborator</span>
-    </dt>
-    <dd>
-      <span *ngFor="let collaborator of note.collaborators; let last = last"> {{ collaborator.id }}{{ last ? '' : ', ' }} </span>
-    </dd>
-  </dl>
   <div class="modal-footer">
-    <button
-      type="button"
-      id="cancel-save"
-      data-dismiss="modal"
-      aria-hidden="true"
-      class="btn btn-primary"
-      data-dismiss="modal"
-      (click)="close()"
-      data-cy="entityDetailsCloseButton"
-    >
-      <fa-icon icon="arrow-left"></fa-icon>
-      &nbsp;
-      <span jhiTranslate="entity.action.close">Close</span>
-    </button>
-
-    <button
-      type="submit"
-      id="save-entity"
-      data-cy="entityCreateSaveButton"
-      [disabled]="editForm.invalid || isSaving"
-      class="btn btn-primary"
-    >
-      <fa-icon icon="save"></fa-icon>
-      &nbsp;
-      <span jhiTranslate="entity.action.save">Save</span>
-    </button>
+    <div class="btn-toolbar w-100 justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-group" role="group" aria-label="action group">
+        <button
+          type="button"
+          class="btn btn-light"
+          ngbTooltip="{{ 'noticeMeApp.note.toolbar.alarm' | translate }}"
+          placement="bottom"
+          container="body"
+          [ngbPopover]="popAlarmDate"
+          placement="top"
+          [autoClose]="'outside'"
+          [popoverTitle]="popAlarmDateTitle"
+        >
+          <fa-icon [icon]="['far', 'bell']"></fa-icon>
+          <ng-template #popAlarmDate>
+            <div class="d-flex">
+              <input
+                id="field_alarmDate"
+                data-cy="alarmDate"
+                type="datetime-local"
+                class="form-control"
+                name="alarmDate"
+                formControlName="alarmDate"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+            </div>
+          </ng-template>
+          <ng-template #popAlarmDateTitle>
+            <label class="h6 mb-0 w-100 text-center" jhiTranslate="noticeMeApp.note.toolbar.alarmdate" for="field_alarmDate"
+              >Alarm Date</label
+            >
+          </ng-template>
+        </button>
+        <button
+          type="button"
+          class="btn btn-light"
+          ngbTooltip="{{ 'noticeMeApp.note.toolbar.collaborator' | translate }}"
+          placement="bottom"
+          container="body"
+        >
+          <fa-icon icon="user-plus"></fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-light"
+          ngbTooltip="{{ 'noticeMeApp.note.toolbar.attachment' | translate }}"
+          placement="bottom"
+          container="body"
+        >
+          <fa-icon icon="link"></fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-light"
+          ngbTooltip="{{ 'noticeMeApp.note.toolbar.archive' | translate }}"
+          placement="bottom"
+          container="body"
+        >
+          <fa-icon [icon]="['far', 'file-archive']"></fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-light"
+          ngbTooltip="{{ 'noticeMeApp.note.toolbar.delete' | translate }}"
+          placement="bottom"
+          container="body"
+        >
+          <fa-icon [icon]="['far', 'trash-alt']"></fa-icon>
+        </button>
+      </div>
+      <div class="btn-group" role="group" aria-label="save group">
+        <button type="submit" id="save-entity" data-cy="entitySaveButton" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+          <span jhiTranslate="entity.action.close">Close</span>
+        </button>
+      </div>
+    </div>
   </div>
 </form>

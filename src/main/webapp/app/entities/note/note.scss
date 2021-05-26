@@ -6,6 +6,10 @@
 Note
 ========================================================================== */
 
+.summary-text {
+  max-height: 33vh;
+}
+
 .muuri-grid {
   position: relative;
 }
@@ -47,8 +51,32 @@ Note
   height: 100%;
 }
 
+.scrollable-modal {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.note-detail-dialog {
+  .modal-content {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.75rem;
+  }
+  .modal-header {
+    all: unset;
+  }
+  .modal-footer {
+    all: unset;
+    display: flex;
+  }
+  #field_title {
+    font-size: 1.5rem;
+    font-weight: 400;
+  }
+}
+
 @media (min-width: 576px) {
-  .note-detail-dialog .model-dialog {
+  .note-detail-dialog .modal-dialog {
     max-width: 600px;
   }
 }

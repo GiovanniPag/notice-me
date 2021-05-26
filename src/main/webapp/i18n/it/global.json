@@ -16,6 +16,7 @@
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "sidebar": {
+        "title": "Menù principale",
         "tags": "Etichette",
         "note": "Note",
         "archive": "Archivio",

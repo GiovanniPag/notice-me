@@ -1,6 +1,15 @@
 {
   "noticeMeApp": {
     "note": {
+      "toolbar": {
+        "archive": "Archivia",
+        "delete": "Elimina",
+        "alarm": "Aggiungi allarme",
+        "alarmdate": "Data allarme",
+        "tags": "Aggiungi etichetta",
+        "collaborator": "Aggiungi collaboratore",
+        "attachment": "Aggiungi allegato"
+      },
       "home": {
         "title": "Note",
         "refreshListLabel": "Aggiorna Lista",

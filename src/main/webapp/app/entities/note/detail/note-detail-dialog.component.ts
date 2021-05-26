@@ -26,17 +26,16 @@ import * as dayjs from 'dayjs';
 })
 export class NoteDetailDialogComponent implements OnInit {
   note?: INote;
-
   isSaving = false;
   usersSharedCollection: IUser[] = [];
   tagsSharedCollection: ITag[] = [];
 
   editForm = this.fb.group({
     id: [],
-    title: [null, [Validators.required, Validators.minLength(1)]],
-    content: [null, [Validators.required]],
-    date: [null, [Validators.required]],
-    alarm: [],
+    title: [null],
+    content: [null],
+    lastUpdateDate: [null, [Validators.required]],
+    alarmDate: [],
     status: [null, [Validators.required]],
     owner: [null, Validators.required],
     tags: [],
@@ -56,17 +55,8 @@ export class NoteDetailDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ note }) => {
-      if (note.id === undefined) {
-        const today = dayjs().startOf('day');
-        note.date = today;
-        note.alarm = today;
-      }
-
-      this.updateForm(note);
-
-      this.loadRelationshipsOptions();
-    });
+    this.updateForm(this.note!);
+    this.loadRelationshipsOptions();
   }
 
   save(): void {
@@ -154,19 +144,15 @@ export class NoteDetailDialogComponent implements OnInit {
       id: note.id,
       title: note.title,
       content: note.content,
-      date: note.lastUpdateDate ? note.lastUpdateDate.format(DATE_TIME_FORMAT) : null,
-      alarm: note.alarmDate ? note.alarmDate.format(DATE_TIME_FORMAT) : null,
+      lastUpdateDate: note.lastUpdateDate ? note.lastUpdateDate.format(DATE_TIME_FORMAT) : null,
+      alarmDate: note.alarmDate ? note.alarmDate.format(DATE_TIME_FORMAT) : null,
       status: note.status,
       owner: note.owner,
       tags: note.tags,
       collaborators: note.collaborators,
     });
 
-    this.usersSharedCollection = this.userService.addUserToCollectionIfMissing(
-      this.usersSharedCollection,
-      note.owner,
-      ...(note.collaborators ?? [])
-    );
+    this.usersSharedCollection = this.userService.addUserToCollectionIfMissing(this.usersSharedCollection, ...(note.collaborators ?? []));
     this.tagsSharedCollection = this.tagService.addTagToCollectionIfMissing(this.tagsSharedCollection, ...(note.tags ?? []));
   }
 
@@ -175,13 +161,7 @@ export class NoteDetailDialogComponent implements OnInit {
       .query()
       .pipe(map((res: HttpResponse<IUser[]>) => res.body ?? []))
       .pipe(
-        map((users: IUser[]) =>
-          this.userService.addUserToCollectionIfMissing(
-            users,
-            this.editForm.get('owner')!.value,
-            ...(this.editForm.get('collaborators')!.value ?? [])
-          )
-        )
+        map((users: IUser[]) => this.userService.addUserToCollectionIfMissing(users, ...(this.editForm.get('collaborators')!.value ?? [])))
       )
       .subscribe((users: IUser[]) => (this.usersSharedCollection = users));
 
