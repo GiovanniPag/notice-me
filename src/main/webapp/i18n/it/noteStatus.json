@@ -3,9 +3,9 @@
     "NoteStatus": {
       "null": "",
       "NORMAL": "NORMAL",
-      "ALARM": "ALARM",
       "ARCHIVED": "ARCHIVED",
-      "DELETED": "DELETED"
+      "DELETED": "DELETED",
+      "PINNED": "PINNED"
     }
   }
 }

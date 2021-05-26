@@ -1,11 +1,11 @@
 id;title;content;last_update_date;alarm_date;status;owner_id
 1;Produttività Rial;../fake-data/blob/hipster.txt;2021-03-24T19:12:46;2021-03-25T03:55:36;NORMAL;1
-2;orange auxiliary reboot;../fake-data/blob/hipster.txt;2021-03-25T11:16:27;2021-03-24T23:18:27;ALARM;2
-3;Assistant;../fake-data/blob/hipster.txt;2021-03-24T23:47:02;2021-03-25T14:57:04;ALARM;1
+2;orange auxiliary reboot;../fake-data/blob/hipster.txt;2021-03-25T11:16:27;2021-03-24T23:18:27;ARCHIVED;2
+3;Assistant;../fake-data/blob/hipster.txt;2021-03-24T23:47:02;2021-03-25T14:57:04;ARCHIVED;1
 4;Savings transizionali;../fake-data/blob/hipster.txt;2021-03-25T08:05:24;2021-03-25T07:04:14;NORMAL;2
-5;Table Handmade Strategist;../fake-data/blob/hipster.txt;2021-03-25T09:39:03;2021-03-25T05:12:23;DELETED;1
-6;Via;../fake-data/blob/hipster.txt;2021-03-25T10:00:58;2021-03-25T12:17:42;ALARM;1
-7;euristica sinergica;../fake-data/blob/hipster.txt;2021-03-25T17:16:41;2021-03-24T20:35:17;DELETED;1
+5;Table Handmade Strategist;../fake-data/blob/hipster.txt;2021-03-25T09:39:03;2021-03-25T05:12:23;PINNED;1
+6;Via;../fake-data/blob/hipster.txt;2021-03-25T10:00:58;2021-03-25T12:17:42;ARCHIVED;1
+7;euristica sinergica;../fake-data/blob/hipster.txt;2021-03-25T17:16:41;2021-03-24T20:35:17;PINNED;1
 8;e-services Chicken;../fake-data/blob/hipster.txt;2021-03-25T12:30:47;2021-03-25T11:32:01;NORMAL;2
-9;Metal Dollar Shirt;../fake-data/blob/hipster.txt;2021-03-25T14:23:23;2021-03-25T16:45:46;ARCHIVED;1
-10;invoice;../fake-data/blob/hipster.txt;2021-03-25T08:19:52;2021-03-24T19:16:17;ALARM;1
+9;Metal Dollar Shirt;../fake-data/blob/hipster.txt;2021-03-25T14:23:23;2021-03-25T16:45:46;DELETED;1
+10;invoice;../fake-data/blob/hipster.txt;2021-03-25T08:19:52;2021-03-24T19:16:17;ARCHIVED;1

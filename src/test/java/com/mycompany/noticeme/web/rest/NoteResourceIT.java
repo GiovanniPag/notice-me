@@ -58,7 +58,7 @@ class NoteResourceIT {
     private static final Instant UPDATED_ALARM_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
     private static final NoteStatus DEFAULT_STATUS = NoteStatus.NORMAL;
-    private static final NoteStatus UPDATED_STATUS = NoteStatus.ALARM;
+    private static final NoteStatus UPDATED_STATUS = NoteStatus.ARCHIVED;
 
     private static final String ENTITY_API_URL = "/api/notes";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
