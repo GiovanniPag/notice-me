@@ -12,6 +12,7 @@ import { DataUtils } from 'app/core/util/data-util.service';
 import { ParseLinks } from 'app/core/util/parse-links.service';
 import { GridOptions } from 'muuri';
 import Grid from 'muuri';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'jhi-note',
@@ -55,6 +56,7 @@ export class NoteComponent implements OnInit {
   grid: Grid | undefined;
 
   constructor(
+    private route: ActivatedRoute,
     protected noteService: NoteService,
     protected dataUtils: DataUtils,
     protected modalService: NgbModal,
@@ -98,12 +100,13 @@ export class NoteComponent implements OnInit {
 
   loadAll(): void {
     this.isLoading = true;
-
     this.noteService
       .query({
         page: this.page,
         size: this.itemsPerPage,
         sort: this.sort(),
+        hasAlarm: this.route.snapshot.queryParams['hasAlarm'] === 'true',
+        status: this.route.snapshot.queryParams['status'],
       })
       .subscribe(
         (res: HttpResponse<INote[]>) => {
@@ -128,7 +131,9 @@ export class NoteComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadAll();
+    this.route.queryParams.subscribe(() => {
+      this.reset();
+    });
   }
 
   trackId(index: number, item: INote): number {

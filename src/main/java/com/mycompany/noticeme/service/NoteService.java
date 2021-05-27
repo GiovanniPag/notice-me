@@ -1,11 +1,15 @@
 package com.mycompany.noticeme.service;
 
 import com.mycompany.noticeme.domain.Note;
+import com.mycompany.noticeme.domain.enumeration.NoteStatus;
 import com.mycompany.noticeme.repository.NoteRepository;
 import com.mycompany.noticeme.security.AuthoritiesConstants;
 import com.mycompany.noticeme.security.SecurityUtils;
 import com.mycompany.noticeme.service.dto.NoteDTO;
 import com.mycompany.noticeme.service.mapper.NoteMapper;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,11 +79,92 @@ public class NoteService {
     @Transactional(readOnly = true)
     public Page<NoteDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Notes");
+        Page<NoteDTO> page;
         if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            return noteRepository.findAll(pageable).map(noteMapper::toDto);
+            page = noteRepository.findAll(pageable).map(noteMapper::toDto);
         } else {
-            return noteRepository.findAllByOwnerLogin(SecurityUtils.getCurrentUserLogin().get(), pageable).map(noteMapper::toDto);
+            page = noteRepository.findAllByOwnerLogin(SecurityUtils.getCurrentUserLogin().get(), pageable).map(noteMapper::toDto);
         }
+        return page;
+    }
+
+    /**
+     * Get all the notes.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<NoteDTO> findAllByStatus(Pageable pageable, String status, boolean hasAlarm) {
+        log.debug("Request to get all Notes");
+
+        Page<NoteDTO> page;
+        if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
+            if (hasAlarm) {
+                page =
+                    noteRepository.findAllByStatusInAndAlarmDateIsNotNull(this.noteStatusFilter(status), pageable).map(noteMapper::toDto);
+            } else {
+                page = noteRepository.findAllByStatusIn(this.noteStatusFilter(status), pageable).map(noteMapper::toDto);
+            }
+        } else {
+            if (hasAlarm) {
+                page =
+                    noteRepository
+                        .findAllByOwnerLoginAndStatusInAndAlarmDateIsNotNull(
+                            SecurityUtils.getCurrentUserLogin().get(),
+                            this.noteStatusFilter(status),
+                            pageable
+                        )
+                        .map(noteMapper::toDto);
+            } else {
+                page =
+                    noteRepository
+                        .findAllByOwnerLoginAndStatusIn(SecurityUtils.getCurrentUserLogin().get(), this.noteStatusFilter(status), pageable)
+                        .map(noteMapper::toDto);
+            }
+        }
+        return page;
+    }
+
+    /**
+     * Get all the notes with eager load of many-to-many relationships.
+     *
+     * @return the list of entities.
+     */
+    public Page<NoteDTO> findAllWithEagerRelationshipsByStatus(Pageable pageable, String status, boolean hasAlarm) {
+        Page<NoteDTO> page;
+        if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
+            if (hasAlarm) {
+                page =
+                    noteRepository
+                        .findAllWithEagerRelationshipsByStatusInAndAlarmDateIsNotNull(this.noteStatusFilter(status), pageable)
+                        .map(noteMapper::toDto);
+            } else {
+                page =
+                    noteRepository.findAllWithEagerRelationshipsByStatusIn(this.noteStatusFilter(status), pageable).map(noteMapper::toDto);
+            }
+        } else {
+            if (hasAlarm) {
+                page =
+                    noteRepository
+                        .findAllWithEagerRelationshipsByOwnerLoginAndStatusInAndAlarmDateIsNotNull(
+                            SecurityUtils.getCurrentUserLogin().get(),
+                            this.noteStatusFilter(status),
+                            pageable
+                        )
+                        .map(noteMapper::toDto);
+            } else {
+                page =
+                    noteRepository
+                        .findAllWithEagerRelationshipsByOwnerLoginAndStatusIn(
+                            SecurityUtils.getCurrentUserLogin().get(),
+                            this.noteStatusFilter(status),
+                            pageable
+                        )
+                        .map(noteMapper::toDto);
+            }
+        }
+        return page;
     }
 
     /**
@@ -88,7 +173,16 @@ public class NoteService {
      * @return the list of entities.
      */
     public Page<NoteDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return noteRepository.findAllWithEagerRelationships(pageable).map(noteMapper::toDto);
+        Page<NoteDTO> page;
+        if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
+            page = noteRepository.findAllWithEagerRelationships(pageable).map(noteMapper::toDto);
+        } else {
+            page =
+                noteRepository
+                    .findAllWithEagerRelationshipsByOwnerLogin(SecurityUtils.getCurrentUserLogin().get(), pageable)
+                    .map(noteMapper::toDto);
+        }
+        return page;
     }
 
     /**
@@ -117,5 +211,22 @@ public class NoteService {
     public void delete(Long id) {
         log.debug("Request to delete Note : {}", id);
         noteRepository.deleteById(id);
+    }
+
+    private Collection<NoteStatus> noteStatusFilter(String status) {
+        Collection<NoteStatus> statusList;
+        switch (status) {
+            case "archived":
+                statusList = List.of(NoteStatus.ARCHIVED);
+                break;
+            case "deleted":
+                statusList = List.of(NoteStatus.DELETED);
+                break;
+            case "undefined":
+            default:
+                statusList = List.of(NoteStatus.NORMAL, NoteStatus.PINNED);
+                break;
+        }
+        return statusList;
     }
 }

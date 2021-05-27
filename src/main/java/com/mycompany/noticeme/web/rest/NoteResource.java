@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -148,14 +147,20 @@ public class NoteResource {
     @GetMapping("/notes")
     public ResponseEntity<List<NoteDTO>> getAllNotes(
         Pageable pageable,
-        @RequestParam(required = false, defaultValue = "false") boolean eagerload
+        @RequestParam(required = false, defaultValue = "false") boolean eagerload,
+        @RequestParam(required = false, defaultValue = "false") boolean hasAlarm,
+        @RequestParam(required = false) String status
     ) {
-        log.debug("REST request to get a page of Notes");
+        log.debug(
+            "REST request to get a page of Notes" +
+            ("undefined".equals(status) ? "" : " with status: " + status) +
+            (hasAlarm ? " with alarm" : "")
+        );
         Page<NoteDTO> page;
         if (eagerload) {
-            page = noteService.findAllWithEagerRelationships(pageable);
+            page = noteService.findAllWithEagerRelationshipsByStatus(pageable, status, hasAlarm);
         } else {
-            page = noteService.findAll(pageable);
+            page = noteService.findAllByStatus(pageable, status, hasAlarm);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
