@@ -41,7 +41,14 @@ import {
   // jhipster-needle-add-icon-import
 } from '@fortawesome/free-solid-svg-icons';
 
-import { faStickyNote, faBell as farBell, faTrashAlt as farTrashAlt, faFileArchive, faBookmark } from '@fortawesome/free-regular-svg-icons';
+import {
+  faStickyNote,
+  faBell as farBell,
+  faTrashAlt as farTrashAlt,
+  faFileArchive,
+  faBookmark,
+  faShareSquare,
+} from '@fortawesome/free-regular-svg-icons';
 
 export const fontAwesomeIcons = [
   faArrowLeft,
@@ -89,4 +96,5 @@ export const fontAwesomeIcons = [
   faFileArchive,
   faBookmark,
   faLink,
+  faShareSquare,
 ];

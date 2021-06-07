@@ -21,7 +21,8 @@
         "note": "Note",
         "archive": "Archivio",
         "trash": "Cestino",
-        "alarm": "Promemoria"
+        "alarm": "Promemoria",
+        "shared": "Condivise con me"
       },
       "account": {
         "main": "Utente",

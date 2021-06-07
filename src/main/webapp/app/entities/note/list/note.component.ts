@@ -83,8 +83,17 @@ export class NoteComponent implements OnInit {
 
   onClick(event: MouseEvent, note: INote): void {
     if (!this.isDragging && Math.abs(this.mousePosition.x - event.screenX) <= 5 && Math.abs(this.mousePosition.y - event.screenY) <= 5) {
-      const modalRef = this.modalService.open(NoteDetailDialogComponent, { scrollable: true, windowClass: 'note-detail-dialog' });
+      const modalRef = this.modalService.open(NoteDetailDialogComponent, {
+        scrollable: true,
+        windowClass: 'note-detail-dialog',
+        backdrop: 'static',
+      });
       modalRef.componentInstance.note = note;
+      modalRef.closed.subscribe(reason => {
+        if (reason === 'modified') {
+          this.loadOne(note.id!);
+        }
+      });
     }
   }
 
@@ -98,6 +107,19 @@ export class NoteComponent implements OnInit {
     });
   }
 
+  loadOne(id: number): void {
+    this.isLoading = true;
+    this.noteService.find(id).subscribe(
+      (note: HttpResponse<INote>) => {
+        this.isLoading = false;
+        this.updateNote(note.body);
+      },
+      () => {
+        this.isLoading = false;
+      }
+    );
+  }
+
   loadAll(): void {
     this.isLoading = true;
     this.noteService
@@ -107,6 +129,7 @@ export class NoteComponent implements OnInit {
         sort: this.sort(),
         hasAlarm: this.route.snapshot.queryParams['hasAlarm'] === 'true',
         status: this.route.snapshot.queryParams['status'],
+        isCollaborator: this.route.snapshot.queryParams['isCollaborator'] === 'true',
       })
       .subscribe(
         (res: HttpResponse<INote[]>) => {
@@ -173,6 +196,12 @@ export class NoteComponent implements OnInit {
       for (const d of data) {
         this.notes.push(d);
       }
+    }
+  }
+
+  protected updateNote(data: INote | null): void {
+    if (data) {
+      this.notes = this.notes.map(note => (note.id === data.id ? data : note));
     }
   }
 }

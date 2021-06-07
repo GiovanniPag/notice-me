@@ -45,11 +45,11 @@
         muuriGridItem
         *ngFor="let note of notes; trackBy: trackId"
       >
-        <div class="muuri-grid-item-content">
+        <div class="muuri-grid-item-content" (resized)="onResized()">
           <img class="card-img-top" alt="Card image cap" />
           <div class="card-body">
             <h5 class="card-title">{{ note.title }}</h5>
-            <p class="card-text summary-text" ellipsis>{{ note.content }}</p>
+            <p class="card-text summary-text" ellipsis [ellipsis-content]="note.content!"></p>
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@
           <td>{{ note.content }}</td>
           <td>{{ note.lastUpdateDate | formatMediumDatetime }}</td>
           <td>{{ note.alarmDate | formatMediumDatetime }}</td>
-          <td jhiTranslate="{{ 'noticeMeApp.NoteStatus.' + note.status }}">{{ note.status }}</td>
+          <td jhiTranslate="{{ 'noticeMeApp.NoteStatus.' + note.status! }}">{{ note.status }}</td>
           <td>{{ note.owner?.id }}</td>
           <td class="text-right">
             <div class="btn-group">

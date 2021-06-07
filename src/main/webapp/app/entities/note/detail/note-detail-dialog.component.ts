@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
+import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 import { INote, Note } from '../note.model';
 import { ITag } from 'app/entities/tag/tag.model';
@@ -25,19 +26,23 @@ import * as dayjs from 'dayjs';
   encapsulation: ViewEncapsulation.None,
 })
 export class NoteDetailDialogComponent implements OnInit {
+  @ViewChild('noteupdateform') form!: ElementRef;
+  @ViewChild('popoverAlarm') popoverAlarm!: NgbPopover;
+  @ViewChild('popoverAlarm', { static: false }) popover!: ElementRef;
   note?: INote;
   isSaving = false;
   usersSharedCollection: IUser[] = [];
   tagsSharedCollection: ITag[] = [];
+  inside = false;
 
   editForm = this.fb.group({
     id: [],
-    title: [null],
-    content: [null],
-    lastUpdateDate: [null, [Validators.required]],
+    title: [],
+    content: [],
+    lastUpdateDate: [[Validators.required]],
     alarmDate: [],
-    status: [null, [Validators.required]],
-    owner: [null, Validators.required],
+    status: [[Validators.required]],
+    owner: [Validators.required],
     tags: [],
     collaborators: [],
   });
@@ -46,7 +51,6 @@ export class NoteDetailDialogComponent implements OnInit {
     protected dataUtils: DataUtils,
     protected activatedRoute: ActivatedRoute,
     public activeModal: NgbActiveModal,
-
     protected eventManager: EventManager,
     protected noteService: NoteService,
     protected userService: UserService,
@@ -57,6 +61,27 @@ export class NoteDetailDialogComponent implements OnInit {
   ngOnInit(): void {
     this.updateForm(this.note!);
     this.loadRelationshipsOptions();
+  }
+
+  @HostListener('document:click', ['$event'])
+  DocumentClick(event: Event): void {
+    alert(this.popover.nativeElement);
+    if (this.popover.nativeElement?.contains(event.target)) {
+      alert('popper');
+    }
+    if (this.form.nativeElement?.contains(event.target)) {
+      alert('inside');
+    } else {
+      alert('outside');
+    }
+  }
+
+  savePatch(): void {
+    this.isSaving = true;
+    const note = this.createFromForm();
+    if (note.id !== undefined) {
+      this.subscribeToSavePatchResponse(this.noteService.partialUpdate(note));
+    }
   }
 
   save(): void {
@@ -99,8 +124,8 @@ export class NoteDetailDialogComponent implements OnInit {
     return item.id!;
   }
 
-  close(): void {
-    this.activeModal.dismiss();
+  close(result: string): void {
+    this.activeModal.close(result);
   }
 
   byteSize(base64String: string): string {
@@ -121,10 +146,18 @@ export class NoteDetailDialogComponent implements OnInit {
   }
 
   protected onSaveSuccess(): void {
-    this.close();
+    this.close('modified');
   }
 
   protected onSaveError(): void {
+    // Api for inheritance.
+  }
+
+  protected onSavePatchSuccess(): void {
+    // Api for inheritance.
+  }
+
+  protected onSavePatchError(): void {
     // Api for inheritance.
   }
 
@@ -136,6 +169,13 @@ export class NoteDetailDialogComponent implements OnInit {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       () => this.onSaveSuccess(),
       () => this.onSaveError()
+    );
+  }
+
+  protected subscribeToSavePatchResponse(result: Observable<HttpResponse<INote>>): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      () => this.onSavePatchSuccess(),
+      () => this.onSavePatchError()
     );
   }
 

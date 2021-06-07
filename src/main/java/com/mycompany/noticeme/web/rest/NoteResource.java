@@ -51,7 +51,9 @@ public class NoteResource {
      * {@code POST  /notes} : Create a new note.
      *
      * @param noteDTO the noteDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new noteDTO, or with status {@code 400 (Bad Request)} if the note has already an ID.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with
+     *         body the new noteDTO, or with status {@code 400 (Bad Request)} if the
+     *         note has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/notes")
@@ -70,11 +72,13 @@ public class NoteResource {
     /**
      * {@code PUT  /notes/:id} : Updates an existing note.
      *
-     * @param id the id of the noteDTO to save.
+     * @param id      the id of the noteDTO to save.
      * @param noteDTO the noteDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated noteDTO,
-     * or with status {@code 400 (Bad Request)} if the noteDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the noteDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the updated noteDTO, or with status {@code 400 (Bad Request)} if the
+     *         noteDTO is not valid, or with status
+     *         {@code 500 (Internal Server Error)} if the noteDTO couldn't be
+     *         updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/notes/{id}")
@@ -102,17 +106,20 @@ public class NoteResource {
     }
 
     /**
-     * {@code PATCH  /notes/:id} : Partial updates given fields of an existing note, field will ignore if it is null
+     * {@code PATCH  /notes/:id} : Partial updates given fields of an existing note,
+     * field will ignore if it is null
      *
-     * @param id the id of the noteDTO to save.
+     * @param id      the id of the noteDTO to save.
      * @param noteDTO the noteDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated noteDTO,
-     * or with status {@code 400 (Bad Request)} if the noteDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the noteDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the noteDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the updated noteDTO, or with status {@code 400 (Bad Request)} if the
+     *         noteDTO is not valid, or with status {@code 404 (Not Found)} if the
+     *         noteDTO is not found, or with status
+     *         {@code 500 (Internal Server Error)} if the noteDTO couldn't be
+     *         updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/notes/{id}", consumes = "application/merge-patch+json")
+    @PatchMapping(value = "/notes/{id}", consumes = "application/json")
     public ResponseEntity<NoteDTO> partialUpdateNote(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody NoteDTO noteDTO
@@ -140,15 +147,18 @@ public class NoteResource {
     /**
      * {@code GET  /notes} : get all the notes.
      *
-     * @param pageable the pagination information.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of notes in body.
+     * @param pageable  the pagination information.
+     * @param eagerload flag to eager load entities from relationships (This is
+     *                  applicable for many-to-many).
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list
+     *         of notes in body.
      */
     @GetMapping("/notes")
     public ResponseEntity<List<NoteDTO>> getAllNotes(
         Pageable pageable,
         @RequestParam(required = false, defaultValue = "false") boolean eagerload,
         @RequestParam(required = false, defaultValue = "false") boolean hasAlarm,
+        @RequestParam(required = false, defaultValue = "false") boolean isCollaborator,
         @RequestParam(required = false) String status
     ) {
         log.debug(
@@ -157,10 +167,14 @@ public class NoteResource {
             (hasAlarm ? " with alarm" : "")
         );
         Page<NoteDTO> page;
-        if (eagerload) {
-            page = noteService.findAllWithEagerRelationshipsByStatus(pageable, status, hasAlarm);
+        if (isCollaborator) {
+            page = noteService.findAllSharedWithMe(pageable);
         } else {
-            page = noteService.findAllByStatus(pageable, status, hasAlarm);
+            if (eagerload) {
+                page = noteService.findAllWithEagerRelationshipsByStatus(pageable, status, hasAlarm);
+            } else {
+                page = noteService.findAllByStatus(pageable, status, hasAlarm);
+            }
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
@@ -170,7 +184,8 @@ public class NoteResource {
      * {@code GET  /notes/:id} : get the "id" note.
      *
      * @param id the id of the noteDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the noteDTO, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the noteDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/notes/{id}")
     public ResponseEntity<NoteDTO> getNote(@PathVariable Long id) {

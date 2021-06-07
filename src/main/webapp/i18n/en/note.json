@@ -4,11 +4,11 @@
       "toolbar": {
         "archive": "Archive",
         "delete": "Delete",
-        "alarm": "Add alarm",
+        "alarm": "Alarm",
         "alarmdate": "Alarm Date",
-        "tags": "Add tag",
-        "collaborator": "Add collaborator",
-        "attachment": "Add attachment"
+        "tags": "Tag",
+        "collaborator": "Collaborator",
+        "attachment": "Attachment"
       },
       "home": {
         "title": "Notes",

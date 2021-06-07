@@ -1,9 +1,25 @@
-<form *ngIf="note" class="scrollable-modal" name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+<form
+  #noteupdateform
+  *ngIf="note"
+  class="scrollable-modal"
+  name="editForm"
+  role="form"
+  novalidate
+  (ngSubmit)="save()"
+  [formGroup]="editForm"
+>
   <div class="modal-header">
     <div class="form-group" [hidden]="true">
       <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
     </div>
-    <div class="form-group">
+    <div class="form-group" [hidden]="true">
+      <input class="form-control" name="owner" id="field_owner" data-cy="owner" formControlName="owner" [readonly]="true" />
+    </div>
+    <div class="form-group" [hidden]="true">
+      <input class="form-control" name="status" id="field_status" data-cy="status" formControlName="status" [readonly]="true" />
+    </div>
+
+    <div class="form-group mb-0">
       <input
         type="text"
         class="form-control"
@@ -13,6 +29,7 @@
         data-cy="title"
         formControlName="title"
         autocomplete="off"
+        (input)="savePatch()"
       />
     </div>
   </div>
@@ -27,6 +44,8 @@
         id="field_content"
         data-cy="content"
         formControlName="content"
+        (input)="savePatch()"
+        ngbAutofocus
       ></textarea>
     </div>
 
@@ -66,39 +85,6 @@
     </div>
 
     <div class="form-group">
-      <label class="form-control-label" jhiTranslate="noticeMeApp.note.status" for="field_status">Status</label>
-      <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
-        <option [ngValue]="null">{{ 'noticeMeApp.NoteStatus.null' | translate }}</option>
-        <option value="NORMAL">{{ 'noticeMeApp.NoteStatus.NORMAL' | translate }}</option>
-        <option value="ARCHIVED">{{ 'noticeMeApp.NoteStatus.ARCHIVED' | translate }}</option>
-        <option value="DELETED">{{ 'noticeMeApp.NoteStatus.DELETED' | translate }}</option>
-      </select>
-      <div *ngIf="editForm.get('status')!.invalid && (editForm.get('status')!.dirty || editForm.get('status')!.touched)">
-        <small class="form-text text-danger" *ngIf="editForm.get('status')?.errors?.required" jhiTranslate="entity.validation.required">
-          This field is required.
-        </small>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-control-label" jhiTranslate="noticeMeApp.note.owner" for="field_owner">Owner</label>
-      <select class="form-control" id="field_owner" data-cy="owner" name="owner" formControlName="owner">
-        <option *ngIf="!editForm.get('owner')!.value" [ngValue]="null" selected></option>
-        <option
-          [ngValue]="userOption.id === editForm.get('owner')!.value?.id ? editForm.get('owner')!.value : userOption"
-          *ngFor="let userOption of usersSharedCollection; trackBy: trackUserById"
-        >
-          {{ userOption.id }}
-        </option>
-      </select>
-    </div>
-    <div *ngIf="editForm.get(['owner'])!.invalid && (editForm.get(['owner'])!.dirty || editForm.get(['owner'])!.touched)">
-      <small class="form-text text-danger" *ngIf="editForm.get(['owner'])?.errors?.required" jhiTranslate="entity.validation.required">
-        This field is required.
-      </small>
-    </div>
-
-    <div class="form-group">
       <label jhiTranslate="noticeMeApp.note.tag" for="field_tags">Tag</label>
       <select class="form-control" id="field_tags" data-cy="tag" multiple name="tags" formControlName="tags">
         <option
@@ -129,59 +115,27 @@
       </select>
     </div>
 
-    <dl class="row-md jh-entity-details">
-      <dt>
-        <span jhiTranslate="noticeMeApp.note.title">Title</span>
-      </dt>
-      <dd>
-        <span>{{ note.title }}</span>
-      </dd>
-      <dt>
-        <span jhiTranslate="noticeMeApp.note.content">Content</span>
-      </dt>
-      <dd>
-        <span>{{ note.content }}</span>
-      </dd>
+    <div class="form-group" [hidden]="true">
+      <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+    </div>
+
+    <!-- <dl class="row-md jh-entity-details">
       <dt>
         <span jhiTranslate="noticeMeApp.note.date">Date</span>
       </dt>
       <dd>
         <span>{{ note.lastUpdateDate | formatMediumDatetime }}</span>
       </dd>
-      <dt>
-        <span jhiTranslate="noticeMeApp.note.alarm">Alarm</span>
-      </dt>
-      <dd>
-        <span>{{ note.alarmDate | formatMediumDatetime }}</span>
-      </dd>
-      <dt>
-        <span jhiTranslate="noticeMeApp.note.status">Status</span>
-      </dt>
-      <dd>
-        <span jhiTranslate="{{ 'noticeMeApp.NoteStatus.' + note.status }}">{{ note.status }}</span>
-      </dd>
-      <dt>
-        <span jhiTranslate="noticeMeApp.note.owner">Owner</span>
-      </dt>
-      <dd>
-        <span>{{ note.owner?.id }}</span>
-      </dd>
-      <dt>
-        <span jhiTranslate="noticeMeApp.note.tag">Tag</span>
-      </dt>
       <dd>
         <span *ngFor="let tag of note.tags; let last = last">
           <a [routerLink]="['/tag', tag?.id, 'view']">{{ tag.tagName }}</a>
           {{ last ? '' : ', ' }}
         </span>
       </dd>
-      <dt>
-        <span jhiTranslate="noticeMeApp.note.collaborator">Collaborator</span>
-      </dt>
       <dd>
         <span *ngFor="let collaborator of note.collaborators; let last = last"> {{ collaborator.id }}{{ last ? '' : ', ' }} </span>
       </dd>
-    </dl>
+    </dl>-->
   </div>
 
   <div class="modal-footer">
@@ -191,38 +145,20 @@
           type="button"
           class="btn btn-light"
           ngbTooltip="{{ 'noticeMeApp.note.toolbar.alarm' | translate }}"
-          placement="bottom"
           container="body"
           [ngbPopover]="popAlarmDate"
           placement="top"
           [autoClose]="'outside'"
+          #popoverAlarm="ngbPopover"
           [popoverTitle]="popAlarmDateTitle"
         >
           <fa-icon [icon]="['far', 'bell']"></fa-icon>
-          <ng-template #popAlarmDate>
-            <div class="d-flex">
-              <input
-                id="field_alarmDate"
-                data-cy="alarmDate"
-                type="datetime-local"
-                class="form-control"
-                name="alarmDate"
-                formControlName="alarmDate"
-                placeholder="YYYY-MM-DD HH:mm"
-              />
-            </div>
-          </ng-template>
-          <ng-template #popAlarmDateTitle>
-            <label class="h6 mb-0 w-100 text-center" jhiTranslate="noticeMeApp.note.toolbar.alarmdate" for="field_alarmDate"
-              >Alarm Date</label
-            >
-          </ng-template>
         </button>
         <button
           type="button"
           class="btn btn-light"
           ngbTooltip="{{ 'noticeMeApp.note.toolbar.collaborator' | translate }}"
-          placement="bottom"
+          placement="top"
           container="body"
         >
           <fa-icon icon="user-plus"></fa-icon>
@@ -231,7 +167,7 @@
           type="button"
           class="btn btn-light"
           ngbTooltip="{{ 'noticeMeApp.note.toolbar.attachment' | translate }}"
-          placement="bottom"
+          placement="top"
           container="body"
         >
           <fa-icon icon="link"></fa-icon>
@@ -240,7 +176,7 @@
           type="button"
           class="btn btn-light"
           ngbTooltip="{{ 'noticeMeApp.note.toolbar.archive' | translate }}"
-          placement="bottom"
+          placement="top"
           container="body"
         >
           <fa-icon [icon]="['far', 'file-archive']"></fa-icon>
@@ -249,7 +185,7 @@
           type="button"
           class="btn btn-light"
           ngbTooltip="{{ 'noticeMeApp.note.toolbar.delete' | translate }}"
-          placement="bottom"
+          placement="top"
           container="body"
         >
           <fa-icon [icon]="['far', 'trash-alt']"></fa-icon>
@@ -262,4 +198,20 @@
       </div>
     </div>
   </div>
+  <ng-template #popAlarmDate>
+    <div class="d-flex">
+      <input
+        id="field_alarmDate"
+        data-cy="alarmDate"
+        type="datetime-local"
+        class="form-control"
+        name="alarmDate"
+        formControlName="alarmDate"
+        placeholder="YYYY-MM-DD HH:mm"
+      />
+    </div>
+  </ng-template>
+  <ng-template #popAlarmDateTitle>
+    <label class="h6 mb-0 w-100 text-center" jhiTranslate="noticeMeApp.note.toolbar.alarmdate" for="field_alarmDate">Alarm Date</label>
+  </ng-template>
 </form>

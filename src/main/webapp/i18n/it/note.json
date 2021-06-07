@@ -4,11 +4,11 @@
       "toolbar": {
         "archive": "Archivia",
         "delete": "Elimina",
-        "alarm": "Aggiungi allarme",
+        "alarm": "Allarme",
         "alarmdate": "Data allarme",
-        "tags": "Aggiungi etichetta",
-        "collaborator": "Aggiungi collaboratore",
-        "attachment": "Aggiungi allegato"
+        "tags": "Etichetta",
+        "collaborator": "Collaboratori",
+        "attachment": "Allegati"
       },
       "home": {
         "title": "Note",

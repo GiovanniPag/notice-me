@@ -24,7 +24,7 @@ export class NotificationInterceptor implements HttpInterceptor {
             }
           }
 
-          if (alert) {
+          if (alert && !alert.includes('updated')) {
             this.alertService.addAlert({
               type: 'success',
               translationKey: alert,

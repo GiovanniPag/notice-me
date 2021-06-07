@@ -21,7 +21,8 @@
         "note": "Notes",
         "archive": "Archive",
         "trash": "Trash",
-        "alarm": "Alarms"
+        "alarm": "Alarms",
+        "shared": "Shared with me"
       },
       "account": {
         "main": "Account",

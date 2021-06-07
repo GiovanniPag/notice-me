@@ -89,6 +89,22 @@ public class NoteService {
     }
 
     /**
+     * Get all the notes by collaborator login.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<NoteDTO> findAllSharedWithMe(Pageable pageable) {
+        log.debug("Request to get all Notes shared with me");
+        Page<NoteDTO> page;
+
+        page = noteRepository.findAllByCollaboratorsLogin(SecurityUtils.getCurrentUserLogin().get(), pageable).map(noteMapper::toDto);
+
+        return page;
+    }
+
+    /**
      * Get all the notes.
      *
      * @param pageable the pagination information.

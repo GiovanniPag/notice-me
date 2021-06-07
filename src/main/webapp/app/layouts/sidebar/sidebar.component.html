@@ -20,6 +20,12 @@
       </a>
     </li>
     <li class="nav-item pointer" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <a class="side-link" routerLink="note" [queryParams]="{ isCollaborator: 'true' }">
+        <fa-icon [icon]="['far', 'share-square']"></fa-icon>
+        <span jhiTranslate="global.menu.sidebar.shared">Shared</span>
+      </a>
+    </li>
+    <li class="nav-item pointer" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
       <a class="side-link" routerLink="note" [queryParams]="{ status: 'archived' }">
         <fa-icon [icon]="['far', 'file-archive']"></fa-icon>
         <span jhiTranslate="global.menu.sidebar.archive">Archive</span>
