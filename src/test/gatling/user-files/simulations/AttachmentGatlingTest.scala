@@ -73,7 +73,6 @@ class AttachmentGatlingTest extends Simulation {
             .body(StringBody("""{
                 "id":null
                 , "data":null
-                , "format":"JPG"
                 }""")).asJson
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_attachment_url"))).exitHereIfFailed

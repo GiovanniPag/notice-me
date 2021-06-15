@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-import { Format } from 'app/entities/enumerations/format.model';
 import { IAttachment, Attachment } from '../attachment.model';
 
 import { AttachmentService } from './attachment.service';
@@ -25,7 +24,6 @@ describe('Service Tests', () => {
         id: 0,
         dataContentType: 'image/png',
         data: 'AAAAAAA',
-        format: Format.JPG,
       };
     });
 
@@ -62,7 +60,6 @@ describe('Service Tests', () => {
           {
             id: 1,
             data: 'BBBBBB',
-            format: 'BBBBBB',
           },
           elemDefault
         );
@@ -77,12 +74,7 @@ describe('Service Tests', () => {
       });
 
       it('should partial update a Attachment', () => {
-        const patchObject = Object.assign(
-          {
-            format: 'BBBBBB',
-          },
-          new Attachment()
-        );
+        const patchObject = Object.assign({}, new Attachment());
 
         const returnedFromService = Object.assign(patchObject, elemDefault);
 
@@ -100,7 +92,6 @@ describe('Service Tests', () => {
           {
             id: 1,
             data: 'BBBBBB',
-            format: 'BBBBBB',
           },
           elemDefault
         );
@@ -152,7 +143,7 @@ describe('Service Tests', () => {
         });
 
         it('should add only unique Attachment to an array', () => {
-          const attachmentArray: IAttachment[] = [{ id: 123 }, { id: 456 }, { id: 12535 }];
+          const attachmentArray: IAttachment[] = [{ id: 123 }, { id: 456 }, { id: 62779 }];
           const attachmentCollection: IAttachment[] = [{ id: 123 }];
           expectedResult = service.addAttachmentToCollectionIfMissing(attachmentCollection, ...attachmentArray);
           expect(expectedResult).toHaveLength(3);

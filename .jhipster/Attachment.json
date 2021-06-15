@@ -6,12 +6,6 @@
       "fieldType": "byte[]",
       "fieldTypeBlobContent": "any",
       "fieldValidateRules": ["required"]
-    },
-    {
-      "fieldName": "format",
-      "fieldType": "Format",
-      "fieldValues": "JPG,PNG",
-      "fieldValidateRules": ["required"]
     }
   ],
   "relationships": [

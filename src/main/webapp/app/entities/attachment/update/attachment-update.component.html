@@ -50,20 +50,6 @@
         </div>
 
         <div class="form-group">
-          <label class="form-control-label" jhiTranslate="noticeMeApp.attachment.format" for="field_format">Format</label>
-          <select class="form-control" name="format" formControlName="format" id="field_format" data-cy="format">
-            <option [ngValue]="null">{{ 'noticeMeApp.Format.null' | translate }}</option>
-            <option value="JPG">{{ 'noticeMeApp.Format.JPG' | translate }}</option>
-            <option value="PNG">{{ 'noticeMeApp.Format.PNG' | translate }}</option>
-          </select>
-          <div *ngIf="editForm.get('format')!.invalid && (editForm.get('format')!.dirty || editForm.get('format')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('format')?.errors?.required" jhiTranslate="entity.validation.required">
-              This field is required.
-            </small>
-          </div>
-        </div>
-
-        <div class="form-group">
           <label class="form-control-label" jhiTranslate="noticeMeApp.attachment.note" for="field_note">Note</label>
           <select class="form-control" id="field_note" data-cy="note" name="note" formControlName="note">
             <option [ngValue]="null"></option>

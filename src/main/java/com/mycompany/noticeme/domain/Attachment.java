@@ -1,7 +1,6 @@
 package com.mycompany.noticeme.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.mycompany.noticeme.domain.enumeration.Format;
 import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -28,11 +27,6 @@ public class Attachment implements Serializable {
 
     @Column(name = "data_content_type", nullable = false)
     private String dataContentType;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "format", nullable = false)
-    private Format format;
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "attachments", "owner", "tags", "collaborators" }, allowSetters = true)
@@ -78,19 +72,6 @@ public class Attachment implements Serializable {
         this.dataContentType = dataContentType;
     }
 
-    public Format getFormat() {
-        return this.format;
-    }
-
-    public Attachment format(Format format) {
-        this.format = format;
-        return this;
-    }
-
-    public void setFormat(Format format) {
-        this.format = format;
-    }
-
     public Note getNote() {
         return this.note;
     }
@@ -130,7 +111,6 @@ public class Attachment implements Serializable {
             "id=" + getId() +
             ", data='" + getData() + "'" +
             ", dataContentType='" + getDataContentType() + "'" +
-            ", format='" + getFormat() + "'" +
             "}";
     }
 }

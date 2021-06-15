@@ -21,10 +21,6 @@
             {{ attachment.dataContentType }}, {{ byteSize(attachment.data) }}
           </div>
         </dd>
-        <dt><span jhiTranslate="noticeMeApp.attachment.format">Format</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'noticeMeApp.Format.' + attachment.format }}">{{ attachment.format }}</span>
-        </dd>
         <dt><span jhiTranslate="noticeMeApp.attachment.note">Note</span></dt>
         <dd>
           <div *ngIf="attachment.note">
