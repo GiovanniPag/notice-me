@@ -16,6 +16,7 @@ public class NoteDTO implements Serializable {
 
     private Long id;
 
+    @Size(max = 255)
     private String title;
 
     @Lob

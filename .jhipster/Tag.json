@@ -4,7 +4,7 @@
     {
       "fieldName": "tagName",
       "fieldType": "String",
-      "fieldValidateRules": ["required", "minlength"],
+      "fieldValidateRules": ["required", "minlength", "maxlength"],
       "fieldValidateRulesMinlength": "1",
       "fieldValidateRulesMaxlength": "255"
     }

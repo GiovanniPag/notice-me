@@ -21,7 +21,7 @@ export class TagUpdateComponent implements OnInit {
 
   editForm = this.fb.group({
     id: [],
-    tagName: [null, [Validators.required, Validators.minLength(1)]],
+    tagName: [null, [Validators.required, Validators.minLength(1), Validators.maxLength(255)]],
     owner: [null, Validators.required],
   });
 

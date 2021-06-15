@@ -25,7 +25,8 @@ public class Note implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title")
+    @Size(max = 255)
+    @Column(name = "title", length = 255)
     private String title;
 
     @Lob
