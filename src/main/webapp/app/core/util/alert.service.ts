@@ -21,9 +21,9 @@ export interface Alert {
   providedIn: 'root',
 })
 export class AlertService {
-  timeout = 5000;
-  toast = false;
-  position = 'top right';
+  timeout = 0;
+  toast = true;
+  position = '';
 
   // unique id for each alert. Starts from 0.
   private alertId = 0;

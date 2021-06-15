@@ -90,8 +90,14 @@ export class NoteComponent implements OnInit {
       });
       modalRef.componentInstance.note = note;
       modalRef.closed.subscribe(reason => {
-        if (reason === 'modified') {
-          this.loadOne(note.id!);
+        switch (reason) {
+          case 'modified':
+            this.loadOne(note.id!);
+            break;
+          case 'deleted':
+          case 'archived':
+            this.removeOne(note.id!);
+            break;
         }
       });
     }
@@ -118,6 +124,10 @@ export class NoteComponent implements OnInit {
         this.isLoading = false;
       }
     );
+  }
+
+  removeOne(id: number): void {
+    this.notes = this.notes.filter(note => note.id !== id);
   }
 
   loadAll(): void {

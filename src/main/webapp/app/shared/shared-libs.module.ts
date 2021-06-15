@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MuuriModule } from 'muuri-angular';
 import { EllipsisModule } from 'ngx-ellipsis';
 import { AngularResizedEventModule } from 'angular-resize-event';
+import { ClickOutsideModule } from 'ng-click-outside';
 
 @NgModule({
   exports: [
@@ -21,6 +22,7 @@ import { AngularResizedEventModule } from 'angular-resize-event';
     TranslateModule,
     AngularResizedEventModule,
     EllipsisModule,
+    ClickOutsideModule,
   ],
 })
 export class SharedLibsModule {}

@@ -1,13 +1,12 @@
 import { Route } from '@angular/router';
 
-export const HOME_ROUTE: Route[] = [
-  {
-    path: '',
-    redirectTo: '/note',
-    pathMatch: 'full',
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'home.title',
-    },
+import { HomeComponent } from './home.component';
+
+export const HOME_ROUTE: Route = {
+  path: '',
+  component: HomeComponent,
+  data: {
+    authorities: [],
+    pageTitle: 'home.title',
   },
-];
+};

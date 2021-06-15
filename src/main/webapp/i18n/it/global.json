@@ -132,7 +132,8 @@
       "maxbytes": "Questo campo non può essere superiore a {{ max }} byte.",
       "pattern": "Questo campo dovrebbe corrispondere al modello {{ pattern }}.",
       "number": "Questo campo dovrebbe essere un numero.",
-      "datetimelocal": "Questo campo dovrebbe essere data e ora."
+      "datetimelocal": "Questo campo dovrebbe essere data e ora.",
+      "MinimumDate": "Questa data è già passata."
     }
   },
   "error": {

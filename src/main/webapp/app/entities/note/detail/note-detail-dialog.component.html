@@ -5,8 +5,12 @@
   name="editForm"
   role="form"
   novalidate
-  (ngSubmit)="save()"
+  (ngSubmit)="closeAndSaveNote()"
   [formGroup]="editForm"
+  (clickOutside)="closeAndSaveNote()"
+  [exclude]="'.click-outside-exclude'"
+  [excludeBeforeClick]="true"
+  [delayClickOutsideInit]="true"
 >
   <div class="modal-header">
     <div class="form-group" [hidden]="true">
@@ -34,8 +38,6 @@
     </div>
   </div>
   <div class="modal-body">
-    <jhi-alert-error></jhi-alert-error>
-
     <div class="form-group">
       <textarea
         class="form-control"
@@ -47,6 +49,18 @@
         (input)="savePatch()"
         ngbAutofocus
       ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label jhiTranslate="noticeMeApp.note.tag" for="field_tags">Tag</label>
+      <select class="form-control" id="field_tags" data-cy="tag" multiple name="tags" formControlName="tags">
+        <option
+          [ngValue]="getSelectedTag(tagOption, editForm.get('tags')!.value)"
+          *ngFor="let tagOption of tagsSharedCollection; trackBy: trackTagById"
+        >
+          {{ tagOption.tagName }}
+        </option>
+      </select>
     </div>
 
     <div class="form-group">
@@ -84,41 +98,6 @@
       </div>
     </div>
 
-    <div class="form-group">
-      <label jhiTranslate="noticeMeApp.note.tag" for="field_tags">Tag</label>
-      <select class="form-control" id="field_tags" data-cy="tag" multiple name="tags" formControlName="tags">
-        <option
-          [ngValue]="getSelectedTag(tagOption, editForm.get('tags')!.value)"
-          *ngFor="let tagOption of tagsSharedCollection; trackBy: trackTagById"
-        >
-          {{ tagOption.tagName }}
-        </option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label jhiTranslate="noticeMeApp.note.collaborator" for="field_collaborators">Collaborator</label>
-      <select
-        class="form-control"
-        id="field_collaborators"
-        data-cy="collaborator"
-        multiple
-        name="collaborators"
-        formControlName="collaborators"
-      >
-        <option
-          [ngValue]="getSelectedUser(userOption, editForm.get('collaborators')!.value)"
-          *ngFor="let userOption of usersSharedCollection; trackBy: trackUserById"
-        >
-          {{ userOption.id }}
-        </option>
-      </select>
-    </div>
-
-    <div class="form-group" [hidden]="true">
-      <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-    </div>
-
     <!-- <dl class="row-md jh-entity-details">
       <dt>
         <span jhiTranslate="noticeMeApp.note.date">Date</span>
@@ -144,6 +123,7 @@
         <button
           type="button"
           class="btn btn-light"
+          [ngClass]="{ 'invalid-red': editForm.get('alarmDate')?.errors }"
           ngbTooltip="{{ 'noticeMeApp.note.toolbar.alarm' | translate }}"
           container="body"
           [ngbPopover]="popAlarmDate"
@@ -151,12 +131,18 @@
           [autoClose]="'outside'"
           #popoverAlarm="ngbPopover"
           [popoverTitle]="popAlarmDateTitle"
+          popoverClass="click-outside-exclude"
         >
           <fa-icon [icon]="['far', 'bell']"></fa-icon>
         </button>
         <button
           type="button"
           class="btn btn-light"
+          [ngbPopover]="popCollaborator"
+          [autoClose]="'outside'"
+          #popoverAlarm="ngbPopover"
+          [popoverTitle]="popCollaboratorTitle"
+          popoverClass="click-outside-exclude"
           ngbTooltip="{{ 'noticeMeApp.note.toolbar.collaborator' | translate }}"
           placement="top"
           container="body"
@@ -178,6 +164,7 @@
           ngbTooltip="{{ 'noticeMeApp.note.toolbar.archive' | translate }}"
           placement="top"
           container="body"
+          (click)="archiveNote()"
         >
           <fa-icon [icon]="['far', 'file-archive']"></fa-icon>
         </button>
@@ -187,19 +174,20 @@
           ngbTooltip="{{ 'noticeMeApp.note.toolbar.delete' | translate }}"
           placement="top"
           container="body"
+          (click)="deleteNote()"
         >
           <fa-icon [icon]="['far', 'trash-alt']"></fa-icon>
         </button>
       </div>
       <div class="btn-group" role="group" aria-label="save group">
-        <button type="submit" id="save-entity" data-cy="entitySaveButton" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+        <button type="submit" id="save-entity" data-cy="entitySaveButton" [disabled]="!canClose()" class="btn btn-primary">
           <span jhiTranslate="entity.action.close">Close</span>
         </button>
       </div>
     </div>
   </div>
   <ng-template #popAlarmDate>
-    <div class="d-flex">
+    <div>
       <input
         id="field_alarmDate"
         data-cy="alarmDate"
@@ -208,10 +196,57 @@
         name="alarmDate"
         formControlName="alarmDate"
         placeholder="YYYY-MM-DD HH:mm"
+        min="{{ minDate }}"
       />
+      <div *ngIf="editForm.get('alarmDate')!.invalid && (editForm.get('alarmDate')!.dirty || editForm.get('alarmDate')!.touched)">
+        <small
+          class="form-text text-danger"
+          [hidden]="!editForm.get('alarmDate')?.errors?.invalidDate"
+          jhiTranslate="entity.validation.MinimumDate"
+        >
+          Alarm date is in the past
+        </small>
+        <small
+          class="form-text text-danger"
+          [hidden]="!editForm.get('alarmDate')?.errors?.ZonedDateTimelocal"
+          jhiTranslate="entity.validation.ZonedDateTimelocal"
+        >
+          This field should be a date and time.
+        </small>
+      </div>
     </div>
   </ng-template>
   <ng-template #popAlarmDateTitle>
-    <label class="h6 mb-0 w-100 text-center" jhiTranslate="noticeMeApp.note.toolbar.alarmdate" for="field_alarmDate">Alarm Date</label>
+    <div class="d-flex w-100 align-items-center justify-content-between">
+      <label class="h6 mb-0" jhiTranslate="noticeMeApp.note.toolbar.alarmdate" for="field_alarmDate">Alarm Date</label>
+      <button type="button" class="btn btn-light btn-sm" (click)="resetDate()">
+        <fa-icon icon="times"></fa-icon>
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template #popCollaborator>
+    <div>
+      <select
+        class="form-control"
+        id="field_collaborators"
+        data-cy="collaborator"
+        multiple
+        name="collaborators"
+        formControlName="collaborators"
+      >
+        <option
+          [ngValue]="getSelectedUser(userOption, editForm.get('collaborators')!.value)"
+          *ngFor="let userOption of usersSharedCollection; trackBy: trackUserById"
+        >
+          {{ userOption.login }}
+        </option>
+      </select>
+    </div>
+  </ng-template>
+  <ng-template #popCollaboratorTitle>
+    <div class="d-flex w-100 text-center">
+      <label class="h6 mb-0" jhiTranslate="noticeMeApp.note.collaborator" for="field_collaborators">Collaborator</label>
+    </div>
   </ng-template>
 </form>

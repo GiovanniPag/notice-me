@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
@@ -13,12 +13,14 @@ import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
 import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
 import { AlertError } from 'app/shared/alert/alert-error.model';
 
-import { DATE_TIME_FORMAT } from 'app/config/input.constants';
+import { DATE_TIME_FORMAT, DATE_TIME_INPUT_FORMAT } from 'app/config/input.constants';
 import { TagService } from 'app/entities/tag/service/tag.service';
 import { UserService } from 'app/entities/user/user.service';
 import { NoteService } from '../service/note.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as dayjs from 'dayjs';
+import { NoteStatus } from 'app/entities/enumerations/note-status.model';
+import { MinDateValidator } from 'app/shared/date/MinDateValidator.directive';
 
 @Component({
   templateUrl: './note-detail-dialog.component.html',
@@ -29,20 +31,23 @@ export class NoteDetailDialogComponent implements OnInit {
   @ViewChild('noteupdateform') form!: ElementRef;
   @ViewChild('popoverAlarm') popoverAlarm!: NgbPopover;
   @ViewChild('popoverAlarm', { static: false }) popover!: ElementRef;
+
   note?: INote;
   isSaving = false;
   usersSharedCollection: IUser[] = [];
   tagsSharedCollection: ITag[] = [];
   inside = false;
 
+  minDate = dayjs().format(DATE_TIME_INPUT_FORMAT);
+
   editForm = this.fb.group({
     id: [],
     title: [],
     content: [],
-    lastUpdateDate: [[Validators.required]],
-    alarmDate: [],
-    status: [[Validators.required]],
-    owner: [Validators.required],
+    lastUpdateDate: ['', [Validators.required]],
+    alarmDate: ['', [MinDateValidator(this.minDate)]],
+    status: ['', [Validators.required]],
+    owner: ['', [Validators.required]],
     tags: [],
     collaborators: [],
   });
@@ -63,16 +68,9 @@ export class NoteDetailDialogComponent implements OnInit {
     this.loadRelationshipsOptions();
   }
 
-  @HostListener('document:click', ['$event'])
-  DocumentClick(event: Event): void {
-    alert(this.popover.nativeElement);
-    if (this.popover.nativeElement?.contains(event.target)) {
-      alert('popper');
-    }
-    if (this.form.nativeElement?.contains(event.target)) {
-      alert('inside');
-    } else {
-      alert('outside');
+  closeAndSaveNote(): void {
+    if (this.canClose()) {
+      this.save('modified');
     }
   }
 
@@ -84,13 +82,13 @@ export class NoteDetailDialogComponent implements OnInit {
     }
   }
 
-  save(): void {
+  save(reason: string): void {
     this.isSaving = true;
     const note = this.createFromForm();
     if (note.id !== undefined) {
-      this.subscribeToSaveResponse(this.noteService.update(note));
+      this.subscribeToSaveResponse(this.noteService.update(note), reason);
     } else {
-      this.subscribeToSaveResponse(this.noteService.create(note));
+      this.subscribeToSaveResponse(this.noteService.create(note), reason);
     }
   }
 
@@ -124,8 +122,8 @@ export class NoteDetailDialogComponent implements OnInit {
     return item.id!;
   }
 
-  close(result: string): void {
-    this.activeModal.close(result);
+  close(reason: string): void {
+    this.activeModal.close(reason);
   }
 
   byteSize(base64String: string): string {
@@ -145,8 +143,26 @@ export class NoteDetailDialogComponent implements OnInit {
     });
   }
 
-  protected onSaveSuccess(): void {
-    this.close('modified');
+  deleteNote(): void {
+    this.editForm.patchValue({ status: NoteStatus.DELETED });
+    this.save('deleted');
+  }
+
+  archiveNote(): void {
+    this.editForm.patchValue({ status: NoteStatus.ARCHIVED });
+    this.save('archived');
+  }
+
+  canClose(): boolean {
+    return !((this.editForm.invalid && this.editForm.get('alarmDate')!.valid) || this.isSaving);
+  }
+
+  resetDate(): void {
+    this.editForm.get('alarmDate')!.reset();
+  }
+
+  protected onSaveSuccess(result: string): void {
+    this.close(result);
   }
 
   protected onSaveError(): void {
@@ -165,9 +181,9 @@ export class NoteDetailDialogComponent implements OnInit {
     this.isSaving = false;
   }
 
-  protected subscribeToSaveResponse(result: Observable<HttpResponse<INote>>): void {
+  protected subscribeToSaveResponse(result: Observable<HttpResponse<INote>>, reason: string): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
-      () => this.onSaveSuccess(),
+      () => this.onSaveSuccess(reason),
       () => this.onSaveError()
     );
   }
@@ -218,10 +234,8 @@ export class NoteDetailDialogComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       title: this.editForm.get(['title'])!.value,
       content: this.editForm.get(['content'])!.value,
-      lastUpdateDate: this.editForm.get(['lastUpdateDate'])!.value
-        ? dayjs(this.editForm.get(['lastUpdateDate'])!.value, DATE_TIME_FORMAT)
-        : undefined,
-      alarmDate: this.editForm.get(['alarmDate'])!.value ? dayjs(this.editForm.get(['alarmDate'])!.value, DATE_TIME_FORMAT) : undefined,
+      lastUpdateDate: dayjs(dayjs(), DATE_TIME_FORMAT),
+      alarmDate: this.editForm.get(['alarmDate'])!.valid ? dayjs(this.editForm.get(['alarmDate'])!.value, DATE_TIME_FORMAT) : undefined,
       status: this.editForm.get(['status'])!.value,
       owner: this.editForm.get(['owner'])!.value,
       tags: this.editForm.get(['tags'])!.value,

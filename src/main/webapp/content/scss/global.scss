@@ -115,6 +115,10 @@ Generic styles
 Custom alerts for notification
 ========================================================================== */
 .alerts {
+  position: fixed;
+  bottom: 0;
+  z-index: 1051;
+
   .alert {
     text-overflow: ellipsis;
     pre {
@@ -130,26 +134,10 @@ Custom alerts for notification
     }
   }
   .jhi-toast {
-    position: fixed;
     width: 100%;
-    &.left {
-      left: 5px;
-    }
-    &.right {
-      right: 5px;
-    }
-    &.top {
-      top: 55px;
-    }
-    &.bottom {
-      bottom: 55px;
-    }
-  }
-}
-
-@media screen and (min-width: 480px) {
-  .alerts .jhi-toast {
-    width: 50%;
+    max-width: 300px;
+    min-width: 300px;
+    opacity: 0.9;
   }
 }
 
