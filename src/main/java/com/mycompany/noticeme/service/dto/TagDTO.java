@@ -14,7 +14,7 @@ public class TagDTO implements Serializable {
     private Long id;
 
     @NotNull
-    @Size(min = 1)
+    @Size(min = 1, max = 255)
     private String tagName;
 
     private UserDTO owner;

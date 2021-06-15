@@ -4,6 +4,7 @@
     {
       "fieldName": "title",
       "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
       "fieldValidateRulesMaxlength": "255"
     },
     {
