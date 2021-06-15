@@ -30,7 +30,7 @@ export class NoteUpdateComponent implements OnInit {
 
   editForm = this.fb.group({
     id: [],
-    title: [],
+    title: [null, [Validators.maxLength(255)]],
     content: [],
     lastUpdateDate: [null, [Validators.required]],
     alarmDate: [],
