@@ -20,9 +20,6 @@
             <column name="data_content_type" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="format" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
             <column name="note_id" type="bigint">
                 <constraints nullable="true" />
             </column>
@@ -48,7 +45,6 @@
             <column name="id" type="numeric"/>
             <column name="data" type="blob"/>
             <column name="data_content_type" type="string"/>
-            <column name="format" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

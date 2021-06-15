@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.mycompany.noticeme.IntegrationTest;
 import com.mycompany.noticeme.domain.Attachment;
-import com.mycompany.noticeme.domain.enumeration.Format;
 import com.mycompany.noticeme.repository.AttachmentRepository;
 import com.mycompany.noticeme.service.dto.AttachmentDTO;
 import com.mycompany.noticeme.service.mapper.AttachmentMapper;
@@ -38,9 +37,6 @@ class AttachmentResourceIT {
     private static final String DEFAULT_DATA_CONTENT_TYPE = "image/jpg";
     private static final String UPDATED_DATA_CONTENT_TYPE = "image/png";
 
-    private static final Format DEFAULT_FORMAT = Format.JPG;
-    private static final Format UPDATED_FORMAT = Format.PNG;
-
     private static final String ENTITY_API_URL = "/api/attachments";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -68,7 +64,7 @@ class AttachmentResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Attachment createEntity(EntityManager em) {
-        Attachment attachment = new Attachment().data(DEFAULT_DATA).dataContentType(DEFAULT_DATA_CONTENT_TYPE).format(DEFAULT_FORMAT);
+        Attachment attachment = new Attachment().data(DEFAULT_DATA).dataContentType(DEFAULT_DATA_CONTENT_TYPE);
         return attachment;
     }
 
@@ -79,7 +75,7 @@ class AttachmentResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Attachment createUpdatedEntity(EntityManager em) {
-        Attachment attachment = new Attachment().data(UPDATED_DATA).dataContentType(UPDATED_DATA_CONTENT_TYPE).format(UPDATED_FORMAT);
+        Attachment attachment = new Attachment().data(UPDATED_DATA).dataContentType(UPDATED_DATA_CONTENT_TYPE);
         return attachment;
     }
 
@@ -104,7 +100,6 @@ class AttachmentResourceIT {
         Attachment testAttachment = attachmentList.get(attachmentList.size() - 1);
         assertThat(testAttachment.getData()).isEqualTo(DEFAULT_DATA);
         assertThat(testAttachment.getDataContentType()).isEqualTo(DEFAULT_DATA_CONTENT_TYPE);
-        assertThat(testAttachment.getFormat()).isEqualTo(DEFAULT_FORMAT);
     }
 
     @Test
@@ -128,24 +123,6 @@ class AttachmentResourceIT {
 
     @Test
     @Transactional
-    void checkFormatIsRequired() throws Exception {
-        int databaseSizeBeforeTest = attachmentRepository.findAll().size();
-        // set the field null
-        attachment.setFormat(null);
-
-        // Create the Attachment, which fails.
-        AttachmentDTO attachmentDTO = attachmentMapper.toDto(attachment);
-
-        restAttachmentMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(attachmentDTO)))
-            .andExpect(status().isBadRequest());
-
-        List<Attachment> attachmentList = attachmentRepository.findAll();
-        assertThat(attachmentList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
     void getAllAttachments() throws Exception {
         // Initialize the database
         attachmentRepository.saveAndFlush(attachment);
@@ -157,8 +134,7 @@ class AttachmentResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(attachment.getId().intValue())))
             .andExpect(jsonPath("$.[*].dataContentType").value(hasItem(DEFAULT_DATA_CONTENT_TYPE)))
-            .andExpect(jsonPath("$.[*].data").value(hasItem(Base64Utils.encodeToString(DEFAULT_DATA))))
-            .andExpect(jsonPath("$.[*].format").value(hasItem(DEFAULT_FORMAT.toString())));
+            .andExpect(jsonPath("$.[*].data").value(hasItem(Base64Utils.encodeToString(DEFAULT_DATA))));
     }
 
     @Test
@@ -174,8 +150,7 @@ class AttachmentResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(attachment.getId().intValue()))
             .andExpect(jsonPath("$.dataContentType").value(DEFAULT_DATA_CONTENT_TYPE))
-            .andExpect(jsonPath("$.data").value(Base64Utils.encodeToString(DEFAULT_DATA)))
-            .andExpect(jsonPath("$.format").value(DEFAULT_FORMAT.toString()));
+            .andExpect(jsonPath("$.data").value(Base64Utils.encodeToString(DEFAULT_DATA)));
     }
 
     @Test
@@ -197,7 +172,7 @@ class AttachmentResourceIT {
         Attachment updatedAttachment = attachmentRepository.findById(attachment.getId()).get();
         // Disconnect from session so that the updates on updatedAttachment are not directly saved in db
         em.detach(updatedAttachment);
-        updatedAttachment.data(UPDATED_DATA).dataContentType(UPDATED_DATA_CONTENT_TYPE).format(UPDATED_FORMAT);
+        updatedAttachment.data(UPDATED_DATA).dataContentType(UPDATED_DATA_CONTENT_TYPE);
         AttachmentDTO attachmentDTO = attachmentMapper.toDto(updatedAttachment);
 
         restAttachmentMockMvc
@@ -214,7 +189,6 @@ class AttachmentResourceIT {
         Attachment testAttachment = attachmentList.get(attachmentList.size() - 1);
         assertThat(testAttachment.getData()).isEqualTo(UPDATED_DATA);
         assertThat(testAttachment.getDataContentType()).isEqualTo(UPDATED_DATA_CONTENT_TYPE);
-        assertThat(testAttachment.getFormat()).isEqualTo(UPDATED_FORMAT);
     }
 
     @Test
@@ -294,8 +268,6 @@ class AttachmentResourceIT {
         Attachment partialUpdatedAttachment = new Attachment();
         partialUpdatedAttachment.setId(attachment.getId());
 
-        partialUpdatedAttachment.format(UPDATED_FORMAT);
-
         restAttachmentMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedAttachment.getId())
@@ -310,7 +282,6 @@ class AttachmentResourceIT {
         Attachment testAttachment = attachmentList.get(attachmentList.size() - 1);
         assertThat(testAttachment.getData()).isEqualTo(DEFAULT_DATA);
         assertThat(testAttachment.getDataContentType()).isEqualTo(DEFAULT_DATA_CONTENT_TYPE);
-        assertThat(testAttachment.getFormat()).isEqualTo(UPDATED_FORMAT);
     }
 
     @Test
@@ -325,7 +296,7 @@ class AttachmentResourceIT {
         Attachment partialUpdatedAttachment = new Attachment();
         partialUpdatedAttachment.setId(attachment.getId());
 
-        partialUpdatedAttachment.data(UPDATED_DATA).dataContentType(UPDATED_DATA_CONTENT_TYPE).format(UPDATED_FORMAT);
+        partialUpdatedAttachment.data(UPDATED_DATA).dataContentType(UPDATED_DATA_CONTENT_TYPE);
 
         restAttachmentMockMvc
             .perform(
@@ -341,7 +312,6 @@ class AttachmentResourceIT {
         Attachment testAttachment = attachmentList.get(attachmentList.size() - 1);
         assertThat(testAttachment.getData()).isEqualTo(UPDATED_DATA);
         assertThat(testAttachment.getDataContentType()).isEqualTo(UPDATED_DATA_CONTENT_TYPE);
-        assertThat(testAttachment.getFormat()).isEqualTo(UPDATED_FORMAT);
     }
 
     @Test

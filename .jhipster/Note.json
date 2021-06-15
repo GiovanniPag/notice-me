@@ -3,7 +3,8 @@
   "fields": [
     {
       "fieldName": "title",
-      "fieldType": "String"
+      "fieldType": "String",
+      "fieldValidateRulesMaxlength": "255"
     },
     {
       "fieldName": "content",

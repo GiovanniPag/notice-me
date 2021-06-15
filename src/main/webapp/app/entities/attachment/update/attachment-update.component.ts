@@ -26,7 +26,6 @@ export class AttachmentUpdateComponent implements OnInit {
     id: [],
     data: [null, [Validators.required]],
     dataContentType: [],
-    format: [null, [Validators.required]],
     note: [],
   });
 
@@ -106,7 +105,6 @@ export class AttachmentUpdateComponent implements OnInit {
       id: attachment.id,
       data: attachment.data,
       dataContentType: attachment.dataContentType,
-      format: attachment.format,
       note: attachment.note,
     });
 
@@ -127,7 +125,6 @@ export class AttachmentUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       dataContentType: this.editForm.get(['dataContentType'])!.value,
       data: this.editForm.get(['data'])!.value,
-      format: this.editForm.get(['format'])!.value,
       note: this.editForm.get(['note'])!.value,
     };
   }

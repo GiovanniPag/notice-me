@@ -1,6 +1,5 @@
 package com.mycompany.noticeme.service.dto;
 
-import com.mycompany.noticeme.domain.enumeration.Format;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Lob;
@@ -17,10 +16,6 @@ public class AttachmentDTO implements Serializable {
     private byte[] data;
 
     private String dataContentType;
-
-    @NotNull
-    private Format format;
-
     private NoteDTO note;
 
     public Long getId() {
@@ -45,14 +40,6 @@ public class AttachmentDTO implements Serializable {
 
     public void setDataContentType(String dataContentType) {
         this.dataContentType = dataContentType;
-    }
-
-    public Format getFormat() {
-        return format;
-    }
-
-    public void setFormat(Format format) {
-        this.format = format;
     }
 
     public NoteDTO getNote() {
@@ -90,7 +77,6 @@ public class AttachmentDTO implements Serializable {
         return "AttachmentDTO{" +
             "id=" + getId() +
             ", data='" + getData() + "'" +
-            ", format='" + getFormat() + "'" +
             ", note=" + getNote() +
             "}";
     }

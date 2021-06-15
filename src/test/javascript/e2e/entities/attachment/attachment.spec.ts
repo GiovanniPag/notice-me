@@ -46,11 +46,7 @@ describe('Attachment e2e test', () => {
 
     await attachmentComponentsPage.clickOnCreateButton();
 
-    await promise.all([
-      attachmentUpdatePage.setDataInput(absolutePath),
-      attachmentUpdatePage.formatSelectLastOption(),
-      attachmentUpdatePage.noteSelectLastOption(),
-    ]);
+    await promise.all([attachmentUpdatePage.setDataInput(absolutePath), attachmentUpdatePage.noteSelectLastOption()]);
 
     expect(await attachmentUpdatePage.getDataInput()).to.endsWith(
       fileNameToUpload,

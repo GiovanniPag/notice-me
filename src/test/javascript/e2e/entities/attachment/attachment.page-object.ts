@@ -31,7 +31,6 @@ export class AttachmentUpdatePage {
 
   idInput = element(by.id('field_id'));
   dataInput = element(by.id('file_data'));
-  formatSelect = element(by.id('field_format'));
 
   noteSelect = element(by.id('field_note'));
 
@@ -53,18 +52,6 @@ export class AttachmentUpdatePage {
 
   async getDataInput(): Promise<string> {
     return await this.dataInput.getAttribute('value');
-  }
-
-  async setFormatSelect(format: string): Promise<void> {
-    await this.formatSelect.sendKeys(format);
-  }
-
-  async getFormatSelect(): Promise<string> {
-    return await this.formatSelect.element(by.css('option:checked')).getText();
-  }
-
-  async formatSelectLastOption(): Promise<void> {
-    await this.formatSelect.all(by.tagName('option')).last().click();
   }
 
   async noteSelectLastOption(): Promise<void> {

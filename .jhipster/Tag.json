@@ -5,7 +5,8 @@
       "fieldName": "tagName",
       "fieldType": "String",
       "fieldValidateRules": ["required", "minlength"],
-      "fieldValidateRulesMinlength": "1"
+      "fieldValidateRulesMinlength": "1",
+      "fieldValidateRulesMaxlength": "255"
     }
   ],
   "relationships": [

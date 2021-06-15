@@ -1,3 +1,4 @@
+
 /**
  * JHipster JDL model for myApp
  */
@@ -7,11 +8,11 @@
 // ==============================
 
 entity Tag {
-    tagName String required minlength(1)
+    tagName String required minlength(1) maxlength(255)
 }
 
 entity Note {
-  title String
+  title String maxlength(255)
   content TextBlob
   lastUpdateDate Instant required
   alarmDate Instant
@@ -20,17 +21,12 @@ entity Note {
 
 entity Attachment{
     data AnyBlob required
-    format Format required
 }
 
-enum Format{
-    JPG,
-    PNG
-}
 
 enum NoteStatus{
     NORMAL,
-    ALARM,
+    PINNED,
     ARCHIVED,
     DELETED
 }
@@ -62,5 +58,4 @@ dto Tag, Note, Attachment with mapstruct
 
 // Set service options to all 
 service Tag, Note, Attachment with serviceClass 
-
 
