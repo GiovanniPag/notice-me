@@ -23,8 +23,7 @@ export class NotificationInterceptor implements HttpInterceptor {
               alertParams = decodeURIComponent(event.headers.get(headerKey)!.replace(/\+/g, ' '));
             }
           }
-
-          if (alert && !alert.includes('updated')) {
+          if (alert && !alert.includes('updated') && !alert.includes('note')) {
             this.alertService.addAlert({
               type: 'success',
               translationKey: alert,

@@ -22,7 +22,7 @@
         "archive": "Archivio",
         "trash": "Cestino",
         "alarm": "Promemoria",
-        "shared": "Condivise con me"
+        "shared": "Condivise"
       },
       "account": {
         "main": "Utente",
@@ -152,6 +152,10 @@
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
     }
+  },
+  "warning": {
+    "titlelength": "{{remainingCharachters}} caratteri rimanenti.",
+    "contentlength": "{{remainingCharachters}} caratteri rimanenti."
   },
   "footer": "Piè di pagina"
 }

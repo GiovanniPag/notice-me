@@ -87,6 +87,11 @@ Note
   .modal-header {
     all: unset;
   }
+
+  .modal-body {
+    all: unset;
+  }
+
   .modal-footer {
     all: unset;
     display: flex;
@@ -94,7 +99,16 @@ Note
   #field_title {
     font-size: 1.5rem;
     font-weight: 400;
+    &.ng-invalid {
+      border-bottom-color: $red;
+    }
   }
+}
+
+.small-text {
+  color: darken($secondary, 20);
+  font-weight: 300;
+  font-size: 0.8rem;
 }
 
 @media (min-width: 576px) {

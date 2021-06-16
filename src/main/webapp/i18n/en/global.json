@@ -22,7 +22,7 @@
         "archive": "Archive",
         "trash": "Trash",
         "alarm": "Alarms",
-        "shared": "Shared with me"
+        "shared": "Shared"
       },
       "account": {
         "main": "Account",
@@ -153,6 +153,10 @@
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
     }
+  },
+  "warning": {
+    "titlelength": "{{remainingCharachters} remaining charachters.}",
+    "contentlength": "{{remainingCharachters} remaining charachters."
   },
   "footer": "This is your footer"
 }
