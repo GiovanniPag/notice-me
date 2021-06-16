@@ -24,8 +24,8 @@ public class Tag implements Serializable {
     private Long id;
 
     @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "tag_name", length = 255, nullable = false)
+    @Size(min = 1, max = 50)
+    @Column(name = "tag_name", length = 50, nullable = false)
     private String tagName;
 
     @ManyToOne(optional = false)
