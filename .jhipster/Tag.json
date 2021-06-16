@@ -6,7 +6,7 @@
       "fieldType": "String",
       "fieldValidateRules": ["required", "minlength", "maxlength"],
       "fieldValidateRulesMinlength": "1",
-      "fieldValidateRulesMaxlength": "255"
+      "fieldValidateRulesMaxlength": "50"
     }
   ],
   "relationships": [
