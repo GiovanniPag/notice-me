@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
@@ -20,7 +20,9 @@ import { NoteService } from '../service/note.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as dayjs from 'dayjs';
 import { NoteStatus } from 'app/entities/enumerations/note-status.model';
+import { ModalCloseReason } from 'app/entities/enumerations/modal-close-reason.model';
 import { MinDateValidator } from 'app/shared/date/MinDateValidator.directive';
+import { NoteDeleteDialogComponent } from '../delete/note-delete-dialog.component';
 
 @Component({
   templateUrl: './note-detail-dialog.component.html',
@@ -32,6 +34,7 @@ export class NoteDetailDialogComponent implements OnInit {
   @ViewChild('field_content') contentText!: ElementRef;
 
   note?: INote;
+  allNoteStatus = NoteStatus;
 
   usersSharedCollection: IUser[] = [];
   tagsSharedCollection: ITag[] = [];
@@ -59,6 +62,7 @@ export class NoteDetailDialogComponent implements OnInit {
 
   constructor(
     protected dataUtils: DataUtils,
+    protected modalService: NgbModal,
     protected activatedRoute: ActivatedRoute,
     public activeModal: NgbActiveModal,
     protected eventManager: EventManager,
@@ -73,11 +77,18 @@ export class NoteDetailDialogComponent implements OnInit {
     this.alerts = this.alertService.get();
     this.updateForm(this.note!);
     this.loadRelationshipsOptions();
+    if (this.note!.status === NoteStatus.DELETED) {
+      this.editForm.disable();
+    }
   }
 
   closeAndSaveNote(): void {
-    if (this.canClose()) {
-      this.save('modified');
+    if (this.note!.status === NoteStatus.DELETED) {
+      this.close(ModalCloseReason.CLOSED);
+    } else {
+      if (this.canSubmit()) {
+        this.save(ModalCloseReason.MODIFIED);
+      }
     }
   }
 
@@ -201,15 +212,53 @@ export class NoteDetailDialogComponent implements OnInit {
 
   deleteNote(): void {
     this.editForm.patchValue({ status: NoteStatus.DELETED });
-    this.save('deleted');
+    this.save(ModalCloseReason.DELETED);
+  }
+  unDeleteNote(): void {
+    this.editForm.patchValue({ status: NoteStatus.NORMAL });
+    this.save(ModalCloseReason.UNDELETED);
+  }
+  permanentDeleteNote(): void {
+    const modalRef = this.modalService.open(NoteDeleteDialogComponent, {
+      size: 'lg',
+      centered: true,
+      backdropClass: 'click-outside-exclude',
+      windowClass: 'click-outside-exclude',
+    });
+    modalRef.componentInstance.note = this.note;
+    // unsubscribe not needed because closed completes on modal close
+    modalRef.closed.subscribe(reason => {
+      if (reason === 'deleted') {
+        this.close(ModalCloseReason.PERMANENTDELETED);
+      }
+    });
   }
 
   archiveNote(): void {
     this.editForm.patchValue({ status: NoteStatus.ARCHIVED });
-    this.save('archived');
+    this.save(ModalCloseReason.ARCHIVED);
   }
 
-  canClose(): boolean {
+  unPinNote(): void {
+    this.note!.status = NoteStatus.NORMAL;
+    this.editForm.patchValue({ status: NoteStatus.NORMAL });
+  }
+
+  pinNote(): void {
+    const initialStatus = this.note!.status;
+    this.note!.status = NoteStatus.PINNED;
+    this.editForm.patchValue({ status: NoteStatus.PINNED });
+    if (initialStatus === NoteStatus.ARCHIVED) {
+      this.save(ModalCloseReason.UNARCHIVED);
+    }
+  }
+
+  unArchiveNote(): void {
+    this.editForm.patchValue({ status: NoteStatus.NORMAL });
+    this.save(ModalCloseReason.UNARCHIVED);
+  }
+
+  canSubmit(): boolean {
     return !((this.editForm.invalid && this.editForm.get('alarmDate')!.valid) || this.isSaving);
   }
 
@@ -220,8 +269,6 @@ export class NoteDetailDialogComponent implements OnInit {
   getFormattedDate(): string {
     let lastUpdateDate: string;
     const today = dayjs().set('second', 0).set('minute', 0).set('hour', 0);
-    // eslint-disable-next-line no-console
-    console.log(this.note?.lastUpdateDate);
     if (this.note?.lastUpdateDate?.isAfter(today)) {
       lastUpdateDate = ': ' + this.note.lastUpdateDate.format(TIME_FORMAT);
     } else {

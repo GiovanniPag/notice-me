@@ -13,7 +13,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * JHipster JDL model for myApp
  */
 @Entity
-@Table(name = "tag")
+@Table(name = "tag", uniqueConstraints = { @UniqueConstraint(columnNames = { "tag_name", "owner_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Tag implements Serializable {
 

@@ -3,15 +3,22 @@
     "note": {
       "toolbar": {
         "archive": "Archivia",
+        "unarchive": "Rimuovi dall'archivio",
         "delete": "Elimina",
         "alarm": "Allarme",
         "alarmdate": "Data allarme",
         "tags": "Etichetta",
         "collaborator": "Collaboratori",
-        "attachment": "Allegati"
+        "attachment": "Allegati",
+        "restore": "Ripristina",
+        "unpin": "Stacca Nota",
+        "pin": "Fissa Nota",
+        "permanentdelete": "Elimina definitivamente"
       },
       "home": {
         "title": "Note",
+        "titlepinned": "Note Fissate",
+        "titleother": "Altre Note",
         "refreshListLabel": "Aggiorna Lista",
         "createLabel": "Genera una nuova Nota",
         "createOrEditLabel": "Genera o modifica una Nota",
@@ -24,7 +31,8 @@
         "question": "Sei sicuro di volere eliminare Nota {{ id }}?"
       },
       "detail": {
-        "title": "Nota"
+        "title": "Nota",
+        "isInTrash": "nota nel cestino"
       },
       "id": "ID",
       "title": "Titolo",

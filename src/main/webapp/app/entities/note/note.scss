@@ -6,6 +6,10 @@
 Note
 ========================================================================== */
 
+.grid-wrapper {
+  display: block;
+}
+
 .summary-text {
   max-height: 33vh;
   white-space: pre-wrap;
@@ -53,9 +57,11 @@ Note
 }
 
 .scrollable-modal {
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
+  all: inherit;
+  .form-control:focus {
+    border-color: none;
+    box-shadow: none;
+  }
 }
 
 .modal.modal-static .modal-dialog {
@@ -72,13 +78,6 @@ Note
   }
 }
 
-.scrollable-modal {
-  .form-control:focus {
-    border-color: none;
-    box-shadow: none;
-  }
-}
-
 .note-detail-dialog {
   .modal-content {
     border: 1px solid rgba(0, 0, 0, 0.125);
@@ -88,8 +87,14 @@ Note
     all: unset;
   }
 
+  #field_content {
+    overflow: hidden;
+    resize: none;
+  }
+
   .modal-body {
     all: unset;
+    overflow-y: auto;
   }
 
   .modal-footer {

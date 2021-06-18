@@ -3,15 +3,22 @@
     "note": {
       "toolbar": {
         "archive": "Archive",
+        "unarchive": "Unarchive",
         "delete": "Delete",
         "alarm": "Alarm",
         "alarmdate": "Alarm Date",
         "tags": "Tag",
         "collaborator": "Collaborator",
-        "attachment": "Attachment"
+        "attachment": "Attachment",
+        "restore": "Restore",
+        "unpin": "Unpin",
+        "pin": "Pin",
+        "permanentdelete": "Permanently delete"
       },
       "home": {
         "title": "Notes",
+        "titlepinned": "Pinned Notes",
+        "titleother": "Other Notes",
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Note",
         "createOrEditLabel": "Create or edit a Note",
@@ -24,7 +31,8 @@
         "question": "Are you sure you want to delete Note {{ id }}?"
       },
       "detail": {
-        "title": "Note"
+        "title": "Note",
+        "isInTrash": "note in the trash"
       },
       "id": "ID",
       "title": "Title",

@@ -46,6 +46,9 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
     Page<Note> findAllByOwnerLoginAndStatusIn(String login, Collection<NoteStatus> status, Pageable pageable);
     Page<Note> findAllByOwnerLoginAndStatusInAndAlarmDateIsNotNull(String login, Collection<NoteStatus> status, Pageable pageable);
 
+    Page<Note> findAllByStatusInOrderByStatusDesc(Collection<NoteStatus> status, Pageable pageable);
+    Page<Note> findAllByOwnerLoginAndStatusInOrderByStatusDesc(String login, Collection<NoteStatus> status, Pageable pageable);
+
     Page<Note> findAllWithEagerRelationshipsByStatusIn(Collection<NoteStatus> status, Pageable pageable);
     Page<Note> findAllWithEagerRelationshipsByStatusInAndAlarmDateIsNotNull(Collection<NoteStatus> status, Pageable pageable);
     Page<Note> findAllWithEagerRelationshipsByOwnerLoginAndStatusIn(String login, Collection<NoteStatus> status, Pageable pageable);

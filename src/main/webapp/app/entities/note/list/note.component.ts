@@ -13,6 +13,8 @@ import { ParseLinks } from 'app/core/util/parse-links.service';
 import { GridOptions } from 'muuri';
 import Grid from 'muuri';
 import { ActivatedRoute } from '@angular/router';
+import { ModalCloseReason } from 'app/entities/enumerations/modal-close-reason.model';
+import { NoteStatus } from 'app/entities/enumerations/note-status.model';
 
 @Component({
   selector: 'jhi-note',
@@ -20,7 +22,9 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['../note.scss'],
 })
 export class NoteComponent implements OnInit {
-  notes: INote[];
+  otherNotes: INote[];
+  pinnedNotes: INote[];
+
   isLoading = false;
   isDragging = false;
   itemsPerPage: number;
@@ -53,7 +57,8 @@ export class NoteComponent implements OnInit {
     },
   };
 
-  grid: Grid | undefined;
+  gridPinned: Grid | undefined;
+  gridOther: Grid | undefined;
 
   constructor(
     private route: ActivatedRoute,
@@ -62,7 +67,8 @@ export class NoteComponent implements OnInit {
     protected modalService: NgbModal,
     protected parseLinks: ParseLinks
   ) {
-    this.notes = [];
+    this.otherNotes = [];
+    this.pinnedNotes = [];
     this.itemsPerPage = ITEMS_PER_PAGE;
     this.page = 0;
     this.links = {
@@ -73,7 +79,8 @@ export class NoteComponent implements OnInit {
   }
 
   onResized(): void {
-    this.grid?.refreshItems().layout();
+    this.gridOther?.refreshItems().layout();
+    this.gridPinned?.refreshItems().layout();
   }
 
   onMouseDown(event: MouseEvent): void {
@@ -87,30 +94,47 @@ export class NoteComponent implements OnInit {
         scrollable: true,
         windowClass: 'note-detail-dialog',
         backdrop: 'static',
+        keyboard: false,
       });
       modalRef.componentInstance.note = note;
       modalRef.closed.subscribe(reason => {
         switch (reason) {
-          case 'modified':
+          case ModalCloseReason.MODIFIED:
             this.loadOne(note.id!);
             break;
-          case 'deleted':
-          case 'archived':
+          case ModalCloseReason.DELETED:
+          case ModalCloseReason.ARCHIVED:
+          case ModalCloseReason.UNDELETED:
+          case ModalCloseReason.UNARCHIVED:
+          case ModalCloseReason.PERMANENTDELETED:
             this.removeOne(note.id!);
+            break;
+          case ModalCloseReason.CLOSED:
+          default:
             break;
         }
       });
     }
   }
 
-  onGridCreated(grid: Grid): void {
-    this.grid = grid;
-    this.grid.on('dragInit', () => {
-      this.isDragging = true;
-    });
-    this.grid.on('dragReleaseEnd', () => {
-      this.isDragging = false;
-    });
+  onGridCreated(grid: Grid, elem: HTMLDivElement): void {
+    if (elem.id === 'gridPinned') {
+      this.gridPinned = grid;
+      this.gridPinned.on('dragInit', () => {
+        this.isDragging = true;
+      });
+      this.gridPinned.on('dragReleaseEnd', () => {
+        this.isDragging = false;
+      });
+    } else {
+      this.gridOther = grid;
+      this.gridOther.on('dragInit', () => {
+        this.isDragging = true;
+      });
+      this.gridOther.on('dragReleaseEnd', () => {
+        this.isDragging = false;
+      });
+    }
   }
 
   loadOne(id: number): void {
@@ -127,7 +151,8 @@ export class NoteComponent implements OnInit {
   }
 
   removeOne(id: number): void {
-    this.notes = this.notes.filter(note => note.id !== id);
+    this.otherNotes = this.otherNotes.filter(note => note.id !== id);
+    this.pinnedNotes = this.pinnedNotes.filter(note => note.id !== id);
   }
 
   loadAll(): void {
@@ -154,7 +179,8 @@ export class NoteComponent implements OnInit {
 
   reset(): void {
     this.page = 0;
-    this.notes = [];
+    this.otherNotes = [];
+    this.pinnedNotes = [];
     this.loadAll();
   }
 
@@ -204,14 +230,32 @@ export class NoteComponent implements OnInit {
     this.links = this.parseLinks.parse(headers.get('link') ?? '');
     if (data) {
       for (const d of data) {
-        this.notes.push(d);
+        d.status === NoteStatus.PINNED ? this.pinnedNotes.push(d) : this.otherNotes.push(d);
       }
     }
   }
 
   protected updateNote(data: INote | null): void {
     if (data) {
-      this.notes = this.notes.map(note => (note.id === data.id ? data : note));
+      let n = this.pinnedNotes.find(note => note.id === data.id);
+      if (n) {
+        if (n.status === data.status && data.status === NoteStatus.PINNED) {
+          this.pinnedNotes = this.pinnedNotes.map(note => (note.id === data.id ? data : note));
+        } else {
+          this.pinnedNotes = this.pinnedNotes.filter(note => note.id !== data.id);
+          this.otherNotes.push(data);
+        }
+      } else {
+        n = this.otherNotes.find(note => note.id === data.id);
+        if (n) {
+          if (n.status === data.status && data.status === NoteStatus.NORMAL) {
+            this.otherNotes = this.otherNotes.map(note => (note.id === data.id ? data : note));
+          } else {
+            this.otherNotes = this.otherNotes.filter(note => note.id !== data.id);
+            this.pinnedNotes.push(data);
+          }
+        }
+      }
     }
   }
 }

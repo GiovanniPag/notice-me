@@ -61,6 +61,9 @@ public class TagResource {
         if (tagDTO.getId() != null) {
             throw new BadRequestAlertException("A new tag cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        if (tagRepository.existsByTagNameAndOwnerId(tagDTO.getTagName(), tagDTO.getOwner().getId())) {
+            throw new BadRequestAlertException("A new tag cannot have the same name of an existing one", ENTITY_NAME, "tagnameesxists");
+        }
         TagDTO result = tagService.save(tagDTO);
         return ResponseEntity
             .created(new URI("/api/tags/" + result.getId()))

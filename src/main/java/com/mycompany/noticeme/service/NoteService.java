@@ -120,7 +120,7 @@ public class NoteService {
                 page =
                     noteRepository.findAllByStatusInAndAlarmDateIsNotNull(this.noteStatusFilter(status), pageable).map(noteMapper::toDto);
             } else {
-                page = noteRepository.findAllByStatusIn(this.noteStatusFilter(status), pageable).map(noteMapper::toDto);
+                page = noteRepository.findAllByStatusInOrderByStatusDesc(this.noteStatusFilter(status), pageable).map(noteMapper::toDto);
             }
         } else {
             if (hasAlarm) {
@@ -135,7 +135,11 @@ public class NoteService {
             } else {
                 page =
                     noteRepository
-                        .findAllByOwnerLoginAndStatusIn(SecurityUtils.getCurrentUserLogin().get(), this.noteStatusFilter(status), pageable)
+                        .findAllByOwnerLoginAndStatusInOrderByStatusDesc(
+                            SecurityUtils.getCurrentUserLogin().get(),
+                            this.noteStatusFilter(status),
+                            pageable
+                        )
                         .map(noteMapper::toDto);
             }
         }
