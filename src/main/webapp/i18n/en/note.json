@@ -1,6 +1,12 @@
 {
   "noticeMeApp": {
     "note": {
+      "placeholder": {
+        "title": "Title",
+        "content": "Content",
+        "tag_1": "+ Tag",
+        "tag_2": "Add tag"
+      },
       "toolbar": {
         "archive": "Archive",
         "unarchive": "Unarchive",

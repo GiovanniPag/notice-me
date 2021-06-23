@@ -248,7 +248,7 @@ export class NoteComponent implements OnInit {
       } else {
         n = this.otherNotes.find(note => note.id === data.id);
         if (n) {
-          if (n.status === data.status && data.status === NoteStatus.NORMAL) {
+          if (n.status === data.status && data.status !== NoteStatus.PINNED) {
             this.otherNotes = this.otherNotes.map(note => (note.id === data.id ? data : note));
           } else {
             this.otherNotes = this.otherNotes.filter(note => note.id !== data.id);

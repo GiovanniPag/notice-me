@@ -39,6 +39,7 @@ export class NoteDetailDialogComponent implements OnInit {
   usersSharedCollection: IUser[] = [];
   tagsSharedCollection: ITag[] = [];
 
+  maxTagLength = 50;
   maxTitleLength = 255;
   maxContentLength = 20000;
   minDate = dayjs().format(DATE_TIME_INPUT_FORMAT);
@@ -99,6 +100,10 @@ export class NoteDetailDialogComponent implements OnInit {
     if (note.id !== undefined && this.editForm.valid) {
       this.subscribeToSavePatchResponse(this.noteService.partialUpdate(note), note);
     }
+  }
+
+  tagSave(event: Event): void {
+    // do
   }
 
   addWarningAlert(translationKey?: string, translationParams?: { [key: string]: unknown }): Alert {
