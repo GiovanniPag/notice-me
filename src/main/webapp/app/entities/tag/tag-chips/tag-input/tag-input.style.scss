@@ -1,3 +1,9 @@
+@import '../../tag.scss';
+
+:host {
+  display: block;
+}
+
 tag {
   @include tag-theme($default-tag-theme);
 }

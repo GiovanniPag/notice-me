@@ -33,11 +33,6 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
    */
   @Output() public onKeydown: EventEmitter<any> = new EventEmitter();
 
-  /**
-   * @name inputTextChange
-   */
-  @Output() public inputTextChange: EventEmitter<string> = new EventEmitter();
-
   // inputs
 
   /**
@@ -67,12 +62,6 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
   @Input() public inputClass!: string;
 
   /**
-   * @name tabindex
-   * @desc pass through the specified tabindex to the input
-   */
-  @Input() public tabindex = '';
-
-  /**
    * @name disabled
    */
   @Input() public disabled = false;
@@ -90,7 +79,6 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
   /**
    * @name inputText
    */
-  @Input()
   public get inputText(): string {
     return this.item.value as string;
   }
@@ -101,8 +89,6 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
    */
   public set inputText(text: string) {
     this.item.setValue(text);
-
-    this.inputTextChange.emit(text);
   }
 
   private readonly item: FormControl = new FormControl({ value: '', disabled: this.disabled });

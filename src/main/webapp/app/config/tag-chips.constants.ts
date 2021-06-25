@@ -1,3 +1,8 @@
+import { Observable } from 'rxjs';
+import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
+
+import { ITag } from 'app/entities/tag/tag.model';
+
 // default value constants
 export const PLACEHOLDER = 'noticeMeApp.note.placeholder.tag_1';
 export const SECONDARY_PLACEHOLDER = 'noticeMeApp.note.placeholder.tag_2';
@@ -27,3 +32,35 @@ export const KEY_PRESS_ACTIONS = {
 export const DRAG_AND_DROP_KEY = 'Text';
 export const NEXT = 'NEXT';
 export const PREV = 'PREV';
+
+export interface TagInputOptions {
+  separatorKeyCodes: number[];
+  placeholder: string;
+  secondaryPlaceholder: string;
+  validators: ValidatorFn[];
+  asyncValidators: AsyncValidatorFn[];
+  errorMessages: { [key: string]: string };
+  theme: string;
+  inputId: string | null;
+  inputClass: string;
+  disable: boolean;
+  onRemoving?: (tag: ITag) => Observable<ITag>;
+  onAdding?: (tag: ITag) => Observable<ITag>;
+}
+
+export const defaults = {
+  tagInput: <TagInputOptions>{
+    separatorKeyCodes: [],
+    placeholder: PLACEHOLDER,
+    secondaryPlaceholder: SECONDARY_PLACEHOLDER,
+    validators: [],
+    asyncValidators: [],
+    errorMessages: {},
+    theme: APP_THEME,
+    inputId: null,
+    inputClass: '',
+    disable: false,
+    onRemoving: undefined,
+    onAdding: undefined,
+  },
+};

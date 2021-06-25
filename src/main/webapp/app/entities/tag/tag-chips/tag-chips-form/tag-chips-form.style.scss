@@ -1,4 +1,4 @@
-@import '../../core/styles/themes/_themes.scss';
+@import '../../tag.scss';
 
 .ng2-tag-input__text-input {
   @include tag-input-form-theme($default-theme);

@@ -5,14 +5,14 @@
     type="text"
     class="ng2-tag-input__text-input"
     autocomplete="off"
-    tabindex="{{ disabled ? -1 : tabindex ? tabindex : 0 }}"
+    tabindex="{{ disabled ? -1 : 0 }}"
     minlength="1"
     formControlName="item"
     [ngClass]="inputClass"
     [attr.id]="inputId"
     [attr.placeholder]="placeholder"
     [attr.aria-label]="placeholder"
-    [attr.tabindex]="tabindex"
+    [attr.tabindex]="0"
     [attr.disabled]="disabled ? disabled : null"
     (focus)="onFocus.emit($event)"
     (blur)="onBlur.emit($event)"
@@ -20,3 +20,4 @@
     (keyup)="onKeyUp($event)"
   />
 </form>
+<!-- must insert typeahead -->

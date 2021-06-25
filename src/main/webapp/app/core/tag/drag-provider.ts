@@ -1,15 +1,15 @@
-import { TagInputComponent } from '../../components/tag-input/tag-input';
-import { TagModel } from '../accessor';
+import { TagInputComponent } from 'app/entities/tag/tag-chips/tag-input/tag-input.component';
+import { ITag } from 'app/entities/tag/tag.model';
 
 import { Injectable } from '@angular/core';
 
 export declare interface DraggedTag {
   index: number;
-  tag: TagModel;
+  tag: ITag;
   zone: string;
 }
 
-import { DRAG_AND_DROP_KEY } from '../../core/constants';
+import { DRAG_AND_DROP_KEY } from 'app/config/tag-chips.constants';
 
 export declare interface State {
   dragging: boolean;
@@ -21,8 +21,8 @@ export declare type StateProperty = keyof State;
 
 @Injectable()
 export class DragProvider {
-  public sender: TagInputComponent;
-  public receiver: TagInputComponent;
+  public sender!: TagInputComponent;
+  public receiver!: TagInputComponent;
 
   public state: State = {
     dragging: false,
@@ -51,9 +51,10 @@ export class DragProvider {
       try {
         return JSON.parse(data) as DraggedTag;
       } catch {
-        return;
+        return undefined;
       }
     }
+    return undefined;
   }
 
   /**
@@ -78,9 +79,8 @@ export class DragProvider {
    * @param indexDragged
    * @param indexDropped
    */
-  public onTagDropped(tag: TagModel, indexDragged: number, indexDropped?: number): void {
+  public onTagDropped(tag: ITag, indexDragged: number, indexDropped?: number): void {
     this.onDragEnd();
-
     this.sender.onRemoveRequested(tag, indexDragged);
     this.receiver.onAddingRequested(false, tag, indexDropped);
   }

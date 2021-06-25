@@ -1,3 +1,5 @@
+@import '../../tag.scss';
+
 :host,
 :host > div,
 :host > div:focus {
@@ -39,4 +41,34 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.remove-icon {
+  width: 20px;
+  height: 16px;
+  transition: all 0.15sì;
+  display: inline-block;
+  text-align: right;
+
+  path {
+    fill: $color-arrow-noticeme;
+  }
+
+  svg {
+    vertical-align: bottom;
+    height: 34px;
+  }
+}
+
+.remove-icon:hover {
+  transform: scale(1.5) translateY(-3px);
+}
+
+:host:focus,
+:host:active {
+  .remove-icon {
+    path {
+      fill: $color-arrow-noticeme-focused;
+    }
+  }
 }

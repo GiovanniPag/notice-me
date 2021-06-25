@@ -1,29 +1,14 @@
-import {
-  Component,
-  forwardRef,
-  HostBinding,
-  Input,
-  Output,
-  EventEmitter,
-  Renderer2,
-  ViewChild,
-  ViewChildren,
-  ContentChildren,
-  ContentChild,
-  OnInit,
-  TemplateRef,
-  QueryList,
-  AfterViewInit,
-} from '@angular/core';
+/* eslint-disable @angular-eslint/no-output-on-prefix */
+import { Component, forwardRef, Input, Output, EventEmitter, ViewChild, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 
 import { AsyncValidatorFn, FormControl, NG_VALUE_ACCESSOR, ValidatorFn } from '@angular/forms';
 
 // rx
-import { Observable } from 'rxjs';
-import { debounceTime, filter, map, first } from 'rxjs/operators';
+import { debounceTime, filter, first } from 'rxjs/operators';
 
 // ng2-tag-input
-import { TagInputAccessor, TagModel } from '../../core/accessor';
+import { ITag } from 'app/entities/tag/tag.model';
+import { TagInputAccessorDirective } from '../../core/accessor';
 import * as constants from 'app/config/tag-chips.constants';
 
 import { DragProvider, DraggedTag } from '../../core/providers/drag-provider';
@@ -33,13 +18,13 @@ import { TagComponent } from '../tag/tag.component';
 
 import { animations } from './animations';
 import { defaults } from '../../defaults';
-import { TagInputDropdown } from '../dropdown/tag-input-dropdown.component';
 
 const CUSTOM_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => TagInputComponent),
   multi: true,
 };
+
 @Component({
   selector: 'jhi-tag-input',
   providers: [CUSTOM_ACCESSOR],
@@ -47,7 +32,7 @@ const CUSTOM_ACCESSOR = {
   templateUrl: './tag-input.template.html',
   animations,
 })
-export class TagInputComponent extends TagInputAccessor implements OnInit, AfterViewInit {
+export class TagInputComponent extends TagInputAccessorDirective implements AfterViewInit {
   /**
    * @name separatorKeyCodes
    * @desc keyboard key codes with which a user can separate items
@@ -89,11 +74,6 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
   @Input() public theme: string = defaults.tagInput.theme;
 
   /**
-   * @name onTextChangeDebounce
-   */
-  @Input() public onTextChangeDebounce = defaults.tagInput.onTextChangeDebounce;
-
-  /**
    * - custom id assigned to the input
    * @name id
    */
@@ -105,83 +85,6 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
   @Input() public inputClass: string = defaults.tagInput.inputClass;
 
   /**
-   * - option to clear text input when the form is blurred
-   * @name clearOnBlur
-   */
-  @Input() public clearOnBlur: boolean = defaults.tagInput.clearOnBlur;
-
-  /**
-   * - hideForm
-   * @name clearOnBlur
-   */
-  @Input() public hideForm: boolean = defaults.tagInput.hideForm;
-
-  /**
-   * @name addOnBlur
-   */
-  @Input() public addOnBlur: boolean = defaults.tagInput.addOnBlur;
-
-  /**
-   * @name addOnPaste
-   */
-  @Input() public addOnPaste: boolean = defaults.tagInput.addOnPaste;
-
-  /**
-   * - pattern used with the native method split() to separate patterns in the string pasted
-   * @name pasteSplitPattern
-   */
-  @Input() public pasteSplitPattern = defaults.tagInput.pasteSplitPattern;
-
-  /**
-   * @name blinkIfDupe
-   */
-  @Input() public blinkIfDupe = defaults.tagInput.blinkIfDupe;
-
-  /**
-   * @name removable
-   */
-  @Input() public removable = defaults.tagInput.removable;
-
-  /**
-   * @name editable
-   */
-  @Input() public editable: boolean = defaults.tagInput.editable;
-
-  /**
-   * @name allowDupes
-   */
-  @Input() public allowDupes = defaults.tagInput.allowDupes;
-
-  /**
-   * @description if set to true, the newly added tags will be added as strings, and not objects
-   * @name modelAsStrings
-   */
-  @Input() public modelAsStrings = defaults.tagInput.modelAsStrings;
-
-  /**
-   * @name trimTags
-   */
-  @Input() public trimTags = defaults.tagInput.trimTags;
-
-  /**
-   * @name inputText
-   */
-  @Input() public get inputText(): string {
-    return this.inputTextValue;
-  }
-
-  /**
-   * @name ripple
-   */
-  @Input() public ripple: boolean = defaults.tagInput.ripple;
-
-  /**
-   * @name tabindex
-   * @desc pass through the specified tabindex to the input
-   */
-  @Input() public tabindex: string = defaults.tagInput.tabIndex;
-
-  /**
    * @name disable
    */
   @Input() public disable: boolean = defaults.tagInput.disable;
@@ -189,7 +92,7 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
   /**
    * @name dragZone
    */
-  @Input() public dragZone: string = defaults.tagInput.dragZone;
+  @Input() public dragZone = 'note_tags';
 
   /**
    * @name onRemoving
@@ -202,135 +105,49 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
   @Input() public onAdding = defaults.tagInput.onAdding;
 
   /**
-   * @name animationDuration
-   */
-  @Input() public animationDuration = defaults.tagInput.animationDuration;
-
-  /**
    * @name onAdd
    * @desc event emitted when adding a new item
    */
-  @Output() public onAdd = new EventEmitter<TagModel>();
+  @Output() public onAdd = new EventEmitter<ITag>();
 
   /**
    * @name onRemove
    * @desc event emitted when removing an existing item
    */
-  @Output() public onRemove = new EventEmitter<TagModel>();
-
-  /**
-   * @name onSelect
-   * @desc event emitted when selecting an item
-   */
-  @Output() public onSelect = new EventEmitter<TagModel>();
-
-  /**
-   * @name onFocus
-   * @desc event emitted when the input is focused
-   */
-  @Output() public onFocus = new EventEmitter<string>();
-
-  /**
-   * @name onFocus
-   * @desc event emitted when the input is blurred
-   */
-  @Output() public onBlur = new EventEmitter<string>();
-
-  /**
-   * @name onTextChange
-   * @desc event emitted when the input value changes
-   */
-  @Output() public onTextChange = new EventEmitter<TagModel>();
-
-  /**
-   * - output triggered when text is pasted in the form
-   * @name onPaste
-   */
-  @Output() public onPaste = new EventEmitter<string>();
+  @Output() public onRemove = new EventEmitter<ITag>();
 
   /**
    * - output triggered when tag entered is not valid
    * @name onValidationError
    */
-  @Output() public onValidationError = new EventEmitter<TagModel>();
-
-  /**
-   * - output triggered when tag is edited
-   * @name onTagEdited
-   */
-  @Output() public onTagEdited = new EventEmitter<TagModel>();
-
-  /**
-   * @name dropdown
-   */
-  // @ContentChild(forwardRef(() => TagInputDropdown), {static: true}) dropdown: TagInputDropdown;
-  @ContentChild(TagInputDropdown) public dropdown: TagInputDropdown;
-  /**
-   * @name template
-   * @desc reference to the template if provided by the user
-   */
-  @ContentChildren(TemplateRef, { descendants: false }) public templates: QueryList<TemplateRef<any>>;
+  @Output() public onValidationError = new EventEmitter<ITag>();
 
   /**
    * @name inputForm
    */
-  @ViewChild(TagInputForm) public inputForm: TagInputForm;
+  @ViewChild(TagChipsFormComponent) public inputForm!: TagChipsFormComponent;
 
   /**
    * @name selectedTag
    * @desc reference to the current selected tag
    */
-  public selectedTag: TagModel | undefined;
-
-  /**
-   * @name isLoading
-   */
-  public isLoading = false;
-
-  /**
-   * @name inputText
-   * @param text
-   */
-  public set inputText(text: string) {
-    this.inputTextValue = text;
-    this.inputTextChange.emit(text);
-  }
+  public selectedTag: ITag | undefined;
 
   /**
    * @name tags
    * @desc list of Element items
    */
-  @ViewChildren(TagComponent) public tags: QueryList<TagComponent>;
-
-  /**
-   * @description emitter for the 2-way data binding inputText value
-   * @name inputTextChange
-   */
-  @Output() public inputTextChange: EventEmitter<string> = new EventEmitter();
-
-  /**
-   * @description private variable to bind get/set
-   * @name inputTextValue
-   */
-  public inputTextValue = '';
-
-  /**
-   * @desc removes the tab index if it is set - it will be passed through to the input
-   * @name tabindexAttr
-   */
-  @HostBinding('attr.tabindex')
-  public get tabindexAttr(): string {
-    return this.tabindex !== '' ? '-1' : '';
-  }
+  @ViewChildren(TagComponent) public tags!: QueryList<TagComponent>;
 
   /**
    * @name animationMetadata
    */
-  public animationMetadata: { value: string; params: object };
+  public animationMetadata = {
+    value: 'in',
+    params: { enter: '250ms', leave: '150ms' },
+  };
 
   public errors: string[] = [];
-
-  public isProgressBarVisible$: Observable<boolean>;
 
   /**
    * @name listeners
@@ -341,7 +158,7 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
     [constants.KEYUP]: <{ (fun: any): any }[]>[],
   };
 
-  constructor(private readonly renderer: Renderer2, public readonly dragProvider: DragProvider) {
+  constructor(public dragProvider: DragProvider) {
     super();
   }
 
@@ -355,43 +172,14 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
     this.setupSeparatorKeysListener();
     this.setUpInputKeydownListeners();
 
-    if (this.onTextChange.observers.length) {
-      this.setUpTextChangeSubscriber();
-    }
+    // on blur clear the text's form
+    this.setUpOnBlurSubscriber();
 
-    // if clear on blur is set to true, subscribe to the event and clear the text's form
-    if (this.clearOnBlur || this.addOnBlur) {
-      this.setUpOnBlurSubscriber();
-    }
-
-    // if addOnPaste is set to true, register the handler and add items
-    if (this.addOnPaste) {
-      this.setUpOnPasteListener();
-    }
-
-    const statusChanges$ = this.inputForm.form.statusChanges;
+    const statusChanges$ = this.inputForm.form!.statusChanges;
 
     statusChanges$.pipe(filter((status: string) => status !== 'PENDING')).subscribe(() => {
       this.errors = this.inputForm.getErrorMessages(this.errorMessages);
     });
-
-    this.isProgressBarVisible$ = statusChanges$.pipe(
-      map((status: string) => {
-        return status === 'PENDING' || this.isLoading;
-      })
-    );
-
-    // if hideForm is set to true, remove the input
-    if (this.hideForm) {
-      this.inputForm.destroy();
-    }
-  }
-
-  /**
-   * @name ngOnInit
-   */
-  public ngOnInit(): void {
-    this.setAnimationMetadata();
   }
 
   /**
@@ -399,9 +187,9 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
    * @param tag
    * @param index
    */
-  public onRemoveRequested(tag: TagModel, index: number): Promise<TagModel> {
+  public onRemoveRequested(tag: ITag, index: number): Promise<ITag> {
     return new Promise(resolve => {
-      const subscribeFn = (model: TagModel) => {
+      const subscribeFn = (model: ITag): void => {
         this.removeItem(model, index);
         resolve(tag);
       };
@@ -413,44 +201,43 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
   /**
    * @name onAddingRequested
    * @param fromAutocomplete {boolean}
-   * @param tag {TagModel}
+   * @param tag {ITag}
    * @param index? {number}
    * @param giveupFocus? {boolean}
    */
-  public onAddingRequested(fromAutocomplete: boolean, tag: TagModel, index?: number, giveupFocus?: boolean): Promise<TagModel> {
-    return new Promise((resolve, reject) => {
-      const subscribeFn = (model: TagModel) => {
+  public onAddingRequested(fromAutocomplete: boolean, tag: ITag, index?: number, giveupFocus?: boolean): Promise<ITag> {
+    return new Promise<ITag>((resolve, reject) => {
+      const subscribeFn = (model: ITag): Promise<ITag> => {
+        alert('oi');
         return this.addItem(fromAutocomplete, model, index, giveupFocus).then(resolve).catch(reject);
       };
-
       return this.onAdding ? this.onAdding(tag).pipe(first()).subscribe(subscribeFn, reject) : subscribeFn(tag);
     });
   }
 
   /**
    * @name appendTag
-   * @param tag {TagModel}
+   * @param tag {ITag}
    */
-  public appendTag = (tag: TagModel, index = this.items.length): void => {
+  public appendTag = (tag: ITag, index = this.items.length): void => {
     const items = this.items;
-    const model = this.modelAsStrings ? tag[this.identifyBy] : tag;
 
-    this.items = [...items.slice(0, index), model, ...items.slice(index, items.length)];
+    this.items = [...items.slice(0, index), tag, ...items.slice(index, items.length)];
   };
 
   /**
    * @name createTag
    * @param model
    */
-  public createTag = (model: TagModel): TagModel => {
-    const trim = (val: TagModel, key: string): TagModel => {
+  public createTag = (model: ITag): ITag => {
+    const trim = (val: ITag, key: string): ITag => {
       return typeof val === 'string' ? val.trim() : val[key];
     };
 
     return {
       ...(typeof model !== 'string' ? model : {}),
-      [this.displayBy]: this.trimTags ? trim(model, this.displayBy) : model,
-      [this.identifyBy]: this.trimTags ? trim(model, this.identifyBy) : model,
+      [this.displayBy]: trim(model, this.displayBy),
+      [this.identifyBy]: trim(model, this.identifyBy),
     };
   };
 
@@ -460,18 +247,11 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
    * @param item
    * @param emit
    */
-  public selectItem(item: TagModel | undefined, emit = true): void {
-    const isReadonly = item && typeof item !== 'string' && item.readonly;
-
-    if (isReadonly || this.selectedTag === item) {
+  public selectItem(item: ITag | undefined): void {
+    if (this.selectedTag === item) {
       return;
     }
-
     this.selectedTag = item;
-
-    if (emit) {
-      this.onSelect.emit(item);
-    }
   }
 
   /**
@@ -498,7 +278,7 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
 
     switch (constants.KEY_PRESS_ACTIONS[key]) {
       case constants.ACTIONS_KEYS.DELETE:
-        if (this.selectedTag && this.removable) {
+        if (this.selectedTag) {
           const index = this.items.indexOf(this.selectedTag);
           this.onRemoveRequested(this.selectedTag, index);
         }
@@ -536,7 +316,7 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
     event.preventDefault();
   }
 
-  public async onFormSubmit() {
+  public async onFormSubmit(): Promise<ITag> {
     try {
       await this.onAddingRequested(false, this.formValue);
     } catch {
@@ -558,18 +338,14 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
   /**
    * @name focus
    * @param applyFocus
-   * @param displayAutocomplete
    */
-  public focus(applyFocus = false, displayAutocomplete = false): void {
+  public focus(applyFocus = false): void {
     if (this.dragProvider.getState('dragging')) {
       return;
     }
-
-    this.selectItem(undefined, false);
-
+    this.selectItem(undefined);
     if (applyFocus) {
       this.inputForm.focus();
-      this.onFocus.emit(this.formValue);
     }
   }
 
@@ -578,43 +354,29 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
    */
   public blur(): void {
     this.onTouched();
-
-    this.onBlur.emit(this.formValue);
   }
 
   /**
    * @name hasErrors
    */
   public hasErrors(): boolean {
-    return !!this.inputForm && this.inputForm.hasErrors();
+    return this.inputForm.hasErrors();
   }
 
   /**
    * @name isInputFocused
    */
   public isInputFocused(): boolean {
-    return !!this.inputForm && this.inputForm.isInputFocused();
-  }
-
-  /**
-   * - this is the one way I found to tell if the template has been passed and it is not
-   * the template for the menu item
-   * @name hasCustomTemplate
-   */
-  public hasCustomTemplate(): boolean {
-    const template = this.templates ? this.templates.first : undefined;
-    const menuTemplate = this.dropdown && this.dropdown.templates ? this.dropdown.templates.first : undefined;
-
-    return Boolean(template && template !== menuTemplate);
+    return this.inputForm.isInputFocused();
   }
 
   /**
    * @name formValue
    */
-  public get formValue(): string {
+  public get formValue(): ITag {
     const form = this.inputForm.value;
 
-    return form ? form.value : '';
+    return form ? form.value : null;
   }
 
   /**3
@@ -622,7 +384,7 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
    * @param event
    * @param index
    */
-  public onDragStarted(event: DragEvent, tag: TagModel, index: number): void {
+  public onDragStarted(event: DragEvent, tag: ITag, index: number): void {
     event.stopPropagation();
 
     const item = { zone: this.dragZone, tag, index } as DraggedTag;
@@ -673,10 +435,10 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
 
   /**
    * @name onTagBlurred
-   * @param changedElement {TagModel}
+   * @param changedElement {ITag}
    * @param index {number}
    */
-  public onTagBlurred(changedElement: TagModel, index: number): void {
+  public onTagBlurred(changedElement: ITag, index: number): void {
     this.items[index] = changedElement;
     this.blur();
   }
@@ -685,16 +447,8 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
    * @name trackBy
    * @param items
    */
-  public trackBy(index: number, item: TagModel): string {
+  public trackBy(index: number, item: ITag): string {
     return item[this.identifyBy];
-  }
-
-  /**
-   * @name updateEditedTag
-   * @param tag
-   */
-  public updateEditedTag({ tag, index }: { tag: TagModel; index: number }): void {
-    this.onTagEdited.emit(tag);
   }
 
   /**
@@ -702,7 +456,7 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
    * @param tag
    * @param isFromAutocomplete
    */
-  public isTagValid = (tag: TagModel, fromAutocomplete = false): boolean => {
+  public isTagValid = (tag: ITag, fromAutocomplete = false): boolean => {
     const selectedItem = this.dropdown ? this.dropdown.selectedItem : undefined;
     const value = this.getItemDisplay(tag).trim();
 
@@ -713,10 +467,8 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
     const dupe = this.findDupe(tag, fromAutocomplete);
 
     // if so, give a visual cue and return false
-    if (!this.allowDupes && dupe && this.blinkIfDupe) {
-      const model = this.tags.find(item => {
-        return this.getItemValue(item.model) === this.getItemValue(dupe);
-      });
+    if (dupe) {
+      const model = this.tags.find(item => this.getItemValue(item.model) === this.getItemValue(dupe));
 
       if (model) {
         model.blink();
@@ -727,7 +479,7 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
 
     const assertions = [
       // 1. there must be no dupe OR dupes are allowed
-      !dupe || this.allowDupes,
+      !dupe,
 
       // 3. check item comes from autocomplete
       isFromAutocomplete,
@@ -739,19 +491,19 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
   /**
    * @name removeItem
    * @desc removes an item from the array of the model
-   * @param tag {TagModel}
+   * @param tag {ITag}
    * @param index {number}
    */
-  public removeItem(tag: TagModel, index: number): void {
+  public removeItem(tag: ITag, index: number): void {
     this.items = this.getItemsWithout(index);
 
     // if the removed tag was selected, set it as undefined
     if (this.selectedTag === tag) {
-      this.selectItem(undefined, false);
+      this.selectItem(undefined);
     }
 
     // focus input
-    this.focus(true, false);
+    this.focus(true);
 
     // emit remove event
     this.onRemove.emit(tag);
@@ -762,7 +514,7 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
    * @param item
    * @param direction
    */
-  private moveToTag(item: TagModel, direction: string): void {
+  private moveToTag(item: ITag, direction: string): void {
     const isLast = this.isLastTag(item);
     const isFirst = this.isFirstTag(item);
     const stopSwitch = (direction === constants.NEXT && isLast) || (direction === constants.PREV && isFirst);
@@ -781,17 +533,17 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
 
   /**
    * @name isFirstTag
-   * @param item {TagModel}
+   * @param item {ITag}
    */
-  private isFirstTag(item: TagModel): boolean {
+  private isFirstTag(item: ITag): boolean {
     return this.tags.first.model === item;
   }
 
   /**
    * @name isLastTag
-   * @param item {TagModel}
+   * @param item {ITag}
    */
-  private isLastTag(item: TagModel): boolean {
+  private isLastTag(item: ITag): boolean {
     return this.tags.last.model === item;
   }
 
@@ -799,7 +551,7 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
    * @name getTagIndex
    * @param item
    */
-  private getTagIndex(item: TagModel): number {
+  private getTagIndex(item: ITag): number {
     const tags = this.tags.toArray();
 
     return tags.findIndex(tag => tag.model === item);
@@ -819,18 +571,18 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
    * @name getControl
    */
   private getControl(): FormControl {
-    return this.inputForm.value as FormControl;
+    return this.inputForm.value;
   }
 
   /**
    * @name addItem
    * @desc adds the current text model to the items array
    * @param fromAutocomplete {boolean}
-   * @param item {TagModel}
+   * @param item {ITag}
    * @param index? {number}
    * @param giveupFocus? {boolean}
    */
-  private addItem(fromAutocomplete = false, item: TagModel, index?: number, giveupFocus?: boolean): Promise<TagModel> {
+  private addItem(fromAutocomplete = false, item: ITag, index?: number, giveupFocus?: boolean): Promise<ITag> {
     const display = this.getItemDisplay(item);
     const tag = this.createTag(item);
 
@@ -873,7 +625,7 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
         }
       };
 
-      const status = this.inputForm.form.status;
+      const status = this.inputForm.form!.status;
       const isTagValid = this.isTagValid(tag, fromAutocomplete);
 
       const onValidationError = () => {
@@ -892,7 +644,7 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
       }
 
       if (status === 'PENDING') {
-        const statusUpdate$ = this.inputForm.form.statusChanges;
+        const statusUpdate$ = this.inputForm.form!.statusChanges;
 
         return statusUpdate$
           .pipe(
@@ -960,46 +712,13 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
   }
 
   /**
-   * @name setUpOnPasteListener
-   */
-  private setUpOnPasteListener(): void {
-    const input = this.inputForm.input.nativeElement;
-
-    // attach listener to input
-    this.renderer.listen(input, 'paste', event => {
-      this.onPasteCallback(event);
-
-      event.preventDefault();
-      return true;
-    });
-  }
-
-  /**
-   * @name setUpTextChangeSubscriber
-   */
-  private setUpTextChangeSubscriber(): void {
-    this.inputForm.form.valueChanges.pipe(debounceTime(this.onTextChangeDebounce)).subscribe((value: { item: string }) => {
-      this.onTextChange.emit(value.item);
-    });
-  }
-
-  /**
    * @name setUpOnBlurSubscriber
    */
   private setUpOnBlurSubscriber(): void {
-    const filterFn = (): boolean => {
-      const isVisible = this.dropdown && this.dropdown.isVisible;
-      return !isVisible && !!this.formValue;
-    };
+    const filterFn = (): boolean => !this.dropdown.isVisible && !!this.formValue;
 
     this.inputForm.onBlur.pipe(debounceTime(100), filter(filterFn)).subscribe(() => {
-      const reset = () => this.setInputValue('');
-
-      if (this.addOnBlur) {
-        return this.onAddingRequested(false, this.formValue, undefined, true).then(reset).catch(reset);
-      }
-
-      reset();
+      this.setInputValue('');
     });
   }
 
@@ -1008,55 +727,11 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
    * @param tag
    * @param isFromAutocomplete
    */
-  private findDupe(tag: TagModel, isFromAutocomplete: boolean): TagModel | undefined {
+  private findDupe(tag: ITag, isFromAutocomplete: boolean): ITag | undefined {
     const identifyBy = isFromAutocomplete ? this.dropdown.identifyBy : this.identifyBy;
     const id = tag[identifyBy];
 
     return this.items.find(item => this.getItemValue(item) === id);
-  }
-
-  /**
-   * @name onPasteCallback
-   * @param data
-   */
-  private onPasteCallback = async (data: ClipboardEvent) => {
-    interface IEWindow extends Window {
-      clipboardData: DataTransfer;
-    }
-
-    const getText = (): string => {
-      const isIE = Boolean((window as IEWindow & typeof globalThis).clipboardData);
-      const clipboardData = isIE ? (window as IEWindow & typeof globalThis).clipboardData : data.clipboardData;
-      const type = isIE ? 'Text' : 'text/plain';
-      return clipboardData === null ? '' : clipboardData.getData(type) || '';
-    };
-
-    const text = getText();
-
-    const requests = text.split(this.pasteSplitPattern).map(item => {
-      const tag = this.createTag(item);
-      this.setInputValue(tag[this.displayBy]);
-      return this.onAddingRequested(false, tag);
-    });
-
-    const resetInput = () => setTimeout(() => this.setInputValue(''), 50);
-
-    Promise.all(requests)
-      .then(() => {
-        this.onPaste.emit(text);
-        resetInput();
-      })
-      .catch(resetInput);
-  };
-
-  /**
-   * @name setAnimationMetadata
-   */
-  private setAnimationMetadata(): void {
-    this.animationMetadata = {
-      value: 'in',
-      params: { ...this.animationDuration },
-    };
   }
 
   private listen(listenerType: string, action: ($event: KeyboardEvent) => any, condition = true): void {
