@@ -1,18 +1,7 @@
 /* eslint-disable @angular-eslint/no-output-on-prefix */
-import { Component, Input, Output, EventEmitter, ElementRef, HostListener, HostBinding, ChangeDetectorRef, Renderer2 } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, HostListener, HostBinding } from '@angular/core';
 
-import { TagModel } from '../../core/accessor';
-
-// mocking navigator
-const navigator =
-  typeof window !== 'undefined'
-    ? window.navigator
-    : {
-        userAgent: 'Chrome',
-        vendor: 'Google Inc',
-      };
-
-const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+import { ITag } from '../../tag.model';
 
 @Component({
   selector: 'jhi-tag-chip',
@@ -21,28 +10,16 @@ const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigat
 })
 export class TagComponent {
   /**
-   * @name model {TagModel}
+   * @name model {ITag}
    */
   @Input()
-  public model: TagModel;
-
-  /**
-   * @name displayBy {string}
-   */
-  @Input()
-  public displayBy: string;
-
-  /**
-   * @name identifyBy {string}
-   */
-  @Input()
-  public identifyBy: string;
+  public model!: ITag;
 
   /**
    * @name index {number}
    */
   @Input()
-  public index: number;
+  public index!: number;
 
   /**
    * @name disabled
@@ -51,28 +28,22 @@ export class TagComponent {
   public disabled = false;
 
   /**
-   * @name canAddTag
-   */
-  @Input()
-  public canAddTag: (tag: TagModel) => boolean;
-
-  /**
    * @name onSelect
    */
   @Output()
-  public onSelect: EventEmitter<TagModel> = new EventEmitter<TagModel>();
+  public onSelect: EventEmitter<ITag> = new EventEmitter<ITag>();
 
   /**
    * @name onRemove
    */
   @Output()
-  public onRemove: EventEmitter<TagModel> = new EventEmitter<TagModel>();
+  public onRemove: EventEmitter<ITag> = new EventEmitter<ITag>();
 
   /**
    * @name onBlur
    */
   @Output()
-  public onBlur: EventEmitter<TagModel> = new EventEmitter<TagModel>();
+  public onBlur: EventEmitter<ITag> = new EventEmitter<ITag>();
 
   /**
    * @name onKeyDown
@@ -84,9 +55,9 @@ export class TagComponent {
    * @name moving
    */
   @HostBinding('class.moving')
-  public moving: boolean;
+  public moving!: boolean;
 
-  constructor(public element: ElementRef, public renderer: Renderer2, private cdRef: ChangeDetectorRef) {}
+  constructor(public element: ElementRef) {}
 
   /**
    * @name select
@@ -95,13 +66,10 @@ export class TagComponent {
     if (this.disabled) {
       return;
     }
-
     if ($event) {
       $event.stopPropagation();
     }
-
     this.focus();
-
     this.onSelect.emit(this.model);
   }
 
@@ -110,7 +78,7 @@ export class TagComponent {
    */
   public remove($event: MouseEvent): void {
     $event.stopPropagation();
-    this.onRemove.emit(this);
+    this.onRemove.emit(this.model);
   }
 
   /**
@@ -139,27 +107,17 @@ export class TagComponent {
   public blink(): void {
     const classList = this.element.nativeElement.classList;
     classList.add('blink');
-
-    setTimeout(() => classList.remove('blink'), 50);
+    setTimeout(() => {
+      classList.remove('blink');
+    }, 50);
   }
 
   /**
    * @name onBlurred
    * @param event
    */
-  public onBlurred(event: any): void {
-    const value: string = event.target.innerText;
-    const result = typeof this.model === 'string' ? value : { ...this.model, [this.displayBy]: value };
-
-    this.onBlur.emit(result);
-  }
-
-  /**
-   * @name getDisplayValue
-   * @param item
-   */
-  public getDisplayValue(item: TagModel): string {
-    return typeof item === 'string' ? item : item[this.displayBy];
+  public onBlurred(): void {
+    this.onBlur.emit(this.model);
   }
 
   /**

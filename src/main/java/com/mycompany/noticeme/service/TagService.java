@@ -99,6 +99,19 @@ public class TagService {
     }
 
     /**
+     * Get one tag by tagname.
+     *
+     * @param tagname the tagname of the entity.
+     * @return the entity.
+     */
+    @Transactional(readOnly = true)
+    public Optional<TagDTO> findOne(String tagname) {
+        log.debug("Request to get Tag : {}", tagname);
+
+        return tagRepository.findOneByTagNameAndOwnerLogin(tagname, SecurityUtils.getCurrentUserLogin().get()).map(tagMapper::toDto);
+    }
+
+    /**
      * Delete the tag by id.
      *
      * @param id the id of the entity.

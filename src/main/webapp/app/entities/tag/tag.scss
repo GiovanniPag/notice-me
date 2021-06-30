@@ -3,14 +3,6 @@
 @import '~bootstrap/scss/variables';
 @import '../../../content/scss/bootstrap-variables';
 
-.noticeme.ng2-tag-input {
-  @include tag-input-theme($noticeme-theme);
-}
-
-.error-message {
-  @include error-message($noticeme-theme);
-}
-
 // THEME
 // minimal container-border-bottom: 1px solid transparent,
 $noticeme-theme: (
@@ -55,3 +47,11 @@ $noticeme-tag-theme: (
   color-hover: initial,
   transition: all 0.3s,
 );
+
+.ng2-tag-input {
+  @include tag-input-theme($noticeme-theme);
+}
+
+.error-message {
+  @include error-message($noticeme-theme);
+}

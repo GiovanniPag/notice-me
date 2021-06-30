@@ -1,5 +1,5 @@
 @import '../../tag.scss';
 
 .ng2-tag-input__text-input {
-  @include tag-input-form-theme($default-theme);
+  @include tag-input-form-theme($noticeme-theme);
 }

@@ -21,6 +21,7 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
     Page<Tag> findAllByOwnerLogin(String login, Pageable pageable);
 
     Optional<Tag> findOneByIdAndOwnerLogin(@Param("id") Long id, @Param("login") String login);
+    Optional<Tag> findOneByTagNameAndOwnerLogin(@Param("tagName") String tagName, @Param("login") String login);
 
     boolean existsByTagNameAndOwnerId(@Param("tagName") String tagName, @Param("id") Long id);
 }

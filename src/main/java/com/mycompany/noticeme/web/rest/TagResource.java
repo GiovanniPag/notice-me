@@ -1,5 +1,6 @@
 package com.mycompany.noticeme.web.rest;
 
+import com.mycompany.noticeme.config.CustomResponseUtil;
 import com.mycompany.noticeme.repository.TagRepository;
 import com.mycompany.noticeme.service.TagService;
 import com.mycompany.noticeme.service.dto.TagDTO;
@@ -164,6 +165,19 @@ public class TagResource {
         log.debug("REST request to get Tag : {}", id);
         Optional<TagDTO> tagDTO = tagService.findOne(id);
         return ResponseUtil.wrapOrNotFound(tagDTO);
+    }
+
+    /**
+     * {@code GET  /tags/:tagname} : get the tag with the name.
+     *
+     * @param tagname the tagname of the tagDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the tagDTO, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/tag/{tagname}")
+    public ResponseEntity<TagDTO> getTag(@PathVariable String tagname) {
+        log.debug("REST request to get Tag : {}", tagname);
+        Optional<TagDTO> tagDTO = tagService.findOne(tagname);
+        return CustomResponseUtil.wrapOrEmpty(tagDTO, null);
     }
 
     /**

@@ -50,7 +50,6 @@ export class AlertService {
    */
   addAlert(alert: Alert, extAlerts?: Alert[]): Alert {
     alert.id = this.alertId++;
-
     if (alert.translationKey) {
       const translatedMessage = this.translateService.instant(alert.translationKey, alert.translationParams);
       // if translation key exists

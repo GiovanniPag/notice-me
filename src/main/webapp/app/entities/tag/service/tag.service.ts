@@ -13,6 +13,7 @@ export type EntityArrayResponseType = HttpResponse<ITag[]>;
 @Injectable({ providedIn: 'root' })
 export class TagService {
   public resourceUrl = this.applicationConfigService.getEndpointFor('api/tags');
+  public resourceUrlAlt = this.applicationConfigService.getEndpointFor('api/tag');
 
   constructor(protected http: HttpClient, private applicationConfigService: ApplicationConfigService) {}
 
@@ -30,6 +31,10 @@ export class TagService {
 
   find(id: number): Observable<EntityResponseType> {
     return this.http.get<ITag>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  findByName(tagName: string): Observable<EntityResponseType> {
+    return this.http.get<ITag>(`${this.resourceUrlAlt}/${tagName}`, { observe: 'response' });
   }
 
   query(req?: any): Observable<EntityArrayResponseType> {

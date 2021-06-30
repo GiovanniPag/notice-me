@@ -19,11 +19,6 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
   @Output() public onBlur: EventEmitter<any> = new EventEmitter();
 
   /**
-   * @name onFocus
-   */
-  @Output() public onFocus: EventEmitter<any> = new EventEmitter();
-
-  /**
    * @name onKeyup
    */
   @Output() public onKeyup: EventEmitter<any> = new EventEmitter();
@@ -54,7 +49,7 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
   /**
    * @name inputId
    */
-  @Input() public inputId!: string;
+  @Input() public inputId: string | null | undefined;
 
   /**
    * @name inputClass
@@ -69,18 +64,18 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
   /**
    * @name input
    */
-  @ViewChild('input') public input!: ElementRef;
+  @ViewChild('tagName') public input!: ElementRef;
 
   /**
    * @name form
    */
-  public form: FormGroup | undefined;
+  public form!: FormGroup;
 
   /**
    * @name inputText
    */
   public get inputText(): string {
-    return this.item.value as string;
+    return this.tagName.value as string;
   }
 
   /**
@@ -88,28 +83,28 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
    * @param text {string}
    */
   public set inputText(text: string) {
-    this.item.setValue(text);
+    this.tagName.setValue(text);
   }
 
-  private readonly item: FormControl = new FormControl({ value: '', disabled: this.disabled });
+  private readonly tagName: FormControl = new FormControl({ value: '', disabled: this.disabled });
 
   ngOnInit(): void {
-    this.item.setValidators(this.validators);
-    this.item.setAsyncValidators(this.asyncValidators);
+    this.tagName.setValidators(this.validators);
+    this.tagName.setAsyncValidators(this.asyncValidators);
 
     // creating form
     this.form = new FormGroup({
-      item: this.item,
+      tagName: this.tagName,
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (changes.disabled && !changes.disabled.firstChange) {
+    if (!!changes.disabled && !changes.disabled.firstChange) {
       if (changes.disabled.currentValue) {
-        this.form!.controls['item'].disable();
+        this.form.controls['tagName'].disable();
       } else {
-        this.form!.controls['item'].enable();
+        this.form.controls['tagName'].enable();
       }
     }
   }
@@ -118,7 +113,7 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
    * @name value
    */
   public get value(): FormControl {
-    return this.form!.get('item') as FormControl;
+    return this.form.get('tagName') as FormControl;
   }
 
   /**
@@ -143,7 +138,7 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
    * @name hasErrors
    */
   public hasErrors(): boolean {
-    const { dirty, value, valid } = this.form!;
+    const { dirty, value, valid } = this.form;
     return (dirty && value.item && !valid) as boolean;
   }
 
@@ -159,22 +154,6 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
    */
   public blur(): void {
     this.input.nativeElement.blur();
-  }
-
-  /**
-   * @name getElementPosition
-   */
-  public getElementPosition(): ClientRect {
-    return this.input.nativeElement.getBoundingClientRect() as ClientRect;
-  }
-
-  /**
-   * - removes input from the component
-   * @name destroy
-   */
-  public destroy(): void {
-    const input = this.input.nativeElement;
-    input.parentElement.removeChild(input);
   }
 
   /**

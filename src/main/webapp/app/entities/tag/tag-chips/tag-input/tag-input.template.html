@@ -3,11 +3,6 @@
   class="ng2-tag-input"
   (click)="focus(true)"
   [attr.tabindex]="-1"
-  (drop)="dragZone ? onTagDropped($event, undefined) : undefined"
-  (dragenter)="dragZone ? onDragOver($event) : undefined"
-  (dragover)="dragZone ? onDragOver($event) : undefined"
-  (dragend)="dragZone ? dragProvider.onDragEnd() : undefined"
-  [class.ng2-tag-input--dropping]="isDropping()"
   [class.ng2-tag-input--disabled]="disable"
   [class.ng2-tag-input--invalid]="hasErrors()"
   [class.ng2-tag-input--focused]="isInputFocused()"
@@ -15,22 +10,15 @@
   <!-- TAGS -->
   <div class="ng2-tags-container">
     <jhi-tag-chip
-      *ngFor="let item of items; let i = index; trackBy: trackBy"
+      *ngFor="let item of items; let i = index; trackBy: trackByIndex "
       (onSelect)="selectItem(item)"
       (onRemove)="onRemoveRequested(item, i)"
       (onKeyDown)="handleKeydown($event)"
       (onBlur)="onTagBlurred($event, i)"
-      (dragstart)="dragZone ? onDragStarted($event, item, i) : undefined"
-      (drop)="dragZone ? onTagDropped($event, i) : undefined"
-      (dragenter)="dragZone ? onDragOver($event) : undefined"
-      (dragover)="dragZone ? onDragOver($event, i) : undefined"
-      (dragleave)="dragZone ? dragProvider.onDragEnd() : undefined"
-      [canAddTag]="isTagValid"
       [attr.tabindex]="0"
       [disabled]="disable"
       [@animation]="animationMetadata"
       [index]="i"
-      [draggable]="dragZone"
       [model]="item"
     >
     </jhi-tag-chip>
@@ -43,7 +31,7 @@
       [disabled]="disable"
       [validators]="validators"
       [asyncValidators]="asyncValidators"
-      [placeholder]="items.length ? placeholder : secondaryPlaceholder"
+      [placeholder]="(items.length ? placeholder : secondaryPlaceholder) | translate"
       [inputClass]="inputClass"
       [inputId]="inputId"
     >

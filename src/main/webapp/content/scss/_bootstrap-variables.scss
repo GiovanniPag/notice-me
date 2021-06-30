@@ -73,7 +73,7 @@ $container-height: 32px !default;
 $container-margin: 0.1em 0 !default;
 $error-message-font-size: 0.8em !default;
 $error-message-margin: 0.5em 0 0 0 !default;
-$error-message-color: $color-error-default !default;
+$error-message-color: $color-error-noticeme !default;
 
 //mixins
 @mixin tag-input-theme($theme) {
@@ -131,7 +131,7 @@ $error-message-color: $color-error-default !default;
 }
 
 @mixin tag-theme($theme) {
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
   flex-wrap: wrap;
 

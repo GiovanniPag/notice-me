@@ -4,13 +4,9 @@
 :host > div,
 :host > div:focus {
   outline: 0;
-  overflow: hidden;
+  overflow: visible;
   transition: opacity 1s;
   z-index: 1;
-}
-
-:host {
-  max-width: 400px;
 }
 
 :host.blink {
@@ -28,25 +24,23 @@
   cursor: not-allowed;
 }
 
-:host [contenteditable='true'] {
-  outline: 0;
-}
-
 .tag-wrapper {
   flex-direction: row;
   display: flex;
 }
 
 .tag__text {
+  max-width: 400px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .remove-icon {
+  overflow: visible !important;
   width: 20px;
   height: 16px;
-  transition: all 0.15sì;
+  transition: all 0.15s;
   display: inline-block;
   text-align: right;
 

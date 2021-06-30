@@ -55,7 +55,7 @@ export class TagInputAccessorDirective implements ControlValueAccessor {
    * @name getItemsWithout
    * @param index
    */
-  protected getItemsWithout(idToRemove: number): ITag[] {
-    return this.items.filter(item => item.id !== idToRemove);
+  protected getItemsWithout(posToRemove: number): ITag[] {
+    return this.items.filter(item => item.id !== this.items[posToRemove].id);
   }
 }

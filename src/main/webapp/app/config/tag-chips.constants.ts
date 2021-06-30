@@ -21,20 +21,19 @@ export const ACTIONS_KEYS = {
   TAB: 'TAB',
 };
 
-export const KEY_PRESS_ACTIONS = {
-  8: ACTIONS_KEYS.DELETE,
-  46: ACTIONS_KEYS.DELETE,
-  37: ACTIONS_KEYS.SWITCH_PREV,
-  39: ACTIONS_KEYS.SWITCH_NEXT,
-  9: ACTIONS_KEYS.TAB,
+export const KEY_PRESS_ACTIONS: { [key: string]: string } = {
+  Backspace: ACTIONS_KEYS.DELETE,
+  Delete: ACTIONS_KEYS.DELETE,
+  ArrowLeft: ACTIONS_KEYS.SWITCH_PREV,
+  ArrowRight: ACTIONS_KEYS.SWITCH_NEXT,
+  Tab: ACTIONS_KEYS.TAB,
 };
 
-export const DRAG_AND_DROP_KEY = 'Text';
 export const NEXT = 'NEXT';
 export const PREV = 'PREV';
 
 export interface TagInputOptions {
-  separatorKeyCodes: number[];
+  separatorKeyCodes: string[];
   placeholder: string;
   secondaryPlaceholder: string;
   validators: ValidatorFn[];

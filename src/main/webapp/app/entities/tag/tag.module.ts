@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { COMPOSITION_BUFFER_MODE } from '@angular/forms';
 
 import { SharedModule } from 'app/shared/shared.module';
 import { TagComponent } from './list/tag.component';
@@ -8,7 +7,6 @@ import { TagUpdateComponent } from './update/tag-update.component';
 import { TagDeleteDialogComponent } from './delete/tag-delete-dialog.component';
 import { TagRoutingModule } from './route/tag-routing.module';
 // tag-chips
-import { DragProvider } from 'app/core/tag/drag-provider';
 import { OptionsProvider, Options } from 'app/core/tag/options-provider';
 import { TagInputComponent } from './tag-chips/tag-input/tag-input.component';
 import { TagComponent as TagChipsComponent } from './tag-chips/tag/tag.component';
@@ -27,8 +25,8 @@ const optionsProvider = new OptionsProvider();
     TagChipsFormComponent,
     TagChipsComponent,
   ],
+  exports: [TagInputComponent],
   entryComponents: [TagDeleteDialogComponent],
-  providers: [DragProvider, { provide: COMPOSITION_BUFFER_MODE, useValue: false }],
 })
 export class TagModule {
   /**

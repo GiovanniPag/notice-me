@@ -1,20 +1,20 @@
 <!-- form -->
 <form (ngSubmit)="submit($event)" [formGroup]="form">
   <input
-    #input
+    #tagName
     type="text"
     class="ng2-tag-input__text-input"
     autocomplete="off"
     tabindex="{{ disabled ? -1 : 0 }}"
     minlength="1"
-    formControlName="item"
+    maxlength="50"
+    formControlName="tagName"
     [ngClass]="inputClass"
     [attr.id]="inputId"
     [attr.placeholder]="placeholder"
     [attr.aria-label]="placeholder"
     [attr.tabindex]="0"
     [attr.disabled]="disabled ? disabled : null"
-    (focus)="onFocus.emit($event)"
     (blur)="onBlur.emit($event)"
     (keydown)="onKeyDown($event)"
     (keyup)="onKeyUp($event)"

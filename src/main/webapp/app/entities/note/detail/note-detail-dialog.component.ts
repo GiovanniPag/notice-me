@@ -93,17 +93,13 @@ export class NoteDetailDialogComponent implements OnInit {
     }
   }
 
-  savePatch(event: Event): void {
+  savePatch(event: Event | undefined): void {
     this.isSaving = true;
-    this.pushAlert(event.target as HTMLInputElement);
+    this.pushAlert(event?.target as HTMLInputElement);
     const note = this.createFromForm();
     if (note.id !== undefined && this.editForm.valid) {
       this.subscribeToSavePatchResponse(this.noteService.partialUpdate(note), note);
     }
-  }
-
-  tagSave(event: Event): void {
-    // do
   }
 
   addWarningAlert(translationKey?: string, translationParams?: { [key: string]: unknown }): Alert {
@@ -133,11 +129,11 @@ export class NoteDetailDialogComponent implements OnInit {
     return alertToDeisplay;
   }
 
-  pushAlert(elem: HTMLInputElement): void {
-    if (elem === this.titleText.nativeElement) {
+  pushAlert(elem: HTMLInputElement | undefined): void {
+    if (elem && elem === this.titleText.nativeElement) {
       this.alertMaxTitle = this.checkInputLenght(100, 'warning.titlelength', elem.value.length, this.maxTitleLength, this.alertMaxTitle);
     }
-    if (elem === this.contentText.nativeElement) {
+    if (elem && elem === this.contentText.nativeElement) {
       this.alertMaxContent = this.checkInputLenght(
         500,
         'warning.contentlength',
@@ -282,6 +278,12 @@ export class NoteDetailDialogComponent implements OnInit {
     return lastUpdateDate;
   }
 
+  public modelChangeFn($event: ITag[]): void {
+    this.note!.tags = $event;
+    this.editForm.patchValue({ tags: this.note!.tags });
+    this.savePatch(undefined);
+  }
+
   protected onSaveSuccess(result: string): void {
     this.close(result);
   }
@@ -363,7 +365,7 @@ export class NoteDetailDialogComponent implements OnInit {
     this.tagService
       .query()
       .pipe(map((res: HttpResponse<ITag[]>) => res.body ?? []))
-      .pipe(map((tags: ITag[]) => this.tagService.addTagToCollectionIfMissing(tags, ...(this.editForm.get('tags')!.value ?? []))))
+      .pipe(map((tags: ITag[]) => this.tagService.addTagToCollectionIfMissing(tags, ...(this.editForm.get('tags')?.value ?? []))))
       .subscribe((tags: ITag[]) => (this.tagsSharedCollection = tags));
   }
 
@@ -377,7 +379,7 @@ export class NoteDetailDialogComponent implements OnInit {
       alarmDate: this.editForm.get(['alarmDate'])!.valid ? dayjs(this.editForm.get(['alarmDate'])!.value, DATE_TIME_FORMAT) : undefined,
       status: this.editForm.get(['status'])!.value,
       owner: this.editForm.get(['owner'])!.value,
-      tags: this.editForm.get(['tags'])!.value,
+      tags: this.editForm.get(['tags'])?.value,
       collaborators: this.editForm.get(['collaborators'])!.value,
     };
   }
