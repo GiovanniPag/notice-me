@@ -42,6 +42,9 @@ a:hover {
   color: $dropdown-link-hover-color;
 }
 
+.zindex-popover {
+  z-index: $zindex-popover;
+}
 /* ==========================================================================
 Browser Upgrade Prompt
 ========================================================================== */

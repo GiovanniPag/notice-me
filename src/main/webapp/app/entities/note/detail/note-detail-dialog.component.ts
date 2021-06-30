@@ -37,7 +37,6 @@ export class NoteDetailDialogComponent implements OnInit {
   allNoteStatus = NoteStatus;
 
   usersSharedCollection: IUser[] = [];
-  tagsSharedCollection: ITag[] = [];
 
   maxTagLength = 50;
   maxTitleLength = 255;
@@ -164,17 +163,6 @@ export class NoteDetailDialogComponent implements OnInit {
     }
     return option;
   }
-
-  /* getSelectedTag(option: ITag, selectedVals?: ITag[]): ITag {
-    if (selectedVals) {
-      for (const selectedVal of selectedVals) {
-        if (option.id === selectedVal.id) {
-          return selectedVal;
-        }
-      }
-    }
-    return option;
-  } */
 
   trackUserById(index: number, item: IUser): number {
     return item.id!;
@@ -335,7 +323,6 @@ export class NoteDetailDialogComponent implements OnInit {
     });
 
     this.usersSharedCollection = this.userService.addUserToCollectionIfMissing(this.usersSharedCollection, ...(note.collaborators ?? []));
-    this.tagsSharedCollection = this.tagService.addTagToCollectionIfMissing(this.tagsSharedCollection, ...(note.tags ?? []));
 
     this.alertMaxTitle = this.checkInputLenght(
       100,
@@ -361,12 +348,6 @@ export class NoteDetailDialogComponent implements OnInit {
         map((users: IUser[]) => this.userService.addUserToCollectionIfMissing(users, ...(this.editForm.get('collaborators')!.value ?? [])))
       )
       .subscribe((users: IUser[]) => (this.usersSharedCollection = users));
-
-    this.tagService
-      .query()
-      .pipe(map((res: HttpResponse<ITag[]>) => res.body ?? []))
-      .pipe(map((tags: ITag[]) => this.tagService.addTagToCollectionIfMissing(tags, ...(this.editForm.get('tags')?.value ?? []))))
-      .subscribe((tags: ITag[]) => (this.tagsSharedCollection = tags));
   }
 
   protected createFromForm(): INote {

@@ -54,6 +54,12 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
   @Input() public owner!: IUser;
 
   /**
+   * @name noteid
+   * @desc the owner of the component
+   */
+  @Input() public noteid: number | undefined;
+
+  /**
    * @name secondaryPlaceholder
    * @desc placeholder to appear when the input is empty
    */

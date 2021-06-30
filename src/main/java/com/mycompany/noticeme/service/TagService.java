@@ -6,7 +6,9 @@ import com.mycompany.noticeme.security.AuthoritiesConstants;
 import com.mycompany.noticeme.security.SecurityUtils;
 import com.mycompany.noticeme.service.dto.TagDTO;
 import com.mycompany.noticeme.service.mapper.TagMapper;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -107,7 +109,6 @@ public class TagService {
     @Transactional(readOnly = true)
     public Optional<TagDTO> findOne(String tagname) {
         log.debug("Request to get Tag : {}", tagname);
-
         return tagRepository.findOneByTagNameAndOwnerLogin(tagname, SecurityUtils.getCurrentUserLogin().get()).map(tagMapper::toDto);
     }
 
@@ -119,5 +120,25 @@ public class TagService {
     public void delete(Long id) {
         log.debug("Request to delete Tag : {}", id);
         tagRepository.deleteById(id);
+    }
+
+    /**
+     * Get all the tags filtered.
+     *
+     * @param pageable the pagination information.
+     * @param
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<TagDTO> findfilterAll(Pageable pageable, String initial, Long ownerid, Long noteid) {
+        log.debug("Request to get all Tags");
+        Collection<String> noteTags = tagRepository
+            .findDistinctAllByEntriesId(noteid)
+            .stream()
+            .map((Tag t) -> t.getTagName())
+            .collect(Collectors.toList());
+        return tagRepository
+            .findDistinctAllByOwnerIdAndTagNameNotInAndTagNameStartingWithOrderByTagNameAsc(ownerid, noteTags, initial, pageable)
+            .map(tagMapper::toDto);
     }
 }

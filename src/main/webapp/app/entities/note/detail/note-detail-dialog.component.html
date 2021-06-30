@@ -104,6 +104,7 @@
         inputClass="w-100"
         (ngModelChange)="modelChangeFn($event)"
         [disable]="this.note!.status === allNoteStatus.DELETED"
+        [noteid]="note!.id"
       >
       </jhi-tag-input>
     </div>

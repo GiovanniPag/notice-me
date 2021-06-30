@@ -147,9 +147,19 @@ public class TagResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of tags in body.
      */
     @GetMapping("/tags")
-    public ResponseEntity<List<TagDTO>> getAllTags(Pageable pageable) {
+    public ResponseEntity<List<TagDTO>> getAllTags(
+        Pageable pageable,
+        @RequestParam(required = false) String initial,
+        @RequestParam(required = false) Long ownerid,
+        @RequestParam(required = false) Long noteid
+    ) {
         log.debug("REST request to get a page of Tags");
-        Page<TagDTO> page = tagService.findAll(pageable);
+        Page<TagDTO> page;
+        if (initial != null && ownerid != null && noteid != null) {
+            page = tagService.findfilterAll(pageable, initial, ownerid, noteid);
+        } else {
+            page = tagService.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

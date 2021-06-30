@@ -18,6 +18,9 @@
     (blur)="onBlur.emit($event)"
     (keydown)="onKeyDown($event)"
     (keyup)="onKeyUp($event)"
+    [ngbTypeahead]="search"
+    container="body"
+    placement="auto"
+    popupClass="zindex-popover"
   />
 </form>
-<!-- must insert typeahead -->

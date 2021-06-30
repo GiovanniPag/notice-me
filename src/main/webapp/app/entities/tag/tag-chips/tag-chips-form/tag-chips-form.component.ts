@@ -1,11 +1,19 @@
 /* eslint-disable @angular-eslint/no-output-on-prefix */
+import { HttpResponse } from '@angular/common/http';
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
+import { IUser } from 'app/admin/user-management/user-management.model';
+import { Observable, OperatorFunction } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { TagService } from '../../service/tag.service';
+import { ITag } from '../../tag.model';
 
 @Component({
   selector: 'jhi-tag-chips-form',
   styleUrls: ['./tag-chips-form.style.scss'],
   templateUrl: './tag-chips-form.template.html',
+  providers: [NgbTypeaheadConfig],
 })
 export class TagChipsFormComponent implements OnChanges {
   /**
@@ -41,6 +49,18 @@ export class TagChipsFormComponent implements OnChanges {
   @Input() public inputId: string | null | undefined;
 
   /**
+   * @name owner
+   * @desc the owner of the component
+   */
+  @Input() public owner!: IUser;
+
+  /**
+   * @name owner
+   * @desc the owner of the component
+   */
+  @Input() public noteid: number | undefined;
+
+  /**
    * @name inputClass
    */
   @Input() public inputClass!: string;
@@ -62,7 +82,13 @@ export class TagChipsFormComponent implements OnChanges {
     tagName: ['', [this.tagnameValidator(), Validators.maxLength(50)]],
   });
 
-  constructor(private fb: FormBuilder) {}
+  tagsAutocomplete: ITag[] = [];
+  private searching = false;
+
+  constructor(private fb: FormBuilder, private config: NgbTypeaheadConfig, private tagService: TagService) {
+    // customize default values of typeaheads used by this component tree
+    this.config.showHint = true;
+  }
 
   tagnameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -177,4 +203,25 @@ export class TagChipsFormComponent implements OnChanges {
     $event.preventDefault();
     this.onSubmit.emit($event);
   }
+
+  search: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => (this.searching = true)),
+      switchMap((value: string) =>
+        value.length > 0
+          ? this.tagService
+              .query({
+                page: 0,
+                size: 10,
+                initial: value,
+                ownerid: this.owner.id,
+                noteid: this.noteid,
+              })
+              .pipe(map((res: HttpResponse<ITag[]>): string[] => (res.body ? res.body.map((t: ITag): string => t.tagName!) : [])))
+          : []
+      ),
+      tap(() => (this.searching = false))
+    );
 }
