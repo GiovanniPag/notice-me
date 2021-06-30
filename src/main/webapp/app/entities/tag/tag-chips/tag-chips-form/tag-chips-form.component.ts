@@ -1,13 +1,13 @@
 /* eslint-disable @angular-eslint/no-output-on-prefix */
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { AsyncValidatorFn, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 @Component({
   selector: 'jhi-tag-chips-form',
   styleUrls: ['./tag-chips-form.style.scss'],
   templateUrl: './tag-chips-form.template.html',
 })
-export class TagChipsFormComponent implements OnInit, OnChanges {
+export class TagChipsFormComponent implements OnChanges {
   /**
    * @name onSubmit
    */
@@ -36,17 +36,6 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
   @Input() public placeholder!: string;
 
   /**
-   * @name validators
-   */
-  @Input() public validators: ValidatorFn[] = [];
-
-  /**
-   * @name asyncValidators
-   * @desc array of AsyncValidator that are used to validate the tag before it gets appended to the list
-   */
-  @Input() public asyncValidators: AsyncValidatorFn[] = [];
-
-  /**
    * @name inputId
    */
   @Input() public inputId: string | null | undefined;
@@ -69,13 +58,24 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
   /**
    * @name form
    */
-  public form!: FormGroup;
+  public form = this.fb.group({
+    tagName: ['', [this.tagnameValidator(), Validators.maxLength(50)]],
+  });
+
+  constructor(private fb: FormBuilder) {}
+
+  tagnameValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = (control.value as string).trim();
+      return value.length < 1 ? { minlength: { msg: 'entity.validation.minlength', TranslateValues: { min: 1 } } } : null;
+    };
+  }
 
   /**
    * @name inputText
    */
   public get inputText(): string {
-    return this.tagName.value as string;
+    return this.form.get('tagName')!.value as string;
   }
 
   /**
@@ -83,19 +83,7 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
    * @param text {string}
    */
   public set inputText(text: string) {
-    this.tagName.setValue(text);
-  }
-
-  private readonly tagName: FormControl = new FormControl({ value: '', disabled: this.disabled });
-
-  ngOnInit(): void {
-    this.tagName.setValidators(this.validators);
-    this.tagName.setAsyncValidators(this.asyncValidators);
-
-    // creating form
-    this.form = new FormGroup({
-      tagName: this.tagName,
-    });
+    this.form.get('tagName')!.setValue(text);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -128,7 +116,9 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
    * @name getErrorMessages
    * @param messages
    */
-  public getErrorMessages(messages: { [key: string]: string }): string[] {
+  public getErrorMessages(messages: {
+    [key: string]: { msg: string; translateValues?: { [key: string]: unknown } };
+  }): { msg: string; translateValues?: { [key: string]: unknown } }[] {
     return Object.keys(messages)
       .filter(err => this.value.hasError(err))
       .map(err => messages[err]);
@@ -139,7 +129,7 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
    */
   public hasErrors(): boolean {
     const { dirty, value, valid } = this.form;
-    return (dirty && value.item && !valid) as boolean;
+    return dirty && !!value.tagName && !valid;
   }
 
   /**
@@ -162,8 +152,10 @@ export class TagChipsFormComponent implements OnInit, OnChanges {
    */
   public onKeyDown($event: any): void {
     this.inputText = this.value.value;
-    if ($event.key === 'Enter') {
+    if ($event.key === 'Enter' && this.inputText.length > 0 && !this.hasErrors()) {
       this.submit($event);
+    } else if ($event.key === 'Enter') {
+      $event.preventDefault();
     } else {
       return this.onKeydown.emit($event);
     }

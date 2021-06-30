@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms';
 
 import { ITag } from 'app/entities/tag/tag.model';
 
@@ -37,8 +37,7 @@ export interface TagInputOptions {
   placeholder: string;
   secondaryPlaceholder: string;
   validators: ValidatorFn[];
-  asyncValidators: AsyncValidatorFn[];
-  errorMessages: { [key: string]: string };
+  errorMessages: { [key: string]: { msg: string; translateValues?: { [key: string]: unknown } } };
   theme: string;
   inputId: string | null;
   inputClass: string;
@@ -53,8 +52,10 @@ export const defaults = {
     placeholder: PLACEHOLDER,
     secondaryPlaceholder: SECONDARY_PLACEHOLDER,
     validators: [],
-    asyncValidators: [],
-    errorMessages: {},
+    errorMessages: {
+      maxlength: { msg: 'entity.validation.maxlength', translateValues: { max: 50 } },
+      minlength: { msg: 'entity.validation.minlength', translateValues: { min: 1 } },
+    },
     theme: APP_THEME,
     inputId: null,
     inputClass: '',

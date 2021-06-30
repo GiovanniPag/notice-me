@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/no-output-on-prefix */
 import { Component, forwardRef, Input, Output, EventEmitter, ViewChild, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 
-import { AsyncValidatorFn, FormControl, NG_VALUE_ACCESSOR, ValidatorFn } from '@angular/forms';
+import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 // rx
 import { debounceTime, filter, finalize, first } from 'rxjs/operators';
@@ -60,21 +60,10 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
   @Input() public secondaryPlaceholder: string = defaults.tagInput.secondaryPlaceholder;
 
   /**
-   * @name validators
-   * @desc array of Validators that are used to validate the tag before it gets appended to the list
-   */
-  @Input() public validators: ValidatorFn[] = defaults.tagInput.validators;
-
-  /**
-   * @name asyncValidators
-   * @desc array of AsyncValidator that are used to validate the tag before it gets appended to the list
-   */
-  @Input() public asyncValidators: AsyncValidatorFn[] = defaults.tagInput.asyncValidators;
-
-  /**
    * @name errorMessages
    */
-  @Input() public errorMessages: { [key: string]: string } = defaults.tagInput.errorMessages;
+  @Input() public errorMessages: { [key: string]: { msg: string; translateValues?: { [key: string]: unknown } } } =
+    defaults.tagInput.errorMessages;
 
   /**
    * @name theme
@@ -147,7 +136,7 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
    */
   public animationMetadata = { value: 'in', params: { enter: '250ms', leave: '150ms' } };
 
-  public errors: string[] | undefined;
+  public errors: { msg: string; translateValues?: { [key: string]: unknown } }[] | undefined;
 
   /**
    * @name listeners
@@ -245,7 +234,6 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
       case ACTIONS_KEYS.DELETE:
         if (this.selectedTag) {
           const index = this.items.indexOf(this.selectedTag);
-
           this.onRemoveRequested(this.selectedTag, index);
         }
         break;
@@ -259,17 +247,9 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
         break;
 
       case ACTIONS_KEYS.TAB:
-        alert('yo');
         if (event.shiftKey) {
-          if (this.isFirstTag(data.model)) {
-            return;
-          }
-
           this.moveToTag(data.model, PREV);
         } else {
-          if (this.isLastTag(data.model) && this.disable) {
-            return;
-          }
           this.moveToTag(data.model, NEXT);
         }
         break;
@@ -331,8 +311,7 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
    * @name formValue
    */
   public get formValue(): string {
-    const form = this.inputForm?.value;
-    return form?.value as string;
+    return this.inputForm?.inputText.trim() as string;
   }
 
   /**
@@ -349,7 +328,7 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
    * @name trackByIndex
    * @param items
    */
-  public trackByIndex(index: number, item: ITag): number {
+  public trackByIndex(index: number): number {
     return index;
   }
 
@@ -459,7 +438,6 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
     const isLast = this.isLastTag(item);
     const isFirst = this.isFirstTag(item);
     const stopSwitch = (direction === NEXT && isLast) || (direction === PREV && isFirst);
-
     if (stopSwitch) {
       this.focus(true);
       return;
@@ -605,12 +583,12 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
   private setUpKeypressListeners(): void {
     const listener = ($event: KeyboardEvent): void => {
       let isCorrectKey = $event.key === 'ArrowLeft' || $event.key === 'Backspace';
-      if (isCorrectKey && this.formValue.length === 0 && this.items.length) {
+      if (isCorrectKey && this.inputForm?.inputText.length === 0 && this.items.length) {
         this.tags.last.select.call(this.tags.last);
       }
 
       isCorrectKey = $event.key === 'ArrowRight';
-      if (isCorrectKey && this.formValue.length === 0 && this.items.length) {
+      if (isCorrectKey && this.inputForm?.inputText.length === 0 && this.items.length) {
         this.tags.first.select.call(this.tags.first);
       }
     };
@@ -624,7 +602,7 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
    */
   private setUpInputKeydownListeners(): void {
     this.inputForm?.onKeydown.subscribe(event => {
-      if (event.key === 'Backspace' && this.formValue.length === 0) {
+      if (event.key === 'Backspace' && this.inputForm?.inputText.length === 0) {
         event.preventDefault();
       }
     });

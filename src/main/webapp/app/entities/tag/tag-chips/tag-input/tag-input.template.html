@@ -24,13 +24,12 @@
     </jhi-tag-chip>
 
     <jhi-tag-chips-form
+      #TagChipsFormComponent
       (onSubmit)="onFormSubmit()"
       (onBlur)="blur()"
       (onKeydown)="fireEvents('keydown', $event)"
       (onKeyup)="fireEvents('keyup', $event)"
       [disabled]="disable"
-      [validators]="validators"
-      [asyncValidators]="asyncValidators"
       [placeholder]="(items.length ? placeholder : secondaryPlaceholder) | translate"
       [inputClass]="inputClass"
       [inputId]="inputId"
@@ -41,8 +40,8 @@
 
 <!-- ERRORS -->
 <div *ngIf="hasErrors()" [ngClass]="theme" class="error-messages">
-  <p *ngFor="let error of errors" class="error-message">
-    <span>{{ error }}</span>
+  <p *ngFor="let error of errors" class="error-message" jhitranslate="error">
+    <span [jhiTranslate]="error.msg" [translateValues]="error.translateValues"></span>
   </p>
 </div>
 <ng-content></ng-content>

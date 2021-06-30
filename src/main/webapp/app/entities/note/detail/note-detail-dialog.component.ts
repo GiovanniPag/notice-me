@@ -165,7 +165,7 @@ export class NoteDetailDialogComponent implements OnInit {
     return option;
   }
 
-  getSelectedTag(option: ITag, selectedVals?: ITag[]): ITag {
+  /* getSelectedTag(option: ITag, selectedVals?: ITag[]): ITag {
     if (selectedVals) {
       for (const selectedVal of selectedVals) {
         if (option.id === selectedVal.id) {
@@ -174,7 +174,7 @@ export class NoteDetailDialogComponent implements OnInit {
       }
     }
     return option;
-  }
+  } */
 
   trackUserById(index: number, item: IUser): number {
     return item.id!;
