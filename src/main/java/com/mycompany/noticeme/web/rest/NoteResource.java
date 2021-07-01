@@ -157,8 +157,8 @@ public class NoteResource {
     public ResponseEntity<List<NoteDTO>> getAllNotes(
         Pageable pageable,
         @RequestParam(required = false, defaultValue = "false") boolean eagerload,
-        @RequestParam(required = false, defaultValue = "false") boolean hasAlarm,
-        @RequestParam(required = false, defaultValue = "false") boolean isCollaborator,
+        @RequestParam(required = false, defaultValue = "false") Boolean hasAlarm,
+        @RequestParam(required = false, defaultValue = "false") Boolean isCollaborator,
         @RequestParam(required = false) String status
     ) {
         log.debug(
@@ -167,14 +167,18 @@ public class NoteResource {
             (hasAlarm ? " with alarm" : "")
         );
         Page<NoteDTO> page;
-        if (isCollaborator) {
-            page = noteService.findAllSharedWithMe(pageable);
-        } else {
-            if (eagerload) {
-                page = noteService.findAllWithEagerRelationshipsByStatus(pageable, status, hasAlarm);
+        if (status != null) {
+            if (isCollaborator != null && isCollaborator) {
+                page = noteService.findAllSharedWithMe(pageable);
             } else {
-                page = noteService.findAllByStatus(pageable, status, hasAlarm);
+                if (eagerload) {
+                    page = noteService.findAllWithEagerRelationshipsByStatus(pageable, status, hasAlarm);
+                } else {
+                    page = noteService.findAllByStatus(pageable, status, hasAlarm);
+                }
             }
+        } else {
+            page = noteService.findAll(pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
