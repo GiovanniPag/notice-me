@@ -24,7 +24,6 @@ import { TagService } from 'app/entities/tag/service/tag.service';
 })
 export class NoteUpdateComponent implements OnInit {
   isSaving = false;
-
   usersSharedCollection: IUser[] = [];
   tagsSharedCollection: ITag[] = [];
 

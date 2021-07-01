@@ -19,7 +19,6 @@ import { TagInputAccessorDirective } from '../accessor';
 import { animations } from './animations';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
-import { IUser } from 'app/admin/user-management/user-management.model';
 
 const CUSTOM_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
@@ -46,12 +45,6 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
    * @desc the placeholder of the input text
    */
   @Input() public placeholder: string = defaults.tagInput.placeholder;
-
-  /**
-   * @name owner
-   * @desc the owner of the component
-   */
-  @Input() public owner!: IUser;
 
   /**
    * @name noteid
@@ -401,7 +394,7 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
             this.onAddingRequested(data.body);
           } else if (data.status === 204) {
             this.isSaving = true;
-            tag = new Tag(undefined, tagName, this.owner);
+            tag = new Tag(undefined, tagName);
             this.subscribeToSaveResponse(this.tagService.create(tag));
           }
         },

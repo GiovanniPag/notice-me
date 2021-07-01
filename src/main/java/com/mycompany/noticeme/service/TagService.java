@@ -2,10 +2,12 @@ package com.mycompany.noticeme.service;
 
 import com.mycompany.noticeme.domain.Tag;
 import com.mycompany.noticeme.repository.TagRepository;
+import com.mycompany.noticeme.repository.UserRepository;
 import com.mycompany.noticeme.security.AuthoritiesConstants;
 import com.mycompany.noticeme.security.SecurityUtils;
 import com.mycompany.noticeme.service.dto.TagDTO;
 import com.mycompany.noticeme.service.mapper.TagMapper;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,12 +28,14 @@ public class TagService {
     private final Logger log = LoggerFactory.getLogger(TagService.class);
 
     private final TagRepository tagRepository;
+    private final UserService userService;
 
     private final TagMapper tagMapper;
 
-    public TagService(TagRepository tagRepository, TagMapper tagMapper) {
+    public TagService(TagRepository tagRepository, TagMapper tagMapper, UserService userService) {
         this.tagRepository = tagRepository;
         this.tagMapper = tagMapper;
+        this.userService = userService;
     }
 
     /**
@@ -130,15 +134,43 @@ public class TagService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<TagDTO> findfilterAll(Pageable pageable, String initial, Long ownerid, Long noteid) {
+    public Page<TagDTO> findfilterAll(Pageable pageable, String initial, Long noteid) {
         log.debug("Request to get all Tags");
         Collection<String> noteTags = tagRepository
             .findDistinctAllByEntriesId(noteid)
             .stream()
             .map((Tag t) -> t.getTagName())
             .collect(Collectors.toList());
+        Long ownerid = userService.getUserWithAuthorities().get().getId();
         return tagRepository
             .findDistinctAllByOwnerIdAndTagNameNotInAndTagNameStartingWithOrderByTagNameAsc(ownerid, noteTags, initial, pageable)
             .map(tagMapper::toDto);
+    }
+
+    /**
+     * Get all the tags filtered.
+     *
+     * @param pageable the pagination information.
+     * @param
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<TagDTO> findfilterAll(Pageable pageable, String initial, String[] filterby) {
+        log.debug("Request to get all Tags");
+        Collection<String> noteTags = Arrays.asList(filterby);
+        final Page<TagDTO> page;
+        Long ownerid = userService.getUserWithAuthorities().get().getId();
+        if (noteTags.isEmpty()) {
+            page =
+                tagRepository
+                    .findDistinctAllByOwnerIdAndTagNameStartingWithOrderByTagNameAsc(ownerid, initial, pageable)
+                    .map(tagMapper::toDto);
+        } else {
+            page =
+                tagRepository
+                    .findDistinctAllByOwnerIdAndTagNameNotInAndTagNameStartingWithOrderByTagNameAsc(ownerid, noteTags, initial, pageable)
+                    .map(tagMapper::toDto);
+        }
+        return page;
     }
 }

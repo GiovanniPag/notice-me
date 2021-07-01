@@ -6,6 +6,20 @@
 Note
 ========================================================================== */
 
+.createform {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: 600px;
+  margin: 1.75rem auto;
+  position: relative;
+  width: 100%;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.75rem;
+}
+
 .grid-wrapper {
   display: block;
 }
@@ -78,7 +92,8 @@ Note
   }
 }
 
-.note-detail-dialog {
+.note-detail-dialog,
+.createform {
   .modal-content {
     border: 1px solid rgba(0, 0, 0, 0.125);
     border-radius: 0.75rem;

@@ -5,8 +5,10 @@ import com.mycompany.noticeme.repository.TagRepository;
 import com.mycompany.noticeme.service.TagService;
 import com.mycompany.noticeme.service.dto.TagDTO;
 import com.mycompany.noticeme.web.rest.errors.BadRequestAlertException;
+import java.io.Console;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -150,13 +152,17 @@ public class TagResource {
     public ResponseEntity<List<TagDTO>> getAllTags(
         Pageable pageable,
         @RequestParam(required = false) String initial,
-        @RequestParam(required = false) Long ownerid,
-        @RequestParam(required = false) Long noteid
+        @RequestParam(required = false) Long noteid,
+        @RequestParam(required = false) String[] filterby
     ) {
         log.debug("REST request to get a page of Tags");
         Page<TagDTO> page;
-        if (initial != null && ownerid != null && noteid != null) {
-            page = tagService.findfilterAll(pageable, initial, ownerid, noteid);
+        if (initial != null) {
+            if (noteid != null) {
+                page = tagService.findfilterAll(pageable, initial, noteid);
+            } else {
+                page = tagService.findfilterAll(pageable, initial, filterby);
+            }
         } else {
             page = tagService.findAll(pageable);
         }

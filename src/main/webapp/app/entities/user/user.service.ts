@@ -5,8 +5,9 @@ import { Observable } from 'rxjs';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { isPresent } from 'app/core/util/operators';
-import { Pagination } from 'app/core/request/request.model';
 import { IUser, getUserIdentifier } from './user.model';
+
+export type EntityResponseType = HttpResponse<IUser>;
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -14,9 +15,13 @@ export class UserService {
 
   constructor(private http: HttpClient, private applicationConfigService: ApplicationConfigService) {}
 
-  query(req?: Pagination): Observable<HttpResponse<IUser[]>> {
+  query(req?: any): Observable<HttpResponse<IUser[]>> {
     const options = createRequestOption(req);
     return this.http.get<IUser[]>(this.resourceUrl, { params: options, observe: 'response' });
+  }
+
+  getCurrent(): Observable<EntityResponseType> {
+    return this.http.get<IUser>(`${this.resourceUrl}/current`, { observe: 'response' });
   }
 
   addUserToCollectionIfMissing(userCollection: IUser[], ...usersToCheck: (IUser | null | undefined)[]): IUser[] {

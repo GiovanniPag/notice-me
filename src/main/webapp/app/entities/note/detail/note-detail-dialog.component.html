@@ -100,7 +100,6 @@
         class="form-group mb-0 w-100"
         [(ngModel)]="note!.tags!"
         [ngModelOptions]="{ standalone: true }"
-        [owner]="note!.owner!"
         inputClass="w-100"
         (ngModelChange)="modelChangeFn($event)"
         [disable]="this.note!.status === allNoteStatus.DELETED"

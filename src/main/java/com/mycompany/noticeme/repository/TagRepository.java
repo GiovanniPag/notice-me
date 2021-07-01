@@ -30,6 +30,12 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
         Pageable pageable
     );
 
+    Page<Tag> findDistinctAllByOwnerIdAndTagNameStartingWithOrderByTagNameAsc(
+        @Param("ownerId") Long ownerid,
+        @Param("initial") String initial,
+        Pageable pageable
+    );
+
     Optional<Tag> findOneByIdAndOwnerLogin(@Param("id") Long id, @Param("login") String login);
 
     Optional<Tag> findOneByTagNameAndOwnerLogin(@Param("tagName") String tagName, @Param("login") String login);

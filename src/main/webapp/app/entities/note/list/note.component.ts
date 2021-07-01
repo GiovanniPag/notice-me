@@ -59,6 +59,8 @@ export class NoteComponent implements OnInit {
 
   gridPinned: Grid | undefined;
   gridOther: Grid | undefined;
+  status: string | undefined;
+  collab: boolean | undefined;
 
   constructor(
     private route: ActivatedRoute,
@@ -67,6 +69,10 @@ export class NoteComponent implements OnInit {
     protected modalService: NgbModal,
     protected parseLinks: ParseLinks
   ) {
+    this.route.queryParams.subscribe(params => {
+      this.status = params['status'];
+      this.collab = params['isCollaborator'];
+    });
     this.otherNotes = [];
     this.pinnedNotes = [];
     this.itemsPerPage = ITEMS_PER_PAGE;
@@ -163,8 +169,8 @@ export class NoteComponent implements OnInit {
         size: this.itemsPerPage,
         sort: this.sort(),
         hasAlarm: this.route.snapshot.queryParams['hasAlarm'] === 'true',
-        status: this.route.snapshot.queryParams['status'],
-        isCollaborator: this.route.snapshot.queryParams['isCollaborator'] === 'true',
+        status: this.status,
+        isCollaborator: this.collab ? true : false,
       })
       .subscribe(
         (res: HttpResponse<INote[]>) => {
@@ -216,6 +222,24 @@ export class NoteComponent implements OnInit {
         this.reset();
       }
     });
+  }
+
+  canShowCreate(): boolean {
+    return (
+      (this.status === undefined ||
+        this.status === 'undefined' ||
+        this.status === NoteStatus.NORMAL ||
+        this.status === NoteStatus.PINNED) &&
+      !this.collab
+    );
+  }
+
+  addNote(note: INote): void {
+    if (note.status === NoteStatus.PINNED) {
+      this.pinnedNotes.push(note);
+    } else {
+      this.otherNotes.push(note);
+    }
   }
 
   protected sort(): string[] {

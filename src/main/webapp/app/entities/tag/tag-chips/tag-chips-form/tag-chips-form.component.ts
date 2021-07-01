@@ -3,7 +3,6 @@ import { HttpResponse } from '@angular/common/http';
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
-import { IUser } from 'app/admin/user-management/user-management.model';
 import { Observable, OperatorFunction } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { TagService } from '../../service/tag.service';
@@ -52,13 +51,13 @@ export class TagChipsFormComponent implements OnChanges {
    * @name owner
    * @desc the owner of the component
    */
-  @Input() public owner!: IUser;
+  @Input() public noteid: number | undefined;
 
   /**
    * @name owner
    * @desc the owner of the component
    */
-  @Input() public noteid: number | undefined;
+  @Input() public tags: ITag[] | undefined;
 
   /**
    * @name inputClass
@@ -211,15 +210,23 @@ export class TagChipsFormComponent implements OnChanges {
       tap(() => (this.searching = true)),
       switchMap((value: string) =>
         value.length > 0
-          ? this.tagService
-              .query({
-                page: 0,
-                size: 10,
-                initial: value,
-                ownerid: this.owner.id,
-                noteid: this.noteid,
-              })
-              .pipe(map((res: HttpResponse<ITag[]>): string[] => (res.body ? res.body.map((t: ITag): string => t.tagName!) : [])))
+          ? this.noteid
+            ? this.tagService
+                .query({
+                  page: 0,
+                  size: 10,
+                  initial: value,
+                  noteid: this.noteid,
+                })
+                .pipe(map((res: HttpResponse<ITag[]>): string[] => (res.body ? res.body.map((t: ITag): string => t.tagName!) : [])))
+            : this.tagService
+                .query({
+                  page: 0,
+                  size: 10,
+                  initial: value,
+                  filterby: this.tags?.map(t => t.tagName) ?? [],
+                })
+                .pipe(map((res: HttpResponse<ITag[]>): string[] => (res.body ? res.body.map((t: ITag): string => t.tagName!) : [])))
           : []
       ),
       tap(() => (this.searching = false))

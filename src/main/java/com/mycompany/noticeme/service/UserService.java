@@ -300,6 +300,12 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<UserDTO> getCurrentUser() {
+        String userlogin = SecurityUtils.getCurrentUserLogin().get();
+        return userRepository.findOneWithAuthoritiesByLogin(userlogin).map(UserDTO::new);
+    }
+
+    @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthoritiesByLogin(String login) {
         return userRepository.findOneWithAuthoritiesByLogin(login);
     }
