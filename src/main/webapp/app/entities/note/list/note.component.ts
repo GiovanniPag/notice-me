@@ -7,7 +7,7 @@ import { INote } from '../note.model';
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 import { NoteService } from '../service/note.service';
 import { NoteDeleteDialogComponent } from '../delete/note-delete-dialog.component';
-import { NoteDetailDialogComponent } from '../detail/note-detail-dialog.component';
+import { NoteUpdateDialogComponent } from '../update/note-update-dialog.component';
 import { DataUtils } from 'app/core/util/data-util.service';
 import { ParseLinks } from 'app/core/util/parse-links.service';
 import { GridOptions } from 'muuri';
@@ -96,7 +96,7 @@ export class NoteComponent implements OnInit {
 
   onClick(event: MouseEvent, note: INote): void {
     if (!this.isDragging && Math.abs(this.mousePosition.x - event.screenX) <= 5 && Math.abs(this.mousePosition.y - event.screenY) <= 5) {
-      const modalRef = this.modalService.open(NoteDetailDialogComponent, {
+      const modalRef = this.modalService.open(NoteUpdateDialogComponent, {
         scrollable: true,
         windowClass: 'note-detail-dialog',
         backdrop: 'static',

@@ -2,8 +2,7 @@ import { NgModule } from '@angular/core';
 
 import { SharedModule } from 'app/shared/shared.module';
 import { NoteComponent } from './list/note.component';
-import { NoteDetailDialogComponent } from './detail/note-detail-dialog.component';
-import { NoteUpdateComponent } from './update/note-update.component';
+import { NoteUpdateDialogComponent } from './update/note-update-dialog.component';
 import { NoteDeleteDialogComponent } from './delete/note-delete-dialog.component';
 import { NoteRoutingModule } from './route/note-routing.module';
 import { NoteCreateComponent } from './create/note-create.component';
@@ -11,7 +10,7 @@ import { TagModule } from '../tag/tag.module';
 
 @NgModule({
   imports: [SharedModule, NoteRoutingModule, TagModule],
-  declarations: [NoteComponent, NoteDetailDialogComponent, NoteUpdateComponent, NoteDeleteDialogComponent, NoteCreateComponent],
-  entryComponents: [NoteDeleteDialogComponent, NoteDetailDialogComponent],
+  declarations: [NoteComponent, NoteUpdateDialogComponent, NoteDeleteDialogComponent, NoteCreateComponent],
+  entryComponents: [NoteDeleteDialogComponent, NoteUpdateDialogComponent],
 })
 export class NoteModule {}

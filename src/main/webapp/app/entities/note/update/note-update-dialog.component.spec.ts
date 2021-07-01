@@ -4,17 +4,17 @@ import { of } from 'rxjs';
 
 import { DataUtils } from 'app/core/util/data-util.service';
 
-import { NoteDetailDialogComponent } from './note-detail-dialog.component';
+import { NoteUpdateDialogComponent } from './note-update-dialog.component';
 
 describe('Component Tests', () => {
   describe('Note Management Detail Component', () => {
-    let comp: NoteDetailDialogComponent;
-    let fixture: ComponentFixture<NoteDetailDialogComponent>;
+    let comp: NoteUpdateDialogComponent;
+    let fixture: ComponentFixture<NoteUpdateDialogComponent>;
     let dataUtils: DataUtils;
 
     beforeEach(() => {
       TestBed.configureTestingModule({
-        declarations: [NoteDetailDialogComponent],
+        declarations: [NoteUpdateDialogComponent],
         providers: [
           {
             provide: ActivatedRoute,
@@ -22,9 +22,9 @@ describe('Component Tests', () => {
           },
         ],
       })
-        .overrideTemplate(NoteDetailDialogComponent, '')
+        .overrideTemplate(NoteUpdateDialogComponent, '')
         .compileComponents();
-      fixture = TestBed.createComponent(NoteDetailDialogComponent);
+      fixture = TestBed.createComponent(NoteUpdateDialogComponent);
       comp = fixture.componentInstance;
       dataUtils = TestBed.inject(DataUtils);
     });

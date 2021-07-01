@@ -25,11 +25,11 @@ import { MinDateValidator } from 'app/shared/date/MinDateValidator.directive';
 import { NoteDeleteDialogComponent } from '../delete/note-delete-dialog.component';
 
 @Component({
-  templateUrl: './note-detail-dialog.component.html',
+  templateUrl: './note-update-dialog.component.html',
   styleUrls: ['../note.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class NoteDetailDialogComponent implements OnInit {
+export class NoteUpdateDialogComponent implements OnInit {
   @ViewChild('field_title') titleText!: ElementRef;
   @ViewChild('field_content') contentText!: ElementRef;
 

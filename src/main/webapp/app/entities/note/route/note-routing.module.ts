@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { NoteComponent } from '../list/note.component';
-import { NoteUpdateComponent } from '../update/note-update.component';
 import { NoteRoutingResolveService } from './note-routing-resolve.service';
 
 const noteRoute: Routes = [
@@ -14,7 +13,7 @@ const noteRoute: Routes = [
   },
   {
     path: 'new',
-    component: NoteUpdateComponent,
+    component: NoteComponent,
     resolve: {
       note: NoteRoutingResolveService,
     },
@@ -22,7 +21,7 @@ const noteRoute: Routes = [
   },
   {
     path: ':id/edit',
-    component: NoteUpdateComponent,
+    component: NoteComponent,
     resolve: {
       note: NoteRoutingResolveService,
     },
