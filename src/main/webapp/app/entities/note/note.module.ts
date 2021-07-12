@@ -7,9 +7,10 @@ import { NoteDeleteDialogComponent } from './delete/note-delete-dialog.component
 import { NoteRoutingModule } from './route/note-routing.module';
 import { NoteCreateComponent } from './create/note-create.component';
 import { TagModule } from '../tag/tag.module';
+import { AttachmentModule } from '../attachment/attachment.module';
 
 @NgModule({
-  imports: [SharedModule, NoteRoutingModule, TagModule],
+  imports: [SharedModule, NoteRoutingModule, TagModule, AttachmentModule],
   declarations: [NoteComponent, NoteUpdateDialogComponent, NoteDeleteDialogComponent, NoteCreateComponent],
   entryComponents: [NoteDeleteDialogComponent, NoteUpdateDialogComponent],
 })

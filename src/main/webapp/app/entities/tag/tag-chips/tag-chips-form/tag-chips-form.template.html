@@ -18,9 +18,10 @@
     (blur)="onBlur.emit($event)"
     (keydown)="onKeyDown($event)"
     (keyup)="onKeyUp($event)"
+    #typeahead="ngbTypeahead"
     [ngbTypeahead]="search"
     container="body"
     placement="auto"
-    popupClass="zindex-popover"
+    popupClass="zindex-popover click-outside-exclude"
   />
 </form>

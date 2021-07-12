@@ -41,10 +41,28 @@
           *ngFor="let note of pinnedNotes; trackBy: trackId"
         >
           <div class="muuri-grid-item-content" (resized)="onResized()">
-            <img class="card-img-top" alt="Card image cap" />
+            <img class="card-img-top" src="..." alt="Card image cap" />
             <div class="card-body">
               <h5 class="card-title">{{ note.title }}</h5>
+
               <p class="card-text summary-text" ellipsis [ellipsis-content]="note.content!"></p>
+              <jhi-tag-input
+                #tagInput
+                class="form-group mb-0 w-100"
+                [(ngModel)]="note!.tags!"
+                [ngModelOptions]="{ standalone: true }"
+                [hideForm]="true"
+                [noteid]="note!.id"
+                [disable]="this.note!.status === allNoteStatus.DELETED"
+                (ngModelChange)="modelChangeFn($event, note)"
+              >
+              </jhi-tag-input>
+            </div>
+            <div class="card-footer">
+              <p class="card-text">
+                <small class="text-muted m-0" jhiTranslate="noticeMeApp.note.lastUpdateDate">lastUpdateDate</small>
+                <small class="text-muted m-0">{{ getFormattedLastUpdateDate(note) }}</small>
+              </p>
             </div>
           </div>
         </div>
@@ -73,6 +91,23 @@
             <div class="card-body">
               <h5 class="card-title">{{ note.title }}</h5>
               <p class="card-text summary-text" ellipsis [ellipsis-content]="note.content!"></p>
+              <jhi-tag-input
+                #tagInput
+                class="form-group mb-0 w-100"
+                [(ngModel)]="note!.tags!"
+                [ngModelOptions]="{ standalone: true }"
+                [hideForm]="true"
+                [noteid]="note!.id"
+                [disable]="this.note!.status === allNoteStatus.DELETED"
+                (ngModelChange)="modelChangeFn($event, note)"
+              >
+              </jhi-tag-input>
+            </div>
+            <div class="card-footer">
+              <p class="card-text">
+                <small class="text-muted m-0" jhiTranslate="noticeMeApp.note.lastUpdateDate">lastUpdateDate</small>
+                <small class="text-muted m-0">{{ getFormattedLastUpdateDate(note) }}</small>
+              </p>
             </div>
           </div>
         </div>

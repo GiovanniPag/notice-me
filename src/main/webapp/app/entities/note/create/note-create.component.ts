@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
@@ -18,13 +18,14 @@ import { FormBuilder, Validators } from '@angular/forms';
 import * as dayjs from 'dayjs';
 import { NoteStatus } from 'app/entities/enumerations/note-status.model';
 import { MinDateValidator } from 'app/shared/date/MinDateValidator.directive';
+import { TagInputComponent } from 'app/entities/tag/tag-chips/tag-input/tag-input.component';
 
 @Component({
   selector: 'jhi-note-create',
   templateUrl: './note-create.component.html',
   styleUrls: ['../note.scss'],
 })
-export class NoteCreateComponent implements OnInit {
+export class NoteCreateComponent implements OnInit, AfterViewInit {
   /**
    * @name onSubmit
    */
@@ -32,6 +33,7 @@ export class NoteCreateComponent implements OnInit {
 
   @ViewChild('field_title') titleText!: ElementRef;
   @ViewChild('field_content') contentText!: ElementRef;
+  @ViewChild('tagInput') tagInput!: TagInputComponent;
 
   owner: IUser | undefined;
   tags: ITag[] = [];
@@ -59,6 +61,7 @@ export class NoteCreateComponent implements OnInit {
   private alerts: Alert[] = [];
 
   private isSaving = false;
+  private selected = false;
 
   constructor(
     protected dataUtils: DataUtils,
@@ -69,6 +72,13 @@ export class NoteCreateComponent implements OnInit {
     protected alertService: AlertService
   ) {
     this.userService.getCurrent().subscribe((data: HttpResponse<IUser>) => (data.body ? (this.owner = data.body) : null));
+  }
+
+  ngAfterViewInit(): void {
+    this.tagInput.inputForm!.popup.selectItem.subscribe(() => {
+      this.selected = true;
+      setTimeout(() => (this.selected = false), 10);
+    });
   }
 
   ngOnInit(): void {
@@ -204,11 +214,20 @@ export class NoteCreateComponent implements OnInit {
   }
 
   canSubmit(): boolean {
-    return !((this.createForm.invalid && this.createForm.get('alarmDate')!.valid) || this.isSaving) && this.hasValue();
+    return (
+      (this.createForm.valid ||
+        (this.createForm.get('alarmDate')!.invalid &&
+          this.createForm.get('status')!.valid &&
+          this.createForm.get('title')!.valid &&
+          this.createForm.get('content')!.valid &&
+          this.createForm.get('owner')!.valid)) &&
+      !this.isSaving &&
+      !this.selected &&
+      this.hasValue()
+    );
   }
 
   hasValue(): boolean {
-    // eslint-disable-next-line no-console
     return (
       this.createForm.get(['title'])!.value.trim().length > 0 ||
       this.createForm.get(['content'])!.value.trim().length > 0 ||

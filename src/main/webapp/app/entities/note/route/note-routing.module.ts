@@ -27,6 +27,14 @@ const noteRoute: Routes = [
     },
     canActivate: [UserRouteAccessService],
   },
+  {
+    path: ':id/view',
+    component: NoteComponent,
+    resolve: {
+      note: NoteRoutingResolveService,
+    },
+    canActivate: [UserRouteAccessService],
+  },
 ];
 
 @NgModule({

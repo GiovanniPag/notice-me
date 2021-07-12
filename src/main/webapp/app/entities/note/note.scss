@@ -123,6 +123,12 @@ Note
       border-bottom-color: $red;
     }
   }
+
+  #upload_attach {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+  }
 }
 
 .small-text {

@@ -38,7 +38,13 @@
       },
       "detail": {
         "title": "Note",
-        "isInTrash": "note in the trash"
+        "isInTrash": "note in the trash",
+        "secondsAgo": " some seconds ago",
+        "minutesAgo": " {{time}} minutes ago",
+        "hoursAgo": " {{time}} hours ago",
+        "daysAgo": " {{time}} days ago",
+        "monthsAgo": " {{time}} months ago",
+        "yearsAgo": " {{time}} years ago"
       },
       "id": "ID",
       "title": "Title",

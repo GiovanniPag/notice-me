@@ -16,7 +16,7 @@ import { TagChipsFormComponent } from '../tag-chips-form/tag-chips-form.componen
 import { TagComponent } from '../tag/tag.component';
 
 import { TagInputAccessorDirective } from '../accessor';
-import { animations } from './animations';
+import { animations } from 'app/config/animations';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 
@@ -57,6 +57,12 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
    * @desc placeholder to appear when the input is empty
    */
   @Input() public secondaryPlaceholder: string = defaults.tagInput.secondaryPlaceholder;
+
+  /**
+   * - hideForm
+   * @name clearOnBlur
+   */
+  @Input() public hideForm: boolean = defaults.tagInput.hideForm;
 
   /**
    * @name errorMessages
@@ -171,6 +177,10 @@ export class TagInputComponent extends TagInputAccessorDirective implements Afte
     statusChanges$?.pipe(filter((status: string) => status !== 'PENDING')).subscribe(() => {
       this.errors = this.inputForm?.getErrorMessages(this.errorMessages);
     });
+
+    if (this.hideForm) {
+      this.inputForm?.destroy();
+    }
   }
 
   /**

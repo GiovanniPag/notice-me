@@ -2,7 +2,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTypeahead, NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, OperatorFunction } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { TagService } from '../../service/tag.service';
@@ -15,6 +15,8 @@ import { ITag } from '../../tag.model';
   providers: [NgbTypeaheadConfig],
 })
 export class TagChipsFormComponent implements OnChanges {
+  @ViewChild('typeahead') public popup!: NgbTypeahead;
+
   /**
    * @name onSubmit
    */
@@ -201,6 +203,15 @@ export class TagChipsFormComponent implements OnChanges {
   public submit($event: any): void {
     $event.preventDefault();
     this.onSubmit.emit($event);
+  }
+
+  /**
+   * - removes input from the component
+   * @name destroy
+   */
+  public destroy(): void {
+    const input = this.input.nativeElement;
+    input.parentElement.removeChild(input);
   }
 
   search: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>

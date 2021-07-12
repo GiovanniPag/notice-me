@@ -87,6 +87,7 @@
           <input class="form-control" name="tags" id="field_tags" data-cy="tags" formControlName="tags" [readonly]="true" />
         </div>
         <jhi-tag-input
+          #tagInput
           class="form-group mb-0 w-100"
           [(ngModel)]="this.tags"
           [ngModelOptions]="{ standalone: true }"
@@ -107,7 +108,7 @@
             ngbTooltip="{{ 'noticeMeApp.note.toolbar.alarm' | translate }}"
             container="body"
             [ngbPopover]="popAlarmDate"
-            placement="top"
+            placement="top auto"
             [autoClose]="'outside'"
             #popoverAlarm="ngbPopover"
             [popoverTitle]="popAlarmDateTitle"
@@ -124,7 +125,7 @@
             [popoverTitle]="popCollaboratorTitle"
             popoverClass="click-outside-exclude"
             ngbTooltip="{{ 'noticeMeApp.note.toolbar.collaborator' | translate }}"
-            placement="top"
+            placement="top auto"
             container="body"
           >
             <fa-icon icon="user-plus"></fa-icon>

@@ -39,6 +39,7 @@ export interface TagInputOptions {
   validators: ValidatorFn[];
   errorMessages: { [key: string]: { msg: string; translateValues?: { [key: string]: unknown } } };
   theme: string;
+  hideForm: boolean;
   inputId: string | null;
   inputClass: string;
   disable: boolean;
@@ -57,6 +58,7 @@ export const defaults = {
       minlength: { msg: 'entity.validation.minlength', translateValues: { min: 1 } },
     },
     theme: APP_THEME,
+    hideForm: false,
     inputId: null,
     inputClass: '',
     disable: false,

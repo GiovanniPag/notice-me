@@ -25,7 +25,7 @@ const optionsProvider = new OptionsProvider();
     TagChipsFormComponent,
     TagChipsComponent,
   ],
-  exports: [TagInputComponent],
+  exports: [TagInputComponent, TagChipsComponent],
   entryComponents: [TagDeleteDialogComponent],
 })
 export class TagModule {

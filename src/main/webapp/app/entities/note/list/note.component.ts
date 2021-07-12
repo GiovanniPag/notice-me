@@ -15,11 +15,18 @@ import Grid from 'muuri';
 import { ActivatedRoute } from '@angular/router';
 import { ModalCloseReason } from 'app/entities/enumerations/modal-close-reason.model';
 import { NoteStatus } from 'app/entities/enumerations/note-status.model';
+import { animations } from 'app/config/animations';
+import { ITag } from 'app/entities/tag/tag.model';
+import { finalize } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import * as dayjs from 'dayjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'jhi-note',
   templateUrl: './note.component.html',
   styleUrls: ['../note.scss'],
+  animations,
 })
 export class NoteComponent implements OnInit {
   otherNotes: INote[];
@@ -37,6 +44,8 @@ export class NoteComponent implements OnInit {
     x: 0,
     y: 0,
   };
+
+  allNoteStatus = NoteStatus;
 
   public layoutConfig: GridOptions = {
     layoutOnInit: true, // Muuri trigger layout method automatically on init
@@ -61,13 +70,15 @@ export class NoteComponent implements OnInit {
   gridOther: Grid | undefined;
   status: string | undefined;
   collab: boolean | undefined;
+  isSaving = false;
 
   constructor(
     private route: ActivatedRoute,
     protected noteService: NoteService,
     protected dataUtils: DataUtils,
     protected modalService: NgbModal,
-    protected parseLinks: ParseLinks
+    protected parseLinks: ParseLinks,
+    private translateService: TranslateService
   ) {
     this.route.queryParams.subscribe(params => {
       this.status = params['status'];
@@ -120,6 +131,50 @@ export class NoteComponent implements OnInit {
             break;
         }
       });
+    }
+  }
+
+  getFormattedLastUpdateDate(note: INote): string {
+    let lastUpdateDate: string;
+    let time = dayjs().diff(note.lastUpdateDate!, 's');
+    if (time <= 60) {
+      lastUpdateDate = this.translateService.instant('noticeMeApp.note.detail.secondsAgo');
+    } else {
+      time = dayjs().diff(note.lastUpdateDate!, 'm');
+      if (time <= 60) {
+        lastUpdateDate = this.translateService.instant('noticeMeApp.note.detail.minutesAgo', { time });
+      } else {
+        time = dayjs().diff(note.lastUpdateDate!, 'h');
+        if (time <= 24) {
+          lastUpdateDate = this.translateService.instant('noticeMeApp.note.detail.hoursAgo', { time });
+        } else {
+          time = dayjs().diff(note.lastUpdateDate!, 'd');
+          if (time <= 31) {
+            lastUpdateDate = this.translateService.instant('noticeMeApp.note.detail.daysAgo', { time });
+          } else {
+            time = dayjs().diff(note.lastUpdateDate!, 'M');
+            if (time <= 12) {
+              lastUpdateDate = this.translateService.instant('noticeMeApp.note.detail.monthsAgo', { time });
+            } else {
+              time = dayjs().diff(note.lastUpdateDate!, 'y');
+              lastUpdateDate = this.translateService.instant('noticeMeApp.note.detail.yearsAgo', { time });
+            }
+          }
+        }
+      }
+    }
+    return lastUpdateDate;
+  }
+
+  public modelChangeFn($event: ITag[], note: INote): void {
+    note.tags = $event;
+    this.savePatch(note);
+  }
+
+  savePatch(noteToSave: INote): void {
+    this.isSaving = true;
+    if (noteToSave.id !== undefined) {
+      this.subscribeToSavePatchResponse(this.noteService.partialUpdate(noteToSave));
     }
   }
 
@@ -205,6 +260,10 @@ export class NoteComponent implements OnInit {
     return item.id!;
   }
 
+  trackByIndex(index: number, tag: INote): number {
+    return tag.id!;
+  }
+
   byteSize(base64String: string): string {
     return this.dataUtils.byteSize(base64String);
   }
@@ -240,6 +299,25 @@ export class NoteComponent implements OnInit {
     } else {
       this.otherNotes.push(note);
     }
+  }
+
+  protected subscribeToSavePatchResponse(result: Observable<HttpResponse<INote>>): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      () => this.onSavePatchSuccess(),
+      () => this.onSavePatchError()
+    );
+  }
+
+  protected onSavePatchSuccess(): void {
+    // Api for inheritance.
+  }
+
+  protected onSavePatchError(): void {
+    // Api for inheritance.
+  }
+
+  protected onSaveFinalize(): void {
+    this.isSaving = false;
   }
 
   protected sort(): string[] {

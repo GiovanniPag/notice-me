@@ -38,7 +38,13 @@
       },
       "detail": {
         "title": "Nota",
-        "isInTrash": "nota nel cestino"
+        "isInTrash": "nota nel cestino",
+        "secondsAgo": " qualche secondo fa",
+        "minutesAgo": " {{ time }} minuti fa",
+        "hoursAgo": " {{ time }} ore fa",
+        "daysAgo": " {{ time }} giorni fa",
+        "monthsAgo": " {{ time }} mesi fa",
+        "yearsAgo": " {{ time }} anni fa"
       },
       "id": "ID",
       "title": "Titolo",

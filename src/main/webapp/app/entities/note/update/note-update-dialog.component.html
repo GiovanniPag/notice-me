@@ -9,11 +9,12 @@
   (ngSubmit)="closeAndSaveNote()"
   [formGroup]="editForm"
   (clickOutside)="closeAndSaveNote()"
-  [exclude]="'.click-outside-exclude'"
+  [exclude]="'button, .click-outside-exclude'"
   [excludeBeforeClick]="true"
   [delayClickOutsideInit]="true"
 >
   <div class="modal-header d-flex">
+    <jhi-carousel-attach [images]="note!.attachments!"></jhi-carousel-attach>
     <div class="form-group" [hidden]="true">
       <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
     </div>
@@ -97,6 +98,7 @@
         <input class="form-control" name="tags" id="field_tags" data-cy="tags" formControlName="tags" [readonly]="true" />
       </div>
       <jhi-tag-input
+        #tagInput
         class="form-group mb-0 w-100"
         [(ngModel)]="note!.tags!"
         [ngModelOptions]="{ standalone: true }"
@@ -140,7 +142,7 @@
           ngbTooltip="{{ 'noticeMeApp.note.toolbar.alarm' | translate }}"
           container="body"
           [ngbPopover]="popAlarmDate"
-          placement="top"
+          placement="top auto"
           [autoClose]="'outside'"
           #popoverAlarm="ngbPopover"
           [popoverTitle]="popAlarmDateTitle"
@@ -157,20 +159,30 @@
           [popoverTitle]="popCollaboratorTitle"
           popoverClass="click-outside-exclude"
           ngbTooltip="{{ 'noticeMeApp.note.toolbar.collaborator' | translate }}"
-          placement="top"
+          placement="top auto"
           container="body"
         >
           <fa-icon icon="user-plus"></fa-icon>
         </button>
-        <button
+        <label
           type="button"
-          class="btn btn-light"
+          for="upload_attach"
+          class="btn btn-light mb-0"
           ngbTooltip="{{ 'noticeMeApp.note.toolbar.attachment' | translate }}"
           placement="top"
           container="body"
         >
           <fa-icon icon="link"></fa-icon>
-        </button>
+        </label>
+        <input
+          type="file"
+          name="attachment"
+          data-cy="data"
+          id="upload_attach"
+          (change)="setFileData($event, 'data', true)"
+          [disabled]="isSaving"
+        />
+
         <button
           *ngIf="this.note.status !== allNoteStatus.ARCHIVED"
           type="button"

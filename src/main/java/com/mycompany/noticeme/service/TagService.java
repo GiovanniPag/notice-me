@@ -2,7 +2,6 @@ package com.mycompany.noticeme.service;
 
 import com.mycompany.noticeme.domain.Tag;
 import com.mycompany.noticeme.repository.TagRepository;
-import com.mycompany.noticeme.repository.UserRepository;
 import com.mycompany.noticeme.security.AuthoritiesConstants;
 import com.mycompany.noticeme.security.SecurityUtils;
 import com.mycompany.noticeme.service.dto.TagDTO;
@@ -142,9 +141,20 @@ public class TagService {
             .map((Tag t) -> t.getTagName())
             .collect(Collectors.toList());
         Long ownerid = userService.getUserWithAuthorities().get().getId();
-        return tagRepository
-            .findDistinctAllByOwnerIdAndTagNameNotInAndTagNameStartingWithOrderByTagNameAsc(ownerid, noteTags, initial, pageable)
-            .map(tagMapper::toDto);
+        final Page<TagDTO> page;
+        if (noteTags.isEmpty()) {
+            page =
+                tagRepository
+                    .findDistinctAllByOwnerIdAndTagNameStartingWithOrderByTagNameAsc(ownerid, initial, pageable)
+                    .map(tagMapper::toDto);
+        } else {
+            page =
+                tagRepository
+                    .findDistinctAllByOwnerIdAndTagNameNotInAndTagNameStartingWithOrderByTagNameAsc(ownerid, noteTags, initial, pageable)
+                    .map(tagMapper::toDto);
+        }
+
+        return page;
     }
 
     /**

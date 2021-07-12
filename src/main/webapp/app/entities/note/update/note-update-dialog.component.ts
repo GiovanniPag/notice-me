@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
@@ -23,15 +23,19 @@ import { NoteStatus } from 'app/entities/enumerations/note-status.model';
 import { ModalCloseReason } from 'app/entities/enumerations/modal-close-reason.model';
 import { MinDateValidator } from 'app/shared/date/MinDateValidator.directive';
 import { NoteDeleteDialogComponent } from '../delete/note-delete-dialog.component';
+import { TagInputComponent } from 'app/entities/tag/tag-chips/tag-input/tag-input.component';
+import { Attachment, IAttachment } from 'app/entities/attachment/attachment.model';
+import { AttachmentService } from 'app/entities/attachment/service/attachment.service';
 
 @Component({
   templateUrl: './note-update-dialog.component.html',
   styleUrls: ['../note.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class NoteUpdateDialogComponent implements OnInit {
+export class NoteUpdateDialogComponent implements OnInit, AfterViewInit {
   @ViewChild('field_title') titleText!: ElementRef;
   @ViewChild('field_content') contentText!: ElementRef;
+  @ViewChild('tagInput') tagInput!: TagInputComponent;
 
   note?: INote;
   allNoteStatus = NoteStatus;
@@ -54,11 +58,17 @@ export class NoteUpdateDialogComponent implements OnInit {
     collaborators: [],
   });
 
+  attachForm = this.fb.group({
+    data: [null, [Validators.required]],
+    dataContentType: [],
+  });
+
+  isSaving = false;
   private alertMaxTitle?: Alert;
   private alertMaxContent?: Alert;
   private alerts: Alert[] = [];
 
-  private isSaving = false;
+  private selected = false;
 
   constructor(
     protected dataUtils: DataUtils,
@@ -70,24 +80,38 @@ export class NoteUpdateDialogComponent implements OnInit {
     protected userService: UserService,
     protected tagService: TagService,
     protected fb: FormBuilder,
-    protected alertService: AlertService
+    protected alertService: AlertService,
+    protected attachmentService: AttachmentService
   ) {}
 
+  ngAfterViewInit(): void {
+    this.tagInput.inputForm!.popup.selectItem.subscribe(() => {
+      this.selected = true;
+      setTimeout(() => (this.selected = false), 10);
+    });
+  }
+
   ngOnInit(): void {
+    // eslint-disable-next-line no-console
+    console.log(this.note);
+
     this.alerts = this.alertService.get();
     this.updateForm(this.note!);
     this.loadRelationshipsOptions();
+    this.loadAttachment();
     if (this.note!.status === NoteStatus.DELETED) {
       this.editForm.disable();
     }
   }
 
   closeAndSaveNote(): void {
-    if (this.note!.status === NoteStatus.DELETED) {
-      this.close(ModalCloseReason.CLOSED);
-    } else {
-      if (this.canSubmit()) {
-        this.save(ModalCloseReason.MODIFIED);
+    if (!this.selected) {
+      if (this.note!.status === NoteStatus.DELETED) {
+        this.close(ModalCloseReason.CLOSED);
+      } else {
+        if (this.canSubmit()) {
+          this.save(ModalCloseReason.MODIFIED);
+        }
       }
     }
   }
@@ -96,7 +120,7 @@ export class NoteUpdateDialogComponent implements OnInit {
     this.isSaving = true;
     this.pushAlert(event?.target as HTMLInputElement);
     const note = this.createFromForm();
-    if (note.id !== undefined && this.editForm.valid) {
+    if (note.id !== undefined) {
       this.subscribeToSavePatchResponse(this.noteService.partialUpdate(note), note);
     }
   }
@@ -191,12 +215,17 @@ export class NoteUpdateDialogComponent implements OnInit {
   }
 
   setFileData(event: Event, field: string, isImage: boolean): void {
-    this.dataUtils.loadFileToForm(event, this.editForm, field, isImage).subscribe({
-      error: (err: FileLoadError) =>
+    this.dataUtils.loadFileToForm(event, this.attachForm, field, isImage).subscribe(
+      () => {
+        this.isSaving = true;
+        const attachment = this.createAttach();
+        this.subscribeToAttachSaveResponse(this.attachmentService.create(attachment));
+      },
+      (err: FileLoadError) =>
         this.eventManager.broadcast(
           new EventWithContent<AlertError>('noticeMeApp.error', { ...err, key: 'error.file.' + err.key })
-        ),
-    });
+        )
+    );
   }
 
   deleteNote(): void {
@@ -248,11 +277,21 @@ export class NoteUpdateDialogComponent implements OnInit {
   }
 
   canSubmit(): boolean {
-    return !((this.editForm.invalid && this.editForm.get('alarmDate')!.valid) || this.isSaving);
+    return (
+      (this.editForm.valid ||
+        (this.editForm.get('alarmDate')!.invalid &&
+          this.editForm.get('status')!.valid &&
+          this.editForm.get('title')!.valid &&
+          this.editForm.get('content')!.valid &&
+          this.editForm.get('owner')!.valid)) &&
+      !this.isSaving
+    );
   }
 
-  resetDate(): void {
+  resetDate(): dayjs.Dayjs {
+    this.note!.alarmDate = undefined;
     this.editForm.get('alarmDate')!.reset();
+    return dayjs(this.editForm.get('alarmDate')!.value, DATE_TIME_FORMAT);
   }
 
   getFormattedDate(): string {
@@ -270,6 +309,13 @@ export class NoteUpdateDialogComponent implements OnInit {
     this.note!.tags = $event;
     this.editForm.patchValue({ tags: this.note!.tags });
     this.savePatch(undefined);
+  }
+
+  protected subscribeToAttachSaveResponse(result: Observable<HttpResponse<IAttachment>>): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      () => this.onSavePatchSuccess(),
+      () => this.onSavePatchError()
+    );
   }
 
   protected onSaveSuccess(result: string): void {
@@ -321,7 +367,7 @@ export class NoteUpdateDialogComponent implements OnInit {
       tags: note.tags,
       collaborators: note.collaborators,
     });
-
+    this.attachForm.patchValue({ note: note.id });
     this.usersSharedCollection = this.userService.addUserToCollectionIfMissing(this.usersSharedCollection, ...(note.collaborators ?? []));
 
     this.alertMaxTitle = this.checkInputLenght(
@@ -350,6 +396,11 @@ export class NoteUpdateDialogComponent implements OnInit {
       .subscribe((users: IUser[]) => (this.usersSharedCollection = users));
   }
 
+  protected loadAttachment(): void {
+    this.attachmentService.query;
+    return;
+  }
+
   protected createFromForm(): INote {
     return {
       ...new Note(),
@@ -357,11 +408,22 @@ export class NoteUpdateDialogComponent implements OnInit {
       title: this.editForm.get(['title'])!.value,
       content: this.editForm.get(['content'])!.value,
       lastUpdateDate: dayjs(dayjs(), DATE_TIME_FORMAT),
-      alarmDate: this.editForm.get(['alarmDate'])!.valid ? dayjs(this.editForm.get(['alarmDate'])!.value, DATE_TIME_FORMAT) : undefined,
+      alarmDate: this.editForm.get(['alarmDate'])!.valid
+        ? dayjs(this.editForm.get(['alarmDate'])!.value, DATE_TIME_FORMAT)
+        : this.resetDate(),
       status: this.editForm.get(['status'])!.value,
       owner: this.editForm.get(['owner'])!.value,
       tags: this.editForm.get(['tags'])?.value,
       collaborators: this.editForm.get(['collaborators'])!.value,
+    };
+  }
+
+  protected createAttach(): IAttachment {
+    return {
+      ...new Attachment(),
+      dataContentType: this.attachForm.get(['dataContentType'])!.value,
+      data: this.attachForm.get(['data'])!.value,
+      note: this.createFromForm(),
     };
   }
 }

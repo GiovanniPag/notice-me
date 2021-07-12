@@ -3,12 +3,11 @@ package com.mycompany.noticeme.web.rest;
 import com.mycompany.noticeme.config.CustomResponseUtil;
 import com.mycompany.noticeme.repository.TagRepository;
 import com.mycompany.noticeme.service.TagService;
+import com.mycompany.noticeme.service.UserService;
 import com.mycompany.noticeme.service.dto.TagDTO;
 import com.mycompany.noticeme.web.rest.errors.BadRequestAlertException;
-import java.io.Console;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -45,10 +43,12 @@ public class TagResource {
     private final TagService tagService;
 
     private final TagRepository tagRepository;
+    private final UserService userService;
 
-    public TagResource(TagService tagService, TagRepository tagRepository) {
+    public TagResource(TagService tagService, TagRepository tagRepository, UserService userService) {
         this.tagService = tagService;
         this.tagRepository = tagRepository;
+        this.userService = userService;
     }
 
     /**
@@ -64,7 +64,10 @@ public class TagResource {
         if (tagDTO.getId() != null) {
             throw new BadRequestAlertException("A new tag cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        if (tagRepository.existsByTagNameAndOwnerId(tagDTO.getTagName(), tagDTO.getOwner().getId())) {
+        if (tagDTO.getOwner() == null) {
+            tagDTO.setOwner(this.userService.getCurrentUser().get());
+        }
+        if (tagRepository.existsByTagNameAndOwnerLogin(tagDTO.getTagName(), tagDTO.getOwner().getLogin())) {
             throw new BadRequestAlertException("A new tag cannot have the same name of an existing one", ENTITY_NAME, "tagnameesxists");
         }
         TagDTO result = tagService.save(tagDTO);
