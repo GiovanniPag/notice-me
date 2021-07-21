@@ -85,6 +85,24 @@ public class AttachmentService {
     }
 
     /**
+     * Get all the attachments.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<AttachmentDTO> findAllByNoteId(Pageable pageable, long noteId) {
+        log.debug("Request to get all Attachments");
+        if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
+            return attachmentRepository.findAllByNoteId(noteId, pageable).map(attachmentMapper::toDto);
+        } else {
+            return attachmentRepository
+                .findAllByNoteOwnerLoginAndNoteId(SecurityUtils.getCurrentUserLogin().get(), noteId, pageable)
+                .map(attachmentMapper::toDto);
+        }
+    }
+
+    /**
      * Get one attachment by id.
      *
      * @param id the id of the entity.

@@ -18,10 +18,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
     this.accountService.identity().subscribe(() => {
-      if (!this.accountService.isAuthenticated()) {
-        this.router.navigate(['/login']);
+      if (!this.isAuthenticated()) {
+        this.navigate('/login');
       } else {
-        this.router.navigate(['/note']);
+        this.navigate('/note');
       }
     });
   }
@@ -30,5 +30,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
     }
+  }
+
+  isAuthenticated(): boolean {
+    return this.accountService.isAuthenticated();
+  }
+
+  navigate(route: string): void {
+    this.router.navigate([route]);
   }
 }

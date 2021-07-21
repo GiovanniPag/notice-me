@@ -41,7 +41,14 @@
           *ngFor="let note of pinnedNotes; trackBy: trackId"
         >
           <div class="muuri-grid-item-content" (resized)="onResized()">
-            <img class="card-img-top" src="..." alt="Card image cap" />
+            <div class="card-img-top">
+              <jhi-carousel-attach
+                [images]="note.attachments!"
+                [disableRemove]="true"
+                [showNavigationIndicators]="false"
+                [showNavigationArrows]="false"
+              ></jhi-carousel-attach>
+            </div>
             <div class="card-body">
               <h5 class="card-title">{{ note.title }}</h5>
 
@@ -61,7 +68,7 @@
             <div class="card-footer">
               <p class="card-text">
                 <small class="text-muted m-0" jhiTranslate="noticeMeApp.note.lastUpdateDate">lastUpdateDate</small>
-                <small class="text-muted m-0">{{ getFormattedLastUpdateDate(note) }}</small>
+                <small class="text-muted m-0" [innerHTML]="getFormattedLastUpdateDate(note)"></small>
               </p>
             </div>
           </div>
@@ -87,7 +94,14 @@
           *ngFor="let note of otherNotes; trackBy: trackId"
         >
           <div class="muuri-grid-item-content" (resized)="onResized()">
-            <img class="card-img-top" alt="Card image cap" />
+            <div class="card-img-top">
+              <jhi-carousel-attach
+                [images]="note.attachments!"
+                [disableRemove]="true"
+                [showNavigationIndicators]="false"
+                [showNavigationArrows]="false"
+              ></jhi-carousel-attach>
+            </div>
             <div class="card-body">
               <h5 class="card-title">{{ note.title }}</h5>
               <p class="card-text summary-text" ellipsis [ellipsis-content]="note.content!"></p>
@@ -106,7 +120,7 @@
             <div class="card-footer">
               <p class="card-text">
                 <small class="text-muted m-0" jhiTranslate="noticeMeApp.note.lastUpdateDate">lastUpdateDate</small>
-                <small class="text-muted m-0">{{ getFormattedLastUpdateDate(note) }}</small>
+                <small class="text-muted m-0" [innerHTML]="getFormattedLastUpdateDate(note)"></small>
               </p>
             </div>
           </div>

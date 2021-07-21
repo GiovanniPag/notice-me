@@ -54,10 +54,18 @@ describe('Component Tests', () => {
 
     it('Should navigate to /login on login', () => {
       // WHEN
-      comp.login();
+      comp.navigate('/login');
 
       // THEN
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/login']);
+    });
+
+    it('Should navigate to /note on note', () => {
+      // WHEN
+      comp.navigate('/note');
+
+      // THEN
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/note']);
     });
   });
 });

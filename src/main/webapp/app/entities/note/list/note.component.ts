@@ -21,6 +21,8 @@ import { finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import * as dayjs from 'dayjs';
 import { TranslateService } from '@ngx-translate/core';
+import { IAttachment } from 'app/entities/attachment/attachment.model';
+import { AttachmentService } from 'app/entities/attachment/service/attachment.service';
 
 @Component({
   selector: 'jhi-note',
@@ -78,6 +80,7 @@ export class NoteComponent implements OnInit {
     protected dataUtils: DataUtils,
     protected modalService: NgbModal,
     protected parseLinks: ParseLinks,
+    protected attachmentService: AttachmentService,
     private translateService: TranslateService
   ) {
     this.route.queryParams.subscribe(params => {
@@ -138,7 +141,7 @@ export class NoteComponent implements OnInit {
     let lastUpdateDate: string;
     let time = dayjs().diff(note.lastUpdateDate!, 's');
     if (time <= 60) {
-      lastUpdateDate = this.translateService.instant('noticeMeApp.note.detail.secondsAgo');
+      lastUpdateDate = this.translateService.instant('noticeMeApp.note.detail.secondsAgo', { time });
     } else {
       time = dayjs().diff(note.lastUpdateDate!, 'm');
       if (time <= 60) {
@@ -294,11 +297,22 @@ export class NoteComponent implements OnInit {
   }
 
   addNote(note: INote): void {
+    this.getAttachment(note);
     if (note.status === NoteStatus.PINNED) {
       this.pinnedNotes.push(note);
     } else {
       this.otherNotes.push(note);
     }
+  }
+
+  getAttachment(note: INote): void {
+    this.attachmentService
+      .query({
+        noteId: note.id,
+      })
+      .subscribe((res: HttpResponse<IAttachment[]>) => {
+        note.attachments = res.body ?? [];
+      });
   }
 
   protected subscribeToSavePatchResponse(result: Observable<HttpResponse<INote>>): void {
@@ -332,6 +346,7 @@ export class NoteComponent implements OnInit {
     this.links = this.parseLinks.parse(headers.get('link') ?? '');
     if (data) {
       for (const d of data) {
+        this.getAttachment(d);
         d.status === NoteStatus.PINNED ? this.pinnedNotes.push(d) : this.otherNotes.push(d);
       }
     }
@@ -339,6 +354,7 @@ export class NoteComponent implements OnInit {
 
   protected updateNote(data: INote | null): void {
     if (data) {
+      this.getAttachment(data);
       let n = this.pinnedNotes.find(note => note.id === data.id);
       if (n) {
         if (n.status === data.status && data.status === NoteStatus.PINNED) {

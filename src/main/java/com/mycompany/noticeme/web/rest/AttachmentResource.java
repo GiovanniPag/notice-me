@@ -3,6 +3,7 @@ package com.mycompany.noticeme.web.rest;
 import com.mycompany.noticeme.repository.AttachmentRepository;
 import com.mycompany.noticeme.service.AttachmentService;
 import com.mycompany.noticeme.service.dto.AttachmentDTO;
+import com.mycompany.noticeme.service.dto.NoteDTO;
 import com.mycompany.noticeme.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -145,9 +146,14 @@ public class AttachmentResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of attachments in body.
      */
     @GetMapping("/attachments")
-    public ResponseEntity<List<AttachmentDTO>> getAllAttachments(Pageable pageable) {
+    public ResponseEntity<List<AttachmentDTO>> getAllAttachments(Pageable pageable, @RequestParam(required = false) Long noteId) {
         log.debug("REST request to get a page of Attachments");
-        Page<AttachmentDTO> page = attachmentService.findAll(pageable);
+        Page<AttachmentDTO> page;
+        if (noteId != null) {
+            page = attachmentService.findAllByNoteId(pageable, noteId);
+        } else {
+            page = attachmentService.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

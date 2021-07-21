@@ -24,8 +24,10 @@ import { ModalCloseReason } from 'app/entities/enumerations/modal-close-reason.m
 import { MinDateValidator } from 'app/shared/date/MinDateValidator.directive';
 import { NoteDeleteDialogComponent } from '../delete/note-delete-dialog.component';
 import { TagInputComponent } from 'app/entities/tag/tag-chips/tag-input/tag-input.component';
+import { jhiCarouselComponent } from 'app/entities/attachment/carousel/carousel.component';
 import { Attachment, IAttachment } from 'app/entities/attachment/attachment.model';
 import { AttachmentService } from 'app/entities/attachment/service/attachment.service';
+import { AttachmentDeleteDialogComponent } from 'app/entities/attachment/delete/attachment-delete-dialog.component';
 
 @Component({
   templateUrl: './note-update-dialog.component.html',
@@ -36,8 +38,10 @@ export class NoteUpdateDialogComponent implements OnInit, AfterViewInit {
   @ViewChild('field_title') titleText!: ElementRef;
   @ViewChild('field_content') contentText!: ElementRef;
   @ViewChild('tagInput') tagInput!: TagInputComponent;
+  @ViewChild('carousel') attachmentCarrousel!: jhiCarouselComponent;
 
   note?: INote;
+  attachments?: IAttachment[];
   allNoteStatus = NoteStatus;
 
   usersSharedCollection: IUser[] = [];
@@ -92,9 +96,6 @@ export class NoteUpdateDialogComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    // eslint-disable-next-line no-console
-    console.log(this.note);
-
     this.alerts = this.alertService.get();
     this.updateForm(this.note!);
     this.loadRelationshipsOptions();
@@ -228,6 +229,17 @@ export class NoteUpdateDialogComponent implements OnInit, AfterViewInit {
     );
   }
 
+  deleteAttachment($event: IAttachment): void {
+    const modalRef = this.modalService.open(AttachmentDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.attachment = $event;
+    // unsubscribe not needed because closed completes on modal close
+    modalRef.closed.subscribe(reason => {
+      if (reason === 'deleted') {
+        this.note?.attachments?.splice(this.note.attachments.indexOf($event, 0), 1);
+      }
+    });
+  }
+
   deleteNote(): void {
     this.editForm.patchValue({ status: NoteStatus.DELETED });
     this.save(ModalCloseReason.DELETED);
@@ -313,7 +325,7 @@ export class NoteUpdateDialogComponent implements OnInit, AfterViewInit {
 
   protected subscribeToAttachSaveResponse(result: Observable<HttpResponse<IAttachment>>): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
-      () => this.onSavePatchSuccess(),
+      res => this.onSaveAttachPatchSuccess(res.body),
       () => this.onSavePatchError()
     );
   }
@@ -324,6 +336,14 @@ export class NoteUpdateDialogComponent implements OnInit, AfterViewInit {
 
   protected onSaveError(): void {
     // Api for inheritance.
+  }
+
+  protected onSaveAttachPatchSuccess(toAdd: IAttachment | null): void {
+    if (toAdd) {
+      this.note!.attachments
+        ? this.note!.attachments.push(toAdd)
+        : ((this.note!.attachments = [toAdd]), (this.attachmentCarrousel.images = this.note!.attachments));
+    }
   }
 
   protected onSavePatchSuccess(): void {
@@ -397,8 +417,13 @@ export class NoteUpdateDialogComponent implements OnInit, AfterViewInit {
   }
 
   protected loadAttachment(): void {
-    this.attachmentService.query;
-    return;
+    this.attachmentService
+      .query({
+        noteId: this.note!.id,
+      })
+      .subscribe((res: HttpResponse<IAttachment[]>) => {
+        this.attachments = res.body ?? [];
+      });
   }
 
   protected createFromForm(): INote {

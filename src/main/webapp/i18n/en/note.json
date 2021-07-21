@@ -40,11 +40,11 @@
         "title": "Note",
         "isInTrash": "note in the trash",
         "secondsAgo": " some seconds ago",
-        "minutesAgo": " {{time}} minutes ago",
-        "hoursAgo": " {{time}} hours ago",
-        "daysAgo": " {{time}} days ago",
-        "monthsAgo": " {{time}} months ago",
-        "yearsAgo": " {{time}} years ago"
+        "minutesAgo": " some minutes ago",
+        "hoursAgo": " {{time}} hour(s) ago",
+        "daysAgo": " {{time}} day(s) ago",
+        "monthsAgo": " {{time}} month(s) ago",
+        "yearsAgo": " {{time}} year(s) ago"
       },
       "id": "ID",
       "title": "Title",

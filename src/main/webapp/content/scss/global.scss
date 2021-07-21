@@ -171,6 +171,32 @@ entity detail page css
   }
 }
 
+.border-top {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.carousel .item {
+  overflow: hidden;
+}
+
+.item img {
+  max-height: 40vh !important;
+  min-width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  object-position: center; // You can change this to bottom, right or left depending
+  // on the position you want.
+}
+
+.floating-tr {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 20;
+}
+
 /* ==========================================================================
 ui bootstrap tweaks
 ========================================================================== */

@@ -19,7 +19,10 @@
       },
       "id": "ID",
       "data": "Data",
-      "note": "Note"
+      "note": "Note",
+      "tooltip": {
+        "delete": "Elimina Allegato"
+      }
     }
   }
 }

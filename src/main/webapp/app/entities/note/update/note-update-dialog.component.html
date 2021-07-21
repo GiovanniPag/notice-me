@@ -13,8 +13,12 @@
   [excludeBeforeClick]="true"
   [delayClickOutsideInit]="true"
 >
+  <jhi-carousel-attach
+    #carousel
+    [images]="note!.attachments ? note!.attachments : []"
+    (onAttachmentRemove)="deleteAttachment($event)"
+  ></jhi-carousel-attach>
   <div class="modal-header d-flex">
-    <jhi-carousel-attach [images]="note!.attachments!"></jhi-carousel-attach>
     <div class="form-group" [hidden]="true">
       <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
     </div>

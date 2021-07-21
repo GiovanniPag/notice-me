@@ -1,7 +1,27 @@
-<ngb-carousel #carousel [interval]="5000" [pauseOnHover]="pauseOnHover" [pauseOnFocus]="pauseOnFocus">
+<ngb-carousel
+  #carousel
+  [interval]="5000"
+  [pauseOnHover]="pauseOnHover"
+  [pauseOnFocus]="pauseOnFocus"
+  class="carousel"
+  [showNavigationIndicators]="showIndicators()"
+  [showNavigationArrows]="showArrows()"
+>
   <ng-template ngbSlide *ngFor="let img of images; index as i">
-    <div class="img-wrapper">
+    <div class="img-wrapper item border-top">
       <img [src]="getImage(img)" alt="My image {{ i + 1 }} description" />
+    </div>
+    <div *ngIf="!disableRemove" class="btn-group floating-tr" role="group" aria-label="delete attachment">
+      <button
+        type="button"
+        class="btn btn-light"
+        ngbTooltip="{{ 'noticeMeApp.attachment.tooltip.delete' | translate }}"
+        placement="top auto"
+        container="body"
+        (click)="removeItem(img)"
+      >
+        <fa-icon icon="times"></fa-icon>
+      </button>
     </div>
   </ng-template>
 </ngb-carousel>
